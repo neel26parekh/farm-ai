@@ -1,13 +1,14 @@
 # Agro Nexus
 
-Agro Nexus is a hybrid agriculture project that combines a static web frontend with machine learning notebooks for agricultural decision support. The repository contains a landing website, supporting marketing pages, notebook-based model development for crop and fertilizer recommendations, and links to externally hosted deployments and Google Colab training artifacts.
+Agro Nexus is a hybrid agriculture project that combines a local web interface with machine learning notebooks for agricultural decision support. The repository contains a landing website, supporting marketing pages, notebook-based model development for crop and fertilizer recommendations, and references to remote Google Colab training artifacts.
 
 ## Overview
 
 The project is organized around two parts:
 
-1. A Bootstrap-based frontend website for presenting the Agro Nexus platform and linking users to deployed prediction tools.
+1. A local website interface that exposes crop recommendation, fertilizer suggestion, production estimation, and yield estimation directly inside the site.
 2. A set of Jupyter notebooks used to explore datasets, train models, evaluate performance, and export serialized artifacts with `pickle`.
+3. A dependency-free Python server that serves the website, exposes local prediction endpoints, and reports model diagnostics when notebook data or artifacts are missing.
 
 The repository also includes plain-text references to live and remote assets:
 
@@ -41,11 +42,15 @@ Agro-Nexus/
 
 ### `index.html`
 
-Primary landing page for Agro Nexus. It uses Bootstrap, Font Awesome, Bootstrap Icons, Owl Carousel, and custom inline styling. The navigation includes links to the main content pages and a services dropdown that points to deployed Streamlit tools such as crop recommendation and price prediction.
+Primary landing page for Agro Nexus. It is now a self-contained local interface with modern styling, in-page forms for all prediction workflows, JavaScript calls to local API endpoints, and a diagnostics view that reports missing datasets and model artifacts.
 
 ### `index copy.html`
 
-Alternate or earlier version of the landing page. It includes a wider set of Streamlit links, including fertilizer prediction and crop yield prediction, which makes it useful as a historical or backup variant of the homepage.
+Archived alternate homepage. It now redirects to the main local Agro Nexus interface so there are no stale external prediction links left in the website flow.
+
+### `server.py`
+
+Local HTTP server for the project. It serves the website, exposes JSON endpoints for crop recommendation, fertilizer suggestion, production estimation, and yield estimation, and reports whether the notebook datasets and serialized artifacts are present.
 
 ### `product.html`
 
@@ -130,13 +135,42 @@ These are references only. The actual Colab notebook contents are not stored in 
 
 ### View the Website Locally
 
-Open `index.html` directly in a browser, or run a simple local server from the repository root:
+Run the local Agro Nexus server from the repository root:
 
 ```bash
-python -m http.server 8000
+/usr/local/bin/python3 server.py
 ```
 
 Then open `http://localhost:8000` in your browser.
+
+### Deploy on Vercel
+
+This repository is now structured so the existing website can be deployed directly on Vercel:
+
+- `index.html` and the other HTML pages are served as static files.
+- `api/index.py` handles `/api/health` and all `/api/predict/*` routes.
+- `vercel.json` rewrites `/api/*` requests to the Python function so the frontend does not need to change.
+
+Deploy steps:
+
+```bash
+npm install -g vercel
+vercel
+```
+
+When prompted:
+
+- Set the project root to this repository folder.
+- Keep the default static deployment settings.
+- Do not add a framework preset.
+
+For production deployment:
+
+```bash
+vercel --prod
+```
+
+Important: the deployed API will still run in `heuristic-fallback` mode until the missing datasets and serialized model artifacts are added to the repository.
 
 ### Run the Notebooks Locally
 
@@ -171,14 +205,15 @@ Without these files, the notebook pipelines cannot be executed successfully.
 - Several HTML pages reference local assets such as `css/style.css`, `js/main.js`, `lib/owlcarousel`, and images under `img/`, but those asset directories are not present in this repository.
 - Multiple pages link to `contact.html`, but that file is not included.
 - The notebooks contain saved outputs and appear to have been authored in or exported from Google Colab.
-- The deployed website and some prediction services are hosted externally, so this repository is not a complete standalone production deployment.
+- The notebooks depend on CSV datasets that are not committed, so the sklearn training path is incomplete in this repository.
+- The local website is standalone, but it currently falls back to built-in inference logic because the notebook datasets and serialized sklearn artifacts are missing.
 
 ## Suggested Improvements
 
 1. Add the missing static assets so the website can run locally without broken styles and images.
 2. Add a `requirements.txt` or `environment.yml` for reproducible notebook setup.
 3. Include sample datasets or clear instructions for obtaining them.
-4. Add documentation for how the deployed Streamlit apps are built and connected to the notebooks.
+4. Export and commit reproducible model artifacts if you want the website to switch from fallback inference to notebook-trained sklearn models.
 5. Remove duplicate or archival files if they are no longer needed, or document their purpose explicitly.
 
 ## Summary
