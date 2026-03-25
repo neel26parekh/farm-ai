@@ -1,0 +1,324 @@
+.page {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+}
+
+.pageTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+  color: var(--emerald-400);
+}
+
+.pageSubtitle {
+  font-size: var(--text-base);
+  color: var(--text-dim);
+}
+
+.locationBadge {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  color: var(--text-dim);
+}
+
+/* Current Weather */
+.currentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.currentCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+}
+
+.currentMain {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.currentIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 3s ease-in-out infinite;
+}
+
+.currentTemp {
+  font-family: var(--font-heading);
+  font-size: var(--text-5xl);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.currentCondition {
+  font-size: var(--text-lg);
+  color: var(--text-dim);
+  margin-top: var(--space-1);
+}
+
+.currentDetails {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-glass);
+  border-radius: var(--radius-md);
+}
+
+/* Impact Card */
+.impactCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+}
+
+.impactTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  color: var(--emerald-400);
+}
+
+.impactBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  border: 1px solid;
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.03em;
+}
+
+.impactAdvisory {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-5);
+  line-height: 1.5;
+}
+
+.advisoryList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.advisoryItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.advisoryItem svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Forecast */
+.forecastSection {
+  margin-bottom: var(--space-8);
+}
+
+.sectionTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-5);
+}
+
+.forecastGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-3);
+}
+
+.forecastCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  text-align: center;
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.forecastCard:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.forecastToday {
+  border-color: var(--border-active);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.forecastDay {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.forecastDate {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+
+.forecastIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-1) 0;
+}
+
+.forecastTemp {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.forecastTempMin {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
+.forecastRain {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: #60a5fa;
+}
+
+.forecastImpact {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Bottom Grid */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-6);
+}
+
+.chartCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.cropAlerts {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.alertsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.alertItem {
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.alertItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.alertCrop {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.alertText {
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+@media (max-width: 1024px) {
+  .currentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .forecastGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .forecastGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,340 @@
+.page {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.pageTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+  color: var(--emerald-400);
+}
+
+.pageSubtitle {
+  font-size: var(--text-base);
+  color: var(--text-dim);
+}
+
+.lastUpdated {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+/* Ticker */
+.ticker {
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  background: rgba(6, 78, 59, 0.12);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+}
+
+.tickerTrack {
+  display: flex;
+  gap: var(--space-8);
+  animation: tickerScroll 30s linear infinite;
+  width: max-content;
+}
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.tickerItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.tickerCrop {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.tickerPrice {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.tickerChange {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+/* Price Grid */
+.priceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.priceCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  transition: all var(--transition-base);
+}
+
+.priceCard:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.priceCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.priceCardHeader h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.mandiTag {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-glass);
+  border-radius: var(--radius-sm);
+}
+
+.priceCardValue {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.priceUnit {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
+.priceCardChange {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+/* Charts */
+.chartGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.chartCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.chartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.chartHeader h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.cropSelector {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--bg-glass);
+  padding: var(--space-1);
+  border-radius: var(--radius-lg);
+}
+
+.cropBtn {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  color: var(--text-dim);
+  transition: all var(--transition-fast);
+}
+
+.cropBtn:hover {
+  color: var(--text-primary);
+}
+
+.cropBtnActive {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--emerald-400);
+}
+
+/* Prediction */
+.predictionCard {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.predictionHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--amber-400);
+  margin-bottom: var(--space-5);
+}
+
+.predictionHeader h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.predictionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.predictionItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.predictionLabel {
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+}
+
+.predictionValue {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.predictionConf {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+
+.predictionTrend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--emerald-400);
+  margin-top: var(--space-1);
+}
+
+.predictionDivider {
+  height: 1px;
+  background: var(--border-color);
+}
+
+/* Mandi Section */
+.mandiSection {
+  background: var(--gradient-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.mandiTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-5);
+  color: var(--emerald-400);
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.05);
+}
+
+.table tr:hover td {
+  background: var(--bg-glass);
+}
+
+.mandiName {
+  font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+  .priceGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chartGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .priceGrid {
+    grid-template-columns: 1fr;
+  }
+}

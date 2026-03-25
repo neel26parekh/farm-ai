@@ -1,0 +1,54 @@
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.page { display: flex; min-height: 100vh; background: var(--bg-primary); animation: fadeIn 0.4s ease-out; }
+
+/* Brand Panel (Left Side on Desktop) */
+.brandPanel { flex: 1; background: var(--gradient-hero); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; padding: var(--space-12); position: relative; overflow: hidden; }
+.brandPanel::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.15), transparent 70%); pointer-events: none; }
+.brandContent { max-width: 480px; margin: 0 auto; position: relative; z-index: 2; animation: slideUp 0.6s ease-out; }
+
+.logo { display: inline-flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-12); }
+.logoIcon { width: 48px; height: 48px; border-radius: var(--radius-xl); background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; }
+.logoText { font-family: var(--font-heading); font-size: var(--text-2xl); font-weight: 800; }
+.logoAccent { color: var(--emerald-400); }
+
+.brandHeading { font-size: var(--text-5xl); font-weight: 800; line-height: 1.1; margin-bottom: var(--space-4); }
+.brandSubheading { font-size: var(--text-lg); color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--space-8); }
+
+.featureList { display: flex; flex-direction: column; gap: var(--space-4); }
+.featureItem { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-base); color: var(--text-dim); }
+.checkIcon { width: 24px; height: 24px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--emerald-400); display: flex; align-items: center; justify-content: center; }
+
+/* Form Panel (Right Side on Desktop) */
+.formPanel { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-12); }
+.formContainer { width: 100%; max-width: 400px; animation: slideUp 0.6s ease-out 0.1s both; }
+
+.formHeader { margin-bottom: var(--space-8); text-align: center; }
+.formHeader h2 { font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-2); }
+.formHeader p { font-size: var(--text-sm); color: var(--text-dim); }
+
+.form { display: flex; flex-direction: column; gap: var(--space-5); margin-bottom: var(--space-6); }
+.formGroup { display: flex; flex-direction: column; gap: var(--space-2); }
+.formGroup label { font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary); }
+
+.inputWrap { position: relative; display: flex; align-items: center; }
+.inputIcon { position: absolute; left: var(--space-4); color: var(--text-dim); }
+.inputWrap input { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4) var(--space-3) 44px; color: var(--text-primary); font-size: var(--text-base); transition: all var(--transition-fast); }
+.inputWrap input:focus { outline: none; border-color: var(--emerald-500); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.02); }
+.inputWrap input::placeholder { color: var(--text-dim); opacity: 0.5; }
+
+.submitBtn { width: 100%; padding: var(--space-4); font-size: var(--text-base); margin-top: var(--space-2); justify-content: center; }
+
+.toggleText { text-align: center; font-size: var(--text-sm); color: var(--text-dim); }
+.toggleBtn { color: var(--emerald-400); font-weight: 600; padding: 0; transition: color var(--transition-fast); }
+.toggleBtn:hover { color: var(--emerald-300); text-decoration: underline; }
+
+.demoNote { margin-top: var(--space-8); padding: var(--space-4); background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg); font-size: var(--text-xs); color: var(--text-dim); text-align: center; line-height: 1.5; }
+.demoNote strong { color: #60a5fa; }
+
+@media (max-width: 900px) {
+  .brandPanel { display: none; }
+  .page { padding: var(--space-6); background: var(--gradient-hero); }
+  .formPanel { padding: var(--space-8); background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-2xl); max-width: 480px; margin: 0 auto; box-shadow: var(--shadow-xl); align-self: center; }
+}

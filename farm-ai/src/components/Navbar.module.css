@@ -1,0 +1,133 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: var(--space-4) var(--space-6);
+  transition: all var(--transition-base);
+}
+
+.navbar.scrolled {
+  background: rgba(3, 11, 5, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--space-3) var(--space-6);
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: var(--text-xl);
+  z-index: 110;
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.logoText {
+  color: var(--text-primary);
+}
+
+.logoAccent {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.navLink {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-dim);
+  transition: color var(--transition-fast);
+  position: relative;
+}
+
+.navLink:hover {
+  color: var(--text-primary);
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  transition: width var(--transition-base);
+  border-radius: var(--radius-full);
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.ctaBtn {
+  padding: var(--space-2) var(--space-5) !important;
+  font-size: var(--text-sm) !important;
+}
+
+.mobileToggle {
+  display: none;
+  z-index: 110;
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .mobileToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navLinks {
+    position: fixed;
+    inset: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-8);
+    background: rgba(3, 11, 5, 0.98);
+    backdrop-filter: blur(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+    z-index: 105;
+  }
+
+  .navLinks.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .navLink {
+    font-size: var(--text-xl);
+  }
+}
