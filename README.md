@@ -58,3 +58,23 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 *(Runs on http://localhost:8000)*
+
+---
+
+## 🚀 Deployment
+
+The project is configured for easy hosting on **Vercel** (Frontend) and **Render** (Backend).
+
+### Automated Deployment
+You can use the provided script to sync your changes and trigger deployments:
+```bash
+./scripts/deploy.sh
+```
+
+### Manual Setup
+1.  **Vercel (Frontend)**:
+    -   Connect this repository to Vercel.
+    -   The `vercel.json` will automatically configure the `farm-ai/` directory.
+2.  **Render (Backend)**:
+    -   Connect this repository to Render.
+    -   Use the "Blueprint" feature and select the `render.yaml` file to set up the FastAPI service automatically.
