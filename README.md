@@ -78,3 +78,13 @@ You can use the provided script to sync your changes and trigger deployments:
 2.  **Render (Backend)**:
     -   Connect this repository to Render.
     -   Use the "Blueprint" feature and select the `render.yaml` file to set up the FastAPI service automatically.
+
+---
+
+## 📈 Scalability & Future Integration
+
+Farm-AI is built with a "Plug-and-Play" architecture. While the current version uses high-fidelity mocks for fast demonstration, it is designed for seamless scaling to real-world data:
+
+- **AI Advisor (NLP)**: Switch from mock to live advice by adding a `GEMINI_API_KEY` to the backend `.env`.
+- **Disease Detection (CV)**: Swap the deterministic mock for a live CNN model (e.g., via the `transformers` library) in `main.py`.
+- **Market Intelligence**: Integrate real-time Mandi prices by connecting the backend to the **Agmarknet API** (data.gov.in).
