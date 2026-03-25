@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Counter</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Add your CSS styles if any */
+    </style>
+</head>
+<body>
+    <div class="col-lg-3 col-md-6">
+        <div class="d-flex">
+            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                <i class="fa fa-users fs-4 text-white"></i>
+            </div>
+            <div class="ps-4">
+                <h5 class="text-white">Farm Specialist</h5>
+                <h1 id="visitor-count" class="display-5 text-white mb-0" data-toggle="counter-up">10,943</h1>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var currentCount = parseInt($('#visitor-count').text().replace(/,/g, ''));
+            var updatedCount = currentCount + 1;  // This is just for demonstration, replace it with an API call.
+            $('#visitor-count').text(updatedCount.toLocaleString());
+        });
+    </script>
+</body>
+</html>

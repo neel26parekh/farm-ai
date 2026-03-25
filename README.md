@@ -86,3 +86,67 @@ uvicorn main:app --reload
 ---
 
 ### Built for Emerging Builders | YC Target 2026
+
+---
+
+## Legacy Documentation (Agro Nexus)
+
+Agro Nexus is a hybrid agriculture project that combines a local web interface with machine learning notebooks for agricultural decision support. The repository contains a landing website, supporting marketing pages, notebook-based model development for crop and fertilizer recommendations, and references to remote Google Colab training artifacts.
+
+### Repository Structure
+
+```text
+Agro-Nexus/
+├── index.html
+├── index copy.html
+├── product.html
+├── service.html
+├── team.html
+├── testimonial.html
+├── livecount.html
+├── Crop_Recommendation_2.ipynb
+├── ferti.ipynb
+├── regression.ipynb
+├── yield.ipynb
+├── farmAI
+├── model-01
+├── model-02
+├── model-03
+├── model-04
+└── README.md
+```
+
+### Website Files
+
+#### `index.html`
+Primary landing page for Agro Nexus. It is now a self-contained local interface with modern styling, in-page forms for all prediction workflows, JavaScript calls to local API endpoints, and a diagnostics view that reports missing datasets and model artifacts.
+
+#### `server.py`
+Local HTTP server for the project. It serves the website, exposes JSON endpoints for crop recommendation, fertilizer suggestion, production estimation, and yield estimation, and reports whether the notebook datasets and serialized artifacts are present.
+
+### Machine Learning Notebooks
+
+#### `Crop_Recommendation_2.ipynb`
+Crop recommendation notebook for a classification workflow. The notebook reads `crop_recommendation.csv`, performs exploratory analysis, uses `SMOTE` for class balancing, and evaluates several classification approaches.
+
+#### `ferti.ipynb`
+Fertilizer prediction notebook. It reads `Fertilizer Prediction-2.csv`, performs visual analysis, encodes categorical values, and trains classifiers.
+
+#### `regression.ipynb`
+Crop regression notebook for yield-related prediction work.
+
+#### `yield.ipynb`
+Yield prediction notebook that reads `yield_df.csv` and builds regression pipelines.
+
+### External References
+
+#### Live Website
+The file `farmAI` contains the deployed Vercel URL:
+`https://farm-ai-htl-2526.vercel.app/`
+
+#### Remote Model Notebooks
+The files `model-01` through `model-04` each contain a Google Colab link:
+- `model-01`: `https://colab.research.google.com/drive/1y8XDfIwbaqxFb_kNbvb1j9RxtFj2h7fe`
+- `model-02`: `https://colab.research.google.com/drive/1TQqxwGVgvMwSugHkJ3tvMhP60BKJ1uru`
+- `model-03`: `https://colab.research.google.com/drive/1jAHcVJKqpaxCu4Agq5guw_Ml1dj4jtKS`
+- `model-04`: `https://colab.research.google.com/drive/1y4kY4f-Aa6NBRQ2Fs8TtdaHQfpofwAFs`
