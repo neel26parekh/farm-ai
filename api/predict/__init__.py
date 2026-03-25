@@ -1,1 +1,0 @@
-# Prediction route package for Vercel function routes.

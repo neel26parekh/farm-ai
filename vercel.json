@@ -1,9 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "functions": {
-    "api/**/*.py": {
-      "excludeFiles": "{**/*.ipynb,README copy.md,model-0*,farmAI,**/*.md}"
-    }
-  }
-}
