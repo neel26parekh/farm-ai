@@ -13,7 +13,10 @@ import google.generativeai as genai
 
 # Load Env Vars
 from dotenv import load_dotenv
-load_dotenv()
+
+# Explicitly search for .env in the backend directory
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path=dotenv_path)
 
 # Configure Gemini if key exists
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -150,28 +153,41 @@ async def chat_advisor(req: ChatRequest):
     # Try using genuine Google Gemini API if configured
     if GEMINI_API_KEY:
         try:
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-3-flash-preview')
             
             # Build dynamic system prompt based on user settings
-            system_prompt = "You are FarmAI Advisor, an expert agronomist. Keep answers concise, actionable, and formatted in markdown."
+            system_prompt = (
+                "You are FarmAI Advisor, an expert agronomist for Indian farmers. Be friendly, warm, and professional. "
+                "ABSOLUTE FORMATTING RULES — follow these at ALL times, no exceptions:\n"
+                "1. NEVER use markdown heading symbols (#, ##, ###, ####). This is STRICTLY forbidden. Instead, write section titles as **Bold Text** on their own line.\n"
+                "2. Use **bold** for any important term, variety name, or action item.\n"
+                "3. DO NOT use emojis. Keep the tone clean and professional.\n"
+                "4. Keep paragraphs short and responses concise. Use bullet points (starting with -) for lists.\n"
+                "5. End with a friendly follow-up question to continue the conversation.\n"
+                "Remember: NO hash symbols and NO emojis anywhere in your response."
+            )
+
             if req.user_context:
                 ctx = req.user_context
-                system_prompt += f" Context: The user is a {ctx.get('farmSize', 'small')} acre {ctx.get('primaryCrop', 'mixed')} farmer based in {ctx.get('location', 'India')}. Always consider these local factors in your advice."
+                system_prompt += f" The user is a {ctx.get('farmSize', 'small')} acre {ctx.get('primaryCrop', 'mixed')} farmer in {ctx.get('location', 'India')}."
                 if ctx.get('language') and ctx.get('language') != "English":
-                    system_prompt += f" IMPORTANT: You must reply in the {ctx.get('language')} language."
+                    system_prompt += f" IMPORTANT: Reply entirely in {ctx.get('language')} language."
             
-            # Format history roughly for the model
+            # Format history
             chat_context = f"System: {system_prompt}\n"
-            for msg in req.history[-3:]: # keep last 3 msg context
+            for msg in req.history[-4:]:
                 role = "User: " if msg.get("role") == "user" else "Advisor: "
                 chat_context += f"{role}{msg.get('content')}\n"
             chat_context += f"User: {query}\nAdvisor: "
             
             response = model.generate_content(chat_context)
+            # Post-process: strip any markdown headers that sneak through
+            import re
+            clean_text = re.sub(r'^#{1,6}\s*', '', response.text, flags=re.MULTILINE)
             return {
                 "status": "success",
                 "model_used": "gemini-1.5-flash",
-                "response": response.text
+                "response": clean_text
             }
         except Exception as e:
             print(f"Gemini API Error: {e}")
