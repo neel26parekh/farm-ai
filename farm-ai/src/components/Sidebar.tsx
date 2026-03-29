@@ -9,41 +9,52 @@ import {
   TrendingUp,
   CloudSun,
   Bot,
-  Bell,
   Settings,
-  ChevronLeft,
   Sprout,
   LogOut,
+  ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./Sidebar.module.css";
-
-const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
-  { href: "/dashboard/disease-detection", icon: ScanSearch, label: "Disease Detection" },
-  { href: "/dashboard/market", icon: TrendingUp, label: "Market Intelligence" },
-  { href: "/dashboard/weather", icon: CloudSun, label: "Weather Advisory" },
-  { href: "/dashboard/advisor", icon: Bot, label: "AI Crop Advisor" },
-];
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
+
+  const navItems = [
+    { href: "/dashboard", icon: LayoutDashboard, label: t.sidebar.overview },
+    { href: "/dashboard/disease-detection", icon: ScanSearch, label: t.sidebar.diseaseDetection },
+    { href: "/dashboard/market", icon: TrendingUp, label: t.sidebar.marketIntelligence },
+    { href: "/dashboard/weather", icon: CloudSun, label: t.sidebar.weatherAdvisory },
+    { href: "/dashboard/advisor", icon: Bot, label: t.sidebar.aiAdvisor },
+  ];
+
+  const languages = [
+    { code: "en", label: "EN" },
+    { code: "hi", label: "HI" },
+    { code: "mr", label: "MR" },
+    { code: "te", label: "TE" },
+  ];
 
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
+
       {/* Logo */}
       <div className={styles.logoSection}>
         <Link href="/" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <Sprout size={20} />
-          </div>
           {!collapsed && (
             <span className={styles.logoText}>
-              Farm<span className="gradient-text">AI</span>
+              AI <span className={styles.logoAccent}>FarmAI</span>
             </span>
+          )}
+          {collapsed && (
+            <div className={styles.logoIcon}>
+              AI
+            </div>
           )}
         </Link>
         <button
@@ -51,14 +62,14 @@ export default function Sidebar() {
           onClick={() => setCollapsed(!collapsed)}
           aria-label="Toggle sidebar"
         >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </div>
 
       {/* Navigation */}
       <nav className={styles.nav}>
-        <div className={styles.navSection}>
-          {!collapsed && <p className={styles.navLabel}>Main Menu</p>}
+        <div className={styles.navGroup}>
+          {!collapsed && <p className={styles.navSectionLabel}>Main</p>}
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -68,28 +79,38 @@ export default function Sidebar() {
                 className={`${styles.navItem} ${isActive ? styles.active : ""}`}
                 title={collapsed ? item.label : undefined}
               >
-                <item.icon size={20} />
+                <item.icon size={18} strokeWidth={1.8} />
                 {!collapsed && <span>{item.label}</span>}
-                {isActive && <div className={styles.activeIndicator} />}
               </Link>
             );
           })}
         </div>
 
-        <div className={styles.navSection}>
-          {!collapsed && <p className={styles.navLabel}>System</p>}
-          <button className={styles.navItem} title={collapsed ? "Notifications" : undefined}>
-            <Bell size={20} />
-            {!collapsed && <span>Notifications</span>}
-            <div className={styles.notifDot} />
-          </button>
-          <Link 
-            href="/dashboard/settings" 
-            className={`${styles.navItem} ${pathname === '/dashboard/settings' ? styles.active : ''}`} 
-            title={collapsed ? "Settings" : undefined}
+        <div className={styles.navBottom}>
+          {/* Language toggle */}
+          {!collapsed && <p className={styles.navSectionLabel}>Language</p>}
+          <div className={styles.langRow}>
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                className={`${styles.langBtn} ${language === lang.code ? styles.langActive : ""}`}
+                onClick={() => setLanguage(lang.code as any)}
+                title={lang.label}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.navDivider} />
+
+          <Link
+            href="/dashboard/settings"
+            className={`${styles.navItem} ${pathname === "/dashboard/settings" ? styles.active : ""}`}
+            title={collapsed ? t.sidebar.settings : undefined}
           >
-            <Settings size={20} />
-            {!collapsed && <span>Settings</span>}
+            <Settings size={18} strokeWidth={1.8} />
+            {!collapsed && <span>{t.sidebar.settings}</span>}
           </Link>
         </div>
       </nav>
@@ -97,17 +118,17 @@ export default function Sidebar() {
       {/* User */}
       <div className={styles.userSection}>
         <div className={styles.userAvatar}>
-          {user ? user.name.substring(0, 2).toUpperCase() : "??"}
+          {user ? user.name.substring(0, 2).toUpperCase() : "?"}
         </div>
         {!collapsed && (
           <div className={styles.userInfo}>
             <p className={styles.userName}>{user ? user.name : "Loading..."}</p>
-            <p className={styles.userRole}>{user ? user.role : "Farmer"}</p>
+            <p className={styles.userRole}>{user ? user.role : t.sidebar.profile}</p>
           </div>
         )}
         {!collapsed && (
           <button className={styles.logoutBtn} title="Logout" onClick={logout}>
-            <LogOut size={16} />
+            <LogOut size={15} strokeWidth={1.8} />
           </button>
         )}
       </div>

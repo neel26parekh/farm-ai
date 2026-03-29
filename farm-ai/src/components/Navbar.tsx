@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Sprout, Menu, X, ArrowRight, User } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X, Bot } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import styles from "./Navbar.module.css";
 
@@ -10,6 +11,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -17,28 +19,27 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Hide nav if inside dashboard
+  if (pathname?.startsWith("/dashboard")) return null;
+
   return (
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <Sprout size={24} />
-          </div>
-          <span className={styles.logoText}>Farm</span>
-          <span className={styles.logoAccent}>AI</span>
+          AI <span className={styles.logoAccent}>FarmAI</span>
         </Link>
 
-        <div className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ""}`}>
-          <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
-          <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How It Works</a>
-          <a href="#testimonials" onClick={() => setMenuOpen(false)}>Testimonials</a>
+        <div className={styles.navLinks}>
+          <Link href="/#features">Product</Link>
+          <Link href="/#about">About</Link>
+          <Link href="/#news">News</Link>
           {user ? (
-            <Link href="/dashboard" className="btn btn-primary btn-sm" onClick={() => setMenuOpen(false)}>
-              Dashboard <ArrowRight size={16} />
+            <Link href="/dashboard" className={styles.cta}>
+              Go to Dashboard
             </Link>
           ) : (
-            <Link href="/auth" className="btn btn-primary btn-sm" onClick={() => setMenuOpen(false)}>
-              Login <User size={16} />
+            <Link href="/auth" className={styles.cta}>
+              Try FarmAI
             </Link>
           )}
         </div>

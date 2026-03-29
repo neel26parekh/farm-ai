@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/AuthContext";
+import { LanguageProvider } from "@/lib/LanguageContext";
 
 export const metadata: Metadata = {
   title: "FarmAI — AI-Powered Agricultural Intelligence",
@@ -15,6 +16,8 @@ export const metadata: Metadata = {
     "market prices",
     "weather advisory",
   ],
+  manifest: "/manifest.json",
+  themeColor: "#10b981",
   authors: [{ name: "FarmAI" }],
   openGraph: {
     title: "FarmAI — AI-Powered Agricultural Intelligence",
@@ -33,7 +36,9 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning>
         <AuthProvider>
-          {children}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

@@ -25,9 +25,11 @@ import {
   Bar,
 } from "recharts";
 import { cropPrices, priceHistory, mandiPrices } from "@/lib/mockData";
+import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./page.module.css";
 
 export default function MarketPage() {
+  const { language, t } = useLanguage();
   const [selectedCrop, setSelectedCrop] = useState("wheat");
   const [forecastData, setForecastData] = useState<any[]>(priceHistory);
   const [loadingForecast, setLoadingForecast] = useState(false);
@@ -80,15 +82,15 @@ export default function MarketPage() {
         <div>
           <h1 className={styles.pageTitle}>
             <TrendingUp size={28} />
-            Market Intelligence
+            {t.market.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            Real-time mandi prices, trend analysis, and AI-predicted best selling windows
+            {t.market.subtitle}
           </p>
         </div>
         <div className={styles.lastUpdated}>
           <Clock size={14} />
-          Updated 5 min ago
+          {t.market.lastUpdated}
         </div>
       </div>
 
@@ -139,7 +141,7 @@ export default function MarketPage() {
       <div className={styles.chartGrid}>
         <div className={styles.chartCard}>
           <div className={styles.chartHeader}>
-            <h3>Price Trends (6 Months)</h3>
+            <h3>{t.market.priceTrends}</h3>
             <div className={styles.cropSelector}>
               {["wheat", "rice", "tomato", "onion"].map((crop) => (
                 <button
@@ -193,7 +195,7 @@ export default function MarketPage() {
         <div className={styles.predictionCard}>
           <div className={styles.predictionHeader}>
             <Zap size={18} />
-            <h3>AI Price Prediction</h3>
+            <h3>{t.market.aiPrediction}</h3>
           </div>
           <div className={styles.predictionContent}>
             <div className={styles.predictionItem}>
@@ -239,7 +241,7 @@ export default function MarketPage() {
       <div className={styles.mandiSection}>
         <h3 className={styles.mandiTitle}>
           <BarChart3 size={18} />
-          Mandi Price Comparison
+          {t.market.mandiComparison}
         </h3>
         <div className={styles.tableWrap}>
           <table className={styles.table}>

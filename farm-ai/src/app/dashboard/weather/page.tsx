@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   CloudSun,
   Sun,
@@ -24,6 +25,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { weatherForecast } from "@/lib/mockData";
+import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./page.module.css";
 
 const weatherIcons: Record<string, React.ReactNode> = {
@@ -50,6 +52,30 @@ const impactColors: Record<string, string> = {
 };
 
 export default function WeatherPage() {
+  const { t } = useLanguage();
+  const [weatherData, setWeatherData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchWeather() {
+      try {
+        // OpenWeatherMap API Integration
+        // Note: In production, the API key should be in .env.local
+        const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "YOUR_OPENWEATHER_API_KEY";
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Ludhiana&units=metric&appid=${API_KEY}`);
+        if (res.ok) {
+          const data = await res.json();
+          setWeatherData(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch weather:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchWeather();
+  }, []);
+
   const today = weatherForecast[0];
   const rainfallData = weatherForecast.map((d) => ({
     day: d.day,
@@ -63,10 +89,10 @@ export default function WeatherPage() {
         <div>
           <h1 className={styles.pageTitle}>
             <CloudSun size={28} />
-            Weather Advisory
+            {t.weather.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            Hyper-local forecasts with farming-specific impact analysis
+            {t.weather.subtitle}
           </p>
         </div>
         <div className={styles.locationBadge}>
@@ -91,19 +117,19 @@ export default function WeatherPage() {
           <div className={styles.currentDetails}>
             <div className={styles.detailItem}>
               <Thermometer size={16} />
-              <span>Feels like {today.temp + 2}°C</span>
+              <span>{t.weather.feelsLike} {weatherData ? Math.round(weatherData.main.feels_like) : today.temp + 2}°C</span>
             </div>
             <div className={styles.detailItem}>
               <Droplets size={16} />
-              <span>Humidity {today.humidity}%</span>
+              <span>{t.weather.humidity} {weatherData ? weatherData.main.humidity : today.humidity}%</span>
             </div>
             <div className={styles.detailItem}>
               <Wind size={16} />
-              <span>Wind 12 km/h</span>
+              <span>{t.weather.wind} {weatherData ? Math.round(weatherData.wind.speed * 3.6) : 12} km/h</span>
             </div>
             <div className={styles.detailItem}>
               <Eye size={16} />
-              <span>Visibility 10 km</span>
+              <span>{t.weather.visibility} {weatherData ? (weatherData.visibility / 1000).toFixed(1) : 10} km</span>
             </div>
           </div>
         </div>
@@ -112,7 +138,7 @@ export default function WeatherPage() {
         <div className={styles.impactCard}>
           <h3 className={styles.impactTitle}>
             <Sprout size={18} />
-            Today&apos;s Farming Impact
+            {t.weather.impactTitle}
           </h3>
           <div
             className={styles.impactBadge}
@@ -151,7 +177,7 @@ export default function WeatherPage() {
 
       {/* 7-Day Forecast */}
       <div className={styles.forecastSection}>
-        <h3 className={styles.sectionTitle}>7-Day Forecast</h3>
+        <h3 className={styles.sectionTitle}>{t.weather.forecastTitle}</h3>
         <div className={styles.forecastGrid}>
           {weatherForecast.map((day, i) => (
             <div
@@ -188,7 +214,7 @@ export default function WeatherPage() {
       {/* Rainfall Chart + Advisory */}
       <div className={styles.bottomGrid}>
         <div className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>Rainfall & Humidity Prediction</h3>
+          <h3 className={styles.sectionTitle}>{t.weather.rainfallTitle}</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={rainfallData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(16, 185, 129, 0.08)" />
@@ -211,7 +237,7 @@ export default function WeatherPage() {
         {/* Crop-Specific Alerts */}
         <div className={styles.cropAlerts}>
           <h3 className={styles.sectionTitle}>
-            Crop-Specific Weather Alerts
+            {t.weather.alertsTitle}
           </h3>
           <div className={styles.alertsList}>
             {[

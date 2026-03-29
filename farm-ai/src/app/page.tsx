@@ -1,392 +1,164 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Scan,
-  TrendingUp,
-  CloudSun,
-  Bot,
-  Users,
-  Target,
-  Shield,
-  BarChart3,
-  ArrowRight,
-  Zap,
-  Globe,
-  ChevronRight,
-  Sparkles,
-  Check,
-} from "lucide-react";
-import Navbar from "@/components/Navbar";
+import Image from "next/image";
+import { ArrowRight, Bot, Scan, TrendingUp, CloudSun } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
-import { features, testimonials, landingStats } from "@/lib/mockData";
-import styles from "./page.module.css";
+import styles from "./home.module.css";
 
-const iconMap: Record<string, React.ReactNode> = {
-  Scan: <Scan size={28} />,
-  TrendingUp: <TrendingUp size={28} />,
-  CloudSun: <CloudSun size={28} />,
-  Bot: <Bot size={28} />,
-  Users: <Users size={24} />,
-  Target: <Target size={24} />,
-  Shield: <Shield size={24} />,
-  BarChart3: <BarChart3 size={24} />,
-};
+import Navbar from "@/components/Navbar";
 
 export default function HomePage() {
   const { user } = useAuth();
 
   return (
-    <>
+    <div className={styles.main}>
       <Navbar />
 
-      {/* ===== HERO ===== */}
+      {/* Hero Section */}
       <section className={styles.hero}>
-        <div className={styles.heroBg}>
-          <div className={styles.heroGlow1} />
-          <div className={styles.heroGlow2} />
-          <div className={styles.heroGrid} />
-        </div>
-
         <div className={styles.heroContent}>
-          <div className={styles.heroBadge}>
-            <Sparkles size={14} />
-            <span>AI-Powered Agriculture for Bharat</span>
-          </div>
-
           <h1 className={styles.heroTitle}>
-            Grow Smarter.
-            <br />
-            <span className="gradient-text">Harvest More.</span>
+            Agricultural intelligence for every farmer
           </h1>
-
           <p className={styles.heroSubtitle}>
-            Detect crop diseases in seconds, track real-time market prices, and
-            get AI-powered farming advice — all from your phone.
+            We build advanced AI models to help farmers detect diseases, track market intelligence, and receive expert agronomic advice—all through a clean, accessible interface designed for the field.
           </p>
+          <Link href="/auth" className={styles.cardAction}>
+            Start building your farm <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
 
-          <div className={styles.heroCTA}>
-            {user ? (
-              <Link href="/dashboard" className="btn btn-primary btn-lg">
-                Go to Dashboard <ArrowRight size={20} />
-              </Link>
-            ) : (
-              <Link href="/auth" className="btn btn-primary btn-lg">
-                Start Using FarmAI <ArrowRight size={20} />
-              </Link>
-            )}
-            <a href="#how-it-works" className="btn btn-secondary btn-lg">
-              See How It Works
-            </a>
-          </div>
-
-          <div className={styles.heroTrust}>
-            <div className={styles.trustAvatars}>
-              {["🧑‍🌾", "👩‍🌾", "🧑‍🌾", "👨‍🌾", "👩‍🌾"].map((emoji, i) => (
-                <div key={i} className={styles.trustAvatar}>
-                  {emoji}
-                </div>
-              ))}
-            </div>
-            <p className={styles.trustText}>
-              <strong>5,00,000+</strong> farmers already using FarmAI
+      {/* Subject Cards Grid */}
+      <div id="features" className={styles.grid}>
+        
+        {/* Card 1: AI Advisor */}
+        <section className={`${styles.card} ${styles.cardSage}`}>
+          <div className={styles.cardContent}>
+            <h2 className={styles.cardTitle}>Expert Advice</h2>
+            <p className={styles.cardDesc}>
+              Our AI Crop Advisor provides hyper-local forecasts and farming-specific impact analysis, helping you make informed decisions about your crops.
             </p>
-          </div>
-        </div>
-
-        {/* Floating Elements */}
-        <div className={styles.floatingCard1}>
-          <div className={styles.floatIcon}>
-            <Scan size={20} />
-          </div>
-          <div>
-            <p className={styles.floatLabel}>Disease Detected</p>
-            <p className={styles.floatValue}>Late Blight — 94.7%</p>
-          </div>
-        </div>
-
-        <div className={styles.floatingCard2}>
-          <div className={styles.floatIcon2}>
-            <TrendingUp size={20} />
-          </div>
-          <div>
-            <p className={styles.floatLabel}>Wheat Price</p>
-            <p className={styles.floatValue}>₹2,275/q ↑ 3.2%</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== STATS BAR ===== */}
-      <section className={styles.statsBar}>
-        <div className={styles.statsContainer}>
-          {landingStats.map((stat, i) => (
-            <div key={i} className={styles.statItem}>
-              <div className={styles.statIcon}>{iconMap[stat.icon]}</div>
-              <div>
-                <p className={styles.statValue}>{stat.value}</p>
-                <p className={styles.statLabel}>{stat.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== FEATURES ===== */}
-      <section id="features" className={styles.features}>
-        <div className={styles.sectionHeader}>
-          <div className="badge">
-            <Zap size={12} />
-            Features
-          </div>
-          <h2 className={styles.sectionTitle}>
-            Everything Your Farm Needs,
-            <br />
-            <span className="gradient-text">Powered by AI</span>
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            From disease detection to market intelligence — FarmAI brings the
-            power of artificial intelligence to every Indian farmer.
-          </p>
-        </div>
-
-        <div className={styles.featureGrid}>
-          {features.map((feature, i) => (
-            <div
-              key={i}
-              className={styles.featureCard}
-              style={{ animationDelay: `${i * 100}ms` }}
-            >
-              <div className={styles.featureIconWrap}>
-                {iconMap[feature.icon]}
-              </div>
-              <h3 className={styles.featureTitle}>{feature.title}</h3>
-              <p className={styles.featureDesc}>{feature.description}</p>
-              <div className={styles.featureStat}>
-                <Check size={14} />
-                <span>{feature.stat}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== HOW IT WORKS ===== */}
-      <section id="how-it-works" className={styles.howItWorks}>
-        <div className={styles.sectionHeader}>
-          <div className="badge">
-            <Globe size={12} />
-            How It Works
-          </div>
-          <h2 className={styles.sectionTitle}>
-            From Field to Insight
-            <br />
-            <span className="gradient-text">in 3 Simple Steps</span>
-          </h2>
-        </div>
-
-        <div className={styles.stepsGrid}>
-          {[
-            {
-              step: "01",
-              title: "Capture",
-              desc: "Take a photo of your crop, field, or pest using your smartphone camera.",
-              icon: <Scan size={32} />,
-            },
-            {
-              step: "02",
-              title: "Analyze",
-              desc: "Our AI processes the image using advanced deep learning models trained on 50M+ agricultural images.",
-              icon: <Sparkles size={32} />,
-            },
-            {
-              step: "03",
-              title: "Act",
-              desc: "Get instant diagnosis, treatment plans, market prices, and actionable farming advice.",
-              icon: <Zap size={32} />,
-            },
-          ].map((item, i) => (
-            <div key={i} className={styles.stepCard}>
-              <div className={styles.stepNumber}>{item.step}</div>
-              <div className={styles.stepIconWrap}>{item.icon}</div>
-              <h3 className={styles.stepTitle}>{item.title}</h3>
-              <p className={styles.stepDesc}>{item.desc}</p>
-              {i < 2 && (
-                <div className={styles.stepArrow}>
-                  <ChevronRight size={24} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== TESTIMONIALS ===== */}
-      <section id="testimonials" className={styles.testimonials}>
-        <div className={styles.sectionHeader}>
-          <div className="badge">💬 Testimonials</div>
-          <h2 className={styles.sectionTitle}>
-            Trusted by Farmers
-            <br />
-            <span className="gradient-text">Across India</span>
-          </h2>
-        </div>
-
-        <div className={styles.testimonialGrid}>
-          {testimonials.map((t, i) => (
-            <div key={i} className={styles.testimonialCard}>
-              <p className={styles.testimonialQuote}>&ldquo;{t.quote}&rdquo;</p>
-              <div className={styles.testimonialAuthor}>
-                <div className={styles.testimonialAvatar}>{t.avatar}</div>
-                <div>
-                  <p className={styles.testimonialName}>{t.name}</p>
-                  <p className={styles.testimonialRole}>
-                    {t.crop} • {t.location}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== PRICING (BUSINESS MODEL) ===== */}
-      <section id="pricing" className={styles.pricing}>
-        <div className={styles.sectionHeader}>
-          <div className="badge">
-            <Zap size={12} /> Simple Pricing
-          </div>
-          <h2 className={styles.sectionTitle}>
-            Free for Farmers.
-            <br />
-            <span className="gradient-text">Powerful for Pros.</span>
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            A sustainable business model designed to maximize impact while generating venture-scale revenue.
-          </p>
-        </div>
-
-        <div className={styles.pricingGrid}>
-          {/* Free Tier */}
-          <div className={styles.pricingCard}>
-            <h3 className={styles.planName}>Basic Farmer</h3>
-            <div className={styles.planPrice}>
-              <span className={styles.currency}>₹</span>0<span className={styles.period}>/month</span>
-            </div>
-            <p className={styles.planDesc}>Everything a smallholder farmer needs to get started with AI.</p>
-            <ul className={styles.planFeatures}>
-              <li><Check size={16} /> 3 Disease Scans per month</li>
-              <li><Check size={16} /> Basic Weather Advisory</li>
-              <li><Check size={16} /> Community Forum Access</li>
-              <li><Check size={16} /> Daily Mandi Prices</li>
-            </ul>
-            <Link href="/auth" className="btn btn-secondary" style={{ width: "100%", justifyContent: "center" }}>
-              Start for Free
+            <Link href="/dashboard/advisor" className={styles.cardAction}>
+              Ask the Advisor
             </Link>
           </div>
+          <div className={styles.cardIllustration}>
+            <Image 
+              src="/images/hero-doodle.png" 
+              alt="Farm AI Illustration" 
+              width={400} 
+              height={400} 
+              priority
+            />
+          </div>
+        </section>
 
-          {/* Pro Tier */}
-          <div className={`${styles.pricingCard} ${styles.pricingPro}`}>
-            <div className={styles.popularBadge}>Most Popular</div>
-            <h3 className={styles.planName}>FarmAI Pro</h3>
-            <div className={styles.planPrice}>
-              <span className={styles.currency}>₹</span>299<span className={styles.period}>/month</span>
-            </div>
-            <p className={styles.planDesc}>Advanced machine learning tools for maximum yield and profit.</p>
-            <ul className={styles.planFeatures}>
-              <li><Check size={16} /> Unlimited Disease Detection</li>
-              <li><Check size={16} /> Prophet Time-Series Market Forecast</li>
-              <li><Check size={16} /> 24/7 Gemini-Powered AI Advisor</li>
-              <li><Check size={16} /> SMS Alerts for Pests/Weather</li>
-            </ul>
-            <Link href="/checkout" className="btn btn-primary" style={{ width: "100%", justifyContent: "center" }}>
-              Upgrade to Pro
+        {/* Card 2: Disease Detection */}
+        <section className={`${styles.card} ${styles.cardLavender}`}>
+          <div className={styles.cardContent}>
+            <h2 className={styles.cardTitle}>Disease Detection</h2>
+            <p className={styles.cardDesc}>
+              Upload a photo of your crop to identify diseases in seconds. Our models are trained on millions of images to provide high-accuracy diagnosis and treatment plans.
+            </p>
+            <Link href="/dashboard/disease-detection" className={styles.cardAction}>
+              Scan your crops
             </Link>
           </div>
+          <div className={styles.cardIllustration}>
+            <Image 
+              src="/images/disease-doodle.png" 
+              alt="Disease Scan Illustration" 
+              width={400} 
+              height={400} 
+            />
+          </div>
+        </section>
 
-          {/* Enterprise Tier */}
-          <div className={styles.pricingCard}>
-            <h3 className={styles.planName}>Enterprise / FPO</h3>
-            <div className={styles.planPrice}>
-              Custom
-            </div>
-            <p className={styles.planDesc}>API access and fleet management for Farmer Producer Organizations.</p>
-            <ul className={styles.planFeatures}>
-              <li><Check size={16} /> Raw API Access (CV & NLP)</li>
-              <li><Check size={16} /> Custom Supply Chain Dashboards</li>
-              <li><Check size={16} /> Dedicated Agronomist Support</li>
-              <li><Check size={16} /> White-label App Options</li>
-            </ul>
-            <Link href="/about" className="btn btn-secondary" style={{ width: "100%", justifyContent: "center" }}>
-              Contact Sales
+        {/* Card 3: Market Intelligence */}
+        <section className={`${styles.card} ${styles.cardSand}`}>
+          <div className={styles.cardContent}>
+            <h2 className={styles.cardTitle}>Market Pricing</h2>
+            <p className={styles.cardDesc}>
+              Track real-time market prices across Mandis in India. Get AI-powered price predictions to help you decide when and where to sell for maximum profit.
+            </p>
+            <Link href="/dashboard/market" className={styles.cardAction}>
+              Explore Mandis
             </Link>
           </div>
-        </div>
-      </section>
+          <div className={styles.cardIllustration}>
+            <Image 
+              src="/images/market-doodle.png" 
+              alt="Market Graph Illustration" 
+              width={400} 
+              height={400} 
+            />
+          </div>
+        </section>
 
-      {/* ===== CTA ===== */}
-      <section className={styles.cta}>
-        <div className={styles.ctaGlow} />
-        <div className={styles.ctaContent}>
-          <h2 className={styles.ctaTitle}>
-            Ready to <span className="gradient-text">Transform</span> Your Farm?
-          </h2>
-          <p className={styles.ctaSubtitle}>
-            Join 5,00,000+ farmers already using AI to grow smarter
-          </p>
-          {user ? (
-            <Link href="/dashboard" className="btn btn-primary btn-lg">
-              Go to Dashboard <ArrowRight size={20} />
+        {/* Card 4: Weather Intelligence */}
+        <section className={`${styles.card} ${styles.cardSky}`}>
+          <div className={styles.cardContent}>
+            <h2 className={styles.cardTitle}>Weather Advisory</h2>
+            <p className={styles.cardDesc}>
+              Receive hyper-local weather alerts and actionable advice on how to protect your crops from upcoming weather events.
+            </p>
+            <Link href="/dashboard/weather" className={styles.cardAction}>
+              Get weather data
             </Link>
-          ) : (
-            <Link href="/auth" className="btn btn-primary btn-lg">
-              Start Using FarmAI — It&apos;s Free <ArrowRight size={20} />
-            </Link>
-          )}
-        </div>
-      </section>
+          </div>
+          <div className={styles.cardIllustration}>
+            <Image 
+              src="/images/weather-doodle.png" 
+              alt="Weather Illustration" 
+              width={400} 
+              height={400} 
+            />
+          </div>
+        </section>
 
-      {/* ===== FOOTER ===== */}
+      </div>
+
+      {/* Footer */}
       <footer className={styles.footer}>
-        <div className={styles.footerContainer}>
-          <div className={styles.footerBrand}>
-            <div className={styles.footerLogo}>
-              <div className={styles.logoIcon}>
-                <Scan size={20} />
-              </div>
-              <span>Farm</span>
-              <span className="gradient-text">AI</span>
-            </div>
-            <p className={styles.footerDesc}>
-              AI-powered agricultural intelligence for every Indian farmer.
-              Built with 🇮🇳 for Bharat.
-            </p>
-          </div>
-          <div className={styles.footerLinks}>
-            <h4>Product</h4>
-            <Link href="/dashboard/disease-detection">Disease Detection</Link>
-            <Link href="/dashboard/market">Market Prices</Link>
-            <Link href="/dashboard/weather">Weather Advisory</Link>
-            <Link href="/dashboard/advisor">AI Advisor</Link>
-          </div>
-          <div className={styles.footerLinks}>
-            <h4>Company</h4>
-            <Link href="/about">About Us</Link>
-            <Link href="/careers">Careers</Link>
-            <Link href="/about">Contact</Link>
-            <Link href="/about">Blog</Link>
-          </div>
-          <div className={styles.footerLinks}>
-            <h4>Resources</h4>
-            <Link href="/documentation">Documentation</Link>
-            <Link href="/documentation">API</Link>
-            <Link href="/legal">Privacy Policy</Link>
-            <Link href="/legal">Terms of Service</Link>
-          </div>
+        <div className={styles.footerGroup}>
+          <h4>Product</h4>
+          <ul className={styles.footerList}>
+            <li><Link href="/dashboard/advisor" className={styles.footerLink}>AI Advisor</Link></li>
+            <li><Link href="/dashboard/disease-detection" className={styles.footerLink}>Disease Detection</Link></li>
+            <li><Link href="/dashboard/market" className={styles.footerLink}>Market Intelligence</Link></li>
+            <li><Link href="/dashboard/weather" className={styles.footerLink}>Weather Advisory</Link></li>
+          </ul>
         </div>
-        <div className={styles.footerBottom}>
-          <p>© 2026 FarmAI. All rights reserved. Made with ❤️ in India.</p>
+        <div className={styles.footerGroup}>
+          <h4>Company</h4>
+          <ul className={styles.footerList}>
+            <li><Link href="/about" className={styles.footerLink}>About</Link></li>
+            <li><Link href="/careers" className={styles.footerLink}>Careers</Link></li>
+            <li><Link href="/press" className={styles.footerLink}>Press</Link></li>
+            <li><Link href="/contact" className={styles.footerLink}>Contact</Link></li>
+          </ul>
+        </div>
+        <div className={styles.footerGroup}>
+          <h4>Resources</h4>
+          <ul className={styles.footerList}>
+            <li><Link href="/blog" className={styles.footerLink}>Blog</Link></li>
+            <li><Link href="/help" className={styles.footerLink}>Help Center</Link></li>
+            <li><Link href="/legal" className={styles.footerLink}>Terms</Link></li>
+            <li><Link href="/legal" className={styles.footerLink}>Privacy</Link></li>
+          </ul>
+        </div>
+        <div className={styles.footerGroup}>
+          <h4>Connect</h4>
+          <ul className={styles.footerList}>
+            <li><Link href="#" className={styles.footerLink}>Twitter</Link></li>
+            <li><Link href="#" className={styles.footerLink}>LinkedIn</Link></li>
+            <li><Link href="#" className={styles.footerLink}>GitHub</Link></li>
+          </ul>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

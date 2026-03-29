@@ -2,11 +2,13 @@
 
 import { useState, useCallback, useRef } from "react";
 import Image from "next/image";
-import { ScanSearch, Upload, Camera, X, AlertTriangle, Check, Shield, Loader2, Leaf, ShieldAlert, Pill, ShieldCheck } from "lucide-react";
+import { CheckIcon, AlertTriangle, Upload, X, Sprout, Info, Shield, Droplets, Loader2, Leaf, ShieldAlert, Pill, ShieldCheck, Check } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 import { sampleDiseaseResults, DiseaseResult } from "@/lib/mockData";
 import styles from "./page.module.css";
 
 export default function DiseaseDetectionPage() {
+  const { t } = useLanguage();
   const [dragActive, setDragActive] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<DiseaseResult | null>(null);
@@ -85,11 +87,11 @@ export default function DiseaseDetectionPage() {
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>
-            <ScanSearch size={28} />
-            AI Disease Detection
+            <Sprout size={28} />
+            {t.disease.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            Upload a photo of your crop leaf to instantly detect diseases using our AI model trained on 50M+ images
+            {t.disease.subtitle}
           </p>
         </div>
       </div>
@@ -128,11 +130,9 @@ export default function DiseaseDetectionPage() {
             ) : !imagePreview && (
               <div className={styles.uploadContent}>
                 <div className={styles.uploadIcon}><Upload size={32} /></div>
-                <p className={styles.uploadTitle}>Drop your crop photo here</p>
-                <p className={styles.uploadSubtitle}>or click to upload</p>
-                <div className={styles.uploadFormats}>
-                  <Camera size={14} /><span>JPG, PNG, WebP — Max 10MB</span>
-                </div>
+                <h3>{t.disease.upload}</h3>
+                <p>Drag and drop or click to browse</p>
+                <span className={styles.uploadLimit}>Supports JPG, PNG (Max 5MB)</span>
               </div>
             )}
           </div>
@@ -166,18 +166,18 @@ export default function DiseaseDetectionPage() {
 
           {result && (
             <div className={styles.resultContent}>
-              {/* Status Badge */}
-              <div className={styles.resultBadge} style={{ borderColor: severityColors[result.severity] }}>
-                <AlertTriangle size={18} style={{ color: severityColors[result.severity] }} />
-                <div>
-                  <p className={styles.resultDisease}>{result.name}</p>
-                  <p className={styles.resultCrop}>Detected in {result.crop}</p>
+              <div className={styles.resultHeader}>
+                <div className={styles.resultIcon} style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444" }}>
+                  <ShieldAlert size={20} />
                 </div>
-                <div className={styles.confidenceBadge}>
-                  {result.confidence}% confident
+                <div className={styles.resultInfo}>
+                  <h3 className={styles.resultName}>{result.name}</h3>
+                  <div className={styles.resultMeta}>
+                    <span className="badge badge-danger">{result.severity.toUpperCase()}</span>
+                    <span className={styles.resultConf}>{t.disease.confidence}: {result.confidence}%</span>
+                  </div>
                 </div>
               </div>
-
               {/* Severity */}
               <div className={styles.severityBar}>
                 <span>Severity</span>
@@ -215,35 +215,34 @@ export default function DiseaseDetectionPage() {
               </div>
 
               {/* Treatment */}
-              <div className={styles.resultBlock}>
-                <h4>
-                  <Pill size={16} />
-                  Treatment Plan
-                </h4>
-                <ul>
-                  {result.treatment.map((t, i) => (
-                    <li key={i}>
-                      <Check size={12} />
-                      {t}
-                    </li>
+              <div className={styles.adviceSection}>
+                <div className={styles.adviceHeader}>
+                  <Pill size={18} />
+                  <h3>{t.disease.treatment}</h3>
+                </div>
+                <div className={styles.adviceList}>
+                  {result.treatment.map((step: string, i: number) => (
+                    <div key={i} className={styles.adviceItem}>
+                      <div className={styles.checkIcon}><Check size={14} /></div>
+                      <span>{step}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
 
-              {/* Prevention */}
-              <div className={styles.resultBlock}>
-                <h4>
-                  <ShieldCheck size={16} />
-                  Prevention Tips
-                </h4>
-                <ul>
-                  {result.prevention.map((p, i) => (
-                    <li key={i}>
-                      <Check size={12} />
-                      {p}
-                    </li>
+              <div className={styles.adviceSection}>
+                <div className={styles.adviceHeader}>
+                  <ShieldCheck size={18} />
+                  <h3>{t.disease.prevention}</h3>
+                </div>
+                <div className={styles.adviceList}>
+                  {result.prevention.map((step: string, i: number) => (
+                    <div key={i} className={styles.adviceItem}>
+                      <div className={styles.checkIcon}><Check size={14} /></div>
+                      <span>{step}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             </div>
           )}

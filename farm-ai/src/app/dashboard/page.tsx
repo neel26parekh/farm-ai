@@ -22,6 +22,7 @@ import {
 } from "recharts";
 import { cropHealthData, dashboardAlerts, cropPrices, weatherForecast } from "@/lib/mockData";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./page.module.css";
 
 interface AnimatedCounterProps {
@@ -60,6 +61,7 @@ function AnimatedCounter({ target, suffix = "", prefix = "" }: AnimatedCounterPr
 }
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [greeting, setGreeting] = useState("Hello");
   const [dateStr, setDateStr] = useState("");
@@ -68,9 +70,9 @@ export default function DashboardPage() {
   useEffect(() => {
     setMounted(true);
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good Morning");
-    else if (hour < 17) setGreeting("Good Afternoon");
-    else setGreeting("Good Evening");
+    if (hour < 12) setGreeting(t.dashboard.welcome.split(",")[0] || "Good Morning");
+    else if (hour < 17) setGreeting(t.dashboard.welcome.split(",")[0] || "Good Afternoon");
+    else setGreeting(t.dashboard.welcome.split(",")[0] || "Good Evening");
 
     setDateStr(
       new Date().toLocaleDateString("en-IN", {
@@ -101,9 +103,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className={styles.header}>
         <div>
-          <h1 className={styles.greeting}>{greeting}, {user ? user.name.split(" ")[0] : "Farmer"}! 👋</h1>
+          <h1 className={styles.greeting}>{greeting}, {user ? user.name.split(" ")[0] : "Farmer"}</h1>
           <p className={styles.subGreeting}>
-            Here&apos;s what&apos;s happening with your farm today
+            {t.dashboard.subtitle}
           </p>
         </div>
         <div className={styles.headerDate}>

@@ -12,9 +12,11 @@ import {
 } from "lucide-react";
 import { chatPresets, chatResponses, ChatMessage } from "@/lib/mockData";
 import { generateId } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./page.module.css";
 
 export default function AdvisorPage() {
+  const { language, t } = useLanguage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -35,7 +37,7 @@ export default function AdvisorPage() {
         {
           id: "welcome",
           role: "assistant",
-          content: "Hello! 🌾 I'm your AI Crop Advisor. I can help you with crop selection, disease diagnosis, fertilizer recommendations, pest management, and farming best practices.\n\nWhat would you like to know today?",
+          content: t.advisor.placeholder, // Fallback welcome from translations
           timestamp: new Date(),
         }
       ]);
@@ -72,11 +74,14 @@ export default function AdvisorPage() {
 
     try {
       // Check for user settings to append as context
-      let userContext = null;
+      let userContext: any = {};
       try {
         const savedSettings = localStorage.getItem("farm_ai_settings");
         if (savedSettings) userContext = JSON.parse(savedSettings);
       } catch(e) {}
+      
+      // Inject selected language into context
+      userContext.language = language === 'hi' ? 'Hindi' : language === 'mr' ? 'Marathi' : language === 'te' ? 'Telugu' : 'English';
 
       const res = await fetch("http://localhost:8000/api/chat", {
         method: "POST",
@@ -117,11 +122,11 @@ export default function AdvisorPage() {
   };
 
   const clearChat = () => {
-    const fresh = [
+    const fresh: ChatMessage[] = [
       {
         id: "welcome",
         role: "assistant",
-        content: "Chat cleared! 🌾 How can I help you today?",
+        content: t.advisor.title,
         timestamp: new Date(),
       },
     ];
@@ -135,15 +140,15 @@ export default function AdvisorPage() {
         <div>
           <h1 className={styles.pageTitle}>
             <Bot size={28} />
-            AI Crop Advisor
+            {t.advisor.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            Chat with our AI agronomist — get personalized farming advice 24/7
+            {t.weather.subtitle} 
           </p>
         </div>
         <button className="btn btn-secondary btn-sm" onClick={clearChat}>
           <RotateCcw size={14} />
-          Clear Chat
+          {language === 'en' ? 'Clear Chat' : 'चैट साफ़ करें'}
         </button>
       </div>
 
@@ -177,9 +182,9 @@ export default function AdvisorPage() {
               Universities, and real farming practices across India.
             </p>
             <div className={styles.aiStats}>
-              <span>🌾 50M+ data points</span>
-              <span>📚 200+ crop varieties</span>
-              <span>🇮🇳 All Indian states</span>
+              <span>50M+ data points</span>
+              <span>200+ crop varieties</span>
+              <span>All Indian states covered</span>
             </div>
           </div>
         </div>
@@ -218,25 +223,40 @@ export default function AdvisorPage() {
                     </span>
                   </div>
                   <div className={styles.messageBubble}>
-                    {msg.content.split("\n").map((line, i) => {
-                      if (line.startsWith("**") && line.endsWith("**")) {
-                        return (
-                          <p key={i} className={styles.msgBold}>
-                            {line.replace(/\*\*/g, "")}
-                          </p>
-                        );
-                      }
+                    {msg.content
+                      .replace(/^#{1,6}\s*/gm, '')
+                      .split("\n").map((line, i) => {
+                      if (line.trim() === "") return <br key={i} />;
+
+                      // Helper function to handle inline formatting (only ** for now)
+                      const renderLine = (text: string) => {
+                        const parts = text.split(/(\*\*.*?\*\*)/g);
+                        return parts.map((part, index) => {
+                          if (part.startsWith("**") && part.endsWith("**")) {
+                            return (
+                              <strong key={index} className={styles.inlineBold}>
+                                {part.slice(2, -2)}
+                              </strong>
+                            );
+                          }
+                          return part;
+                        });
+                      };
+
                       if (line.startsWith("- ") || line.startsWith("• ")) {
                         return (
-                          <p key={i} className={styles.msgListItem}>
-                            {line}
-                          </p>
+                          <div key={i} className={styles.msgListItem}>
+                            • {renderLine(line.substring(2))}
+                          </div>
                         );
                       }
-                      if (line.trim() === "") {
-                        return <br key={i} />;
+                      
+                      // Check if it's a bold header (line that is entirely bold)
+                      if (line.startsWith("**") && line.endsWith("**") && !line.includes(" ", 2)) {
+                         return <p key={i} className={styles.msgHeader}>{renderLine(line)}</p>;
                       }
-                      return <p key={i}>{line}</p>;
+
+                      return <p key={i}>{renderLine(line)}</p>;
                     })}
                   </div>
                 </div>
@@ -270,7 +290,7 @@ export default function AdvisorPage() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about crops, diseases, fertilizers, weather..."
+                placeholder={t.advisor.placeholder}
                 className={styles.chatInput}
                 disabled={isTyping}
               />
