@@ -4,7 +4,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
 
 export const metadata: Metadata = {
-  title: "FarmAI — AI-Powered Agricultural Intelligence",
+  title: "AgroNexus — AI-Powered Agricultural Intelligence",
   description:
     "Detect crop diseases instantly, get real-time market prices, and receive AI-powered farming advice. Built for Indian farmers, powered by artificial intelligence.",
   keywords: [
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   ],
   manifest: "/manifest.json",
   themeColor: "#10b981",
-  authors: [{ name: "FarmAI" }],
+  authors: [{ name: "AgroNexus" }],
   openGraph: {
-    title: "FarmAI — AI-Powered Agricultural Intelligence",
+    title: "AgroNexus — AI-Powered Agricultural Intelligence",
     description:
       "Detect crop diseases instantly, get real-time market prices, and receive AI-powered farming advice.",
     type: "website",

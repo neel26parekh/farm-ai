@@ -10,11 +10,11 @@ export default function AboutPage() {
         </Link>
         
         <Building2 size={48} style={{ color: "var(--emerald-500)", marginBottom: "var(--space-6)" }} />
-        <h1 style={{ fontSize: "2.5rem", marginBottom: "var(--space-6)" }}>About FarmAI</h1>
+        <h1 style={{ fontSize: "2.5rem", marginBottom: "var(--space-6)" }}>About AgroNexus</h1>
         
         <div style={{ fontSize: "1.1rem", lineHeight: 1.8, color: "var(--gray-300)" }}>
           <p style={{ marginBottom: "var(--space-4)" }}>
-            FarmAI was founded with a singular mission: to bring Silicon Valley-tier artificial intelligence 
+            AgroNexus was founded with a singular mission: to bring Silicon Valley-tier artificial intelligence 
             directly into the hands of farmers across India and the developing world.
           </p>
           <p style={{ marginBottom: "var(--space-4)" }}>

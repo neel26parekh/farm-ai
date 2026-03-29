@@ -10,7 +10,7 @@ export default function CareersPage() {
         </Link>
         
         <Briefcase size={48} style={{ color: "var(--emerald-500)", marginBottom: "var(--space-6)" }} />
-        <h1 style={{ fontSize: "2.5rem", marginBottom: "var(--space-6)" }}>Join FarmAI</h1>
+        <h1 style={{ fontSize: "2.5rem", marginBottom: "var(--space-6)" }}>Join AgroNexus</h1>
         
         <div style={{ fontSize: "1.1rem", lineHeight: 1.8, color: "var(--gray-300)" }}>
           <p style={{ marginBottom: "var(--space-4)" }}>

@@ -27,23 +27,27 @@
 .logo {
   display: flex;
   align-items: center;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
   font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: 700;
-  text-decoration: none;
-  color: var(--ink);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
-.logoIcon {
+.logoTextWrapper {
   display: flex;
+  overflow: hidden;
+  height: 1.8rem;
   align-items: center;
-  justify-content: center;
-  color: var(--green-600);
 }
 
-.logoText { color: var(--ink); }
 .logoAccent { color: var(--green-600); }
 
 .navLinks {
@@ -65,20 +69,21 @@
 }
 
 .cta {
-  background: var(--ink);
-  color: #fff;
-  padding: 0.5rem 1.25rem;
+  background: transparent;
+  color: var(--ink);
+  padding: 0.5rem 1.5rem;
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.85rem;
-  transition: transform 0.2s;
+  transition: all 0.2s ease;
   text-decoration: none;
   border: 1px solid var(--ink);
 }
 
 .cta:hover {
+  background: var(--ink);
+  color: #fff;
   transform: translateY(-1px);
-  background: #333;
 }
 
 .mobileToggle {

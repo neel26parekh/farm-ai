@@ -1,0 +1,107 @@
+.footer {
+  background: var(--bg-page);
+  border-top: 1px solid var(--border);
+  padding: 6rem 0 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 4rem;
+}
+
+.brandSection {
+  max-width: 320px;
+}
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.logoAccent {
+  color: var(--green-600);
+}
+
+.tagline {
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.socials {
+  display: flex;
+  gap: 1.25rem;
+  color: var(--ink-light);
+}
+
+.socials svg {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.socials svg:hover {
+  color: var(--ink);
+}
+
+.linksGrid {
+  display: flex;
+  gap: 4rem;
+}
+
+.column h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.column a {
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.column a:hover {
+  color: var(--ink);
+}
+
+.bottom {
+  margin-top: 6rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-light);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ink-light);
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 3rem;
+  }
+  .linksGrid {
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+}

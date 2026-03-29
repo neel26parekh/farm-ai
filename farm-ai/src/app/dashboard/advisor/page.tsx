@@ -107,7 +107,7 @@ export default function AdvisorPage() {
       const errorMsg: ChatMessage = {
         id: generateId(),
         role: "assistant",
-        content: "Sorry, I am having trouble connecting to the FarmAI ML backend. Please check your connection.",
+        content: "Sorry, I am having trouble connecting to the AgroNexus ML backend. Please check your connection.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -176,7 +176,7 @@ export default function AdvisorPage() {
             <div className={styles.aiInfoIcon}>
               <Bot size={20} />
             </div>
-            <h4>FarmAI Advisor</h4>
+            <h4>AgroNexus Advisor</h4>
             <p>
               Trained on agricultural data from ICAR, State Agricultural
               Universities, and real farming practices across India.
@@ -213,7 +213,7 @@ export default function AdvisorPage() {
                 <div className={styles.messageContent}>
                   <div className={styles.messageHeader}>
                     <span className={styles.messageName}>
-                      {msg.role === "user" ? "You" : "FarmAI Advisor"}
+                      {msg.role === "user" ? "You" : "AgroNexus Advisor"}
                     </span>
                     <span className={styles.messageTime} suppressHydrationWarning>
                       {msg.timestamp.toLocaleTimeString("en-IN", {
@@ -310,7 +310,7 @@ export default function AdvisorPage() {
               </button>
             </div>
             <p className={styles.inputHint}>
-              FarmAI can make mistakes. Verify critical farming decisions with local agricultural experts.
+              AgroNexus can make mistakes. Verify critical farming decisions with local agricultural experts.
             </p>
           </form>
         </div>

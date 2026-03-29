@@ -1,5 +1,5 @@
 // ============================================
-// FarmAI Mock Data
+// AgroNexus Mock Data
 // Realistic simulated data for all features
 // ============================================
 
@@ -159,7 +159,7 @@ export const testimonials = [
     name: "Rajesh Kumar",
     location: "Punjab",
     crop: "Wheat Farmer",
-    quote: "FarmAI detected blight in my wheat crop 2 weeks before I could see it. Saved my entire harvest worth ₹4 lakhs.",
+    quote: "AgroNexus detected blight in my wheat crop 2 weeks before I could see it. Saved my entire harvest worth ₹4 lakhs.",
     avatar: "🧑‍🌾",
   },
   {

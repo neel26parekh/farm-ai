@@ -14,10 +14,10 @@ export default function GenericPage() {
         
         <div style={{ fontSize: "1.1rem", lineHeight: 1.8, color: "var(--gray-300)" }}>
           <p style={{ marginBottom: "var(--space-4)" }}>
-            This page serves as a placeholder for the FarmAI Terms of Service, Privacy Policy, and legal documentation.
+            This page serves as a placeholder for the AgroNexus Terms of Service, Privacy Policy, and legal documentation.
           </p>
           <p>
-            By using FarmAI, you agree that ML-generated predictions (Market forecasts, Disease diagnoses, AI Advice) are advisory in nature. FarmAI is not liable for autonomous crop execution errors based on platform recommendations. 
+            By using AgroNexus, you agree that ML-generated predictions (Market forecasts, Disease diagnoses, AI Advice) are advisory in nature. AgroNexus is not liable for autonomous crop execution errors based on platform recommendations. 
           </p>
         </div>
       </div>

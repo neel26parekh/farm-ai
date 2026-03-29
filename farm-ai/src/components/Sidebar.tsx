@@ -48,7 +48,7 @@ export default function Sidebar() {
         <Link href="/" className={styles.logo}>
           {!collapsed && (
             <span className={styles.logoText}>
-              AI <span className={styles.logoAccent}>FarmAI</span>
+              AI <span className={styles.logoAccent}>AgroNexus</span>
             </span>
           )}
           {collapsed && (

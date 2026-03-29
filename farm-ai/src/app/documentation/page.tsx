@@ -14,7 +14,7 @@ export default function DocsPage() {
         
         <div style={{ fontSize: "1.1rem", lineHeight: 1.8, color: "var(--gray-300)" }}>
           <p style={{ marginBottom: "var(--space-4)" }}>
-            Welcome to the FarmAI Documentation. Our platform provides three core functionalities:
+            Welcome to the AgroNexus Documentation. Our platform provides three core functionalities:
           </p>
           <ul style={{ paddingLeft: "var(--space-6)", marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
             <li><strong style={{ color: "var(--foreground)" }}>Disease Detection:</strong> Upload clear images of crop leaves. Ensure the leaf occupies at least 60% of the frame and is well-lit for maximum confidence scoring (ResNet50 engine).</li>

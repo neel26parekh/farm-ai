@@ -36,7 +36,7 @@ export default function CheckoutPage() {
           </div>
           <h1 className={styles.successTitle}>Payment Successful!</h1>
           <p className={styles.successDesc}>
-            Welcome to FarmAI Pro. Your account has been upgraded.
+            Welcome to AgroNexus Pro. Your account has been upgraded.
             <br />
             Redirecting to your dashboard...
           </p>
@@ -61,7 +61,7 @@ export default function CheckoutPage() {
           <div className={styles.planCard}>
             <div className={styles.planHeader}>
               <div>
-                <h3 className={styles.planName}>FarmAI Pro</h3>
+                <h3 className={styles.planName}>AgroNexus Pro</h3>
                 <p className={styles.planBilled}>Billed monthly</p>
               </div>
               <div className={styles.planPrice}>

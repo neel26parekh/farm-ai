@@ -57,7 +57,7 @@ export default function DiseaseDetectionPage() {
       setResult({
         name: "Analysis Failed",
         crop: "Unknown",
-        description: "There was an error connecting to the FarmAI ML backend. Please check your connection or try again later.",
+        description: "There was an error connecting to the AgroNexus ML backend. Please check your connection or try again later.",
         symptoms: [],
         confidence: 0,
         severity: "critical",

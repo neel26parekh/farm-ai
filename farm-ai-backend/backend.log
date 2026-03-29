@@ -31,3 +31,10 @@ INFO:     127.0.0.1:50655 - "POST /api/market-forecast HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50656 - "POST /api/market-forecast HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50683 - "OPTIONS /api/chat HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50683 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50786 - "OPTIONS /api/market-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50788 - "OPTIONS /api/market-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50786 - "POST /api/market-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50788 - "POST /api/market-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50791 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50794 - "POST /api/predict-disease HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50818 - "POST /api/predict-disease HTTP/1.1" 200 OK
