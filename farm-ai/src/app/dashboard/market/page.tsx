@@ -184,7 +184,9 @@ export default function MarketPage() {
                 dataKey={selectedCrop}
                 stroke={cropColors[selectedCrop]}
                 fill="url(#cropGrad)"
-                strokeWidth={2}
+                strokeWidth={3}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
               />
             </AreaChart>
           </ResponsiveContainer>

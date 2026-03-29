@@ -96,9 +96,9 @@ export default function DiseaseDetectionPage() {
         </div>
       </div>
 
-      <div className={styles.mainGrid}>
+      <div className={imagePreview ? styles.mainGrid : styles.initialLayout}>
         {/* Upload Area */}
-        <div className={styles.uploadSection}>
+        <div className={imagePreview ? styles.uploadSection : styles.centeredUpload}>
           <div
             className={`${styles.uploadZone} ${dragActive ? styles.uploadZoneActive : ""} ${scanning ? styles.uploadZoneScanning : ""}`}
             onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
@@ -114,139 +114,131 @@ export default function DiseaseDetectionPage() {
               style={{ display: "none" }}
             />
 
-            {imagePreview && (
+            {imagePreview ? (
               <div className={styles.imagePreviewWrapper}>
                 <Image src={imagePreview} alt="Crop preview" fill style={{ objectFit: "cover" }} className={styles.previewImage} />
+                {scanning && (
+                  <div className={styles.scanningOverlay}>
+                    <div className={styles.scanLine} />
+                    <div className={`${styles.corner} ${styles.topLeft}`} />
+                    <div className={`${styles.corner} ${styles.topRight}`} />
+                    <div className={`${styles.corner} ${styles.bottomLeft}`} />
+                    <div className={`${styles.corner} ${styles.bottomRight}`} />
+                  </div>
+                )}
+                {!scanning && (
+                  <button className={styles.clearBtn} onClick={(e) => { e.stopPropagation(); clearImage(); }}>
+                    <X size={16} />
+                  </button>
+                )}
               </div>
-            )}
-
-            {scanning ? (
-              <div className={styles.scanningState}>
-                <div className={styles.scanLine} />
-                <Loader2 size={48} className={styles.spinner} />
-                <p className={styles.scanText}>Analyzing crop image...</p>
-                <p className={styles.scanSubText}>AI is detecting diseases, pests, and deficiencies</p>
-              </div>
-            ) : !imagePreview && (
+            ) : (
               <div className={styles.uploadContent}>
                 <div className={styles.uploadIcon}><Upload size={32} /></div>
-                <h3>{t.disease.upload}</h3>
+                <h3>Upload a photo of a leaf</h3>
                 <p>Drag and drop or click to browse</p>
                 <span className={styles.uploadLimit}>Supports JPG, PNG (Max 5MB)</span>
               </div>
             )}
           </div>
-
-          {imagePreview && !scanning && (
-            <button className="btn btn-secondary" onClick={clearImage} style={{ marginTop: "var(--space-4)" }}>
-              <X size={14} /> Clear & Scan Again
-            </button>
-          )}
         </div>
 
-        {/* Results */}
-        <div className={styles.resultSection}>
-          {!result && !scanning && (
-            <div className={styles.placeholder}>
-              <Leaf size={48} />
-              <h3>Upload a crop image</h3>
-              <p>Our AI will analyze it and provide disease diagnosis, treatment plans, and prevention tips</p>
-            </div>
-          )}
-
-          {scanning && (
-            <div className={styles.placeholder}>
-              <div className={styles.spinnerLg}>
-                <Loader2 size={48} />
-              </div>
-              <h3>AI is analyzing your crop...</h3>
-              <p>Running through 200+ disease models to find the best match</p>
-            </div>
-          )}
-
-          {result && (
-            <div className={styles.resultContent}>
-              <div className={styles.resultHeader}>
-                <div className={styles.resultIcon} style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444" }}>
-                  <ShieldAlert size={20} />
+        {/* Results - Only show if scanning or result exists */}
+        {(scanning || result) && (
+          <div className={styles.resultSection}>
+            {scanning ? (
+              <div className={styles.placeholder}>
+                <div className={styles.spinnerLg}>
+                  <Loader2 size={48} />
                 </div>
-                <div className={styles.resultInfo}>
-                  <h3 className={styles.resultName}>{result.name}</h3>
-                  <div className={styles.resultMeta}>
-                    <span className="badge badge-danger">{result.severity.toUpperCase()}</span>
-                    <span className={styles.resultConf}>{t.disease.confidence}: {result.confidence}%</span>
+                <h3>AI is analyzing your crop...</h3>
+                <p>Running through 200+ disease models to find the best match</p>
+              </div>
+            ) : result && (
+              <div className={styles.resultContent}>
+                <div className={styles.resultHeader}>
+                  <div className={styles.resultIcon} style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444" }}>
+                    <ShieldAlert size={20} />
+                  </div>
+                  <div className={styles.resultInfo}>
+                    <h3 className={styles.resultName}>{result.name}</h3>
+                    <div className={styles.resultMeta}>
+                      <span className="badge badge-danger">{result.severity.toUpperCase()}</span>
+                      <span className={styles.resultConf}>{t.disease.confidence}: {result.confidence}%</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Severity */}
+                <div className={styles.severityBar}>
+                  <div className={styles.severityLabels}>
+                    <span>Severity</span>
+                    <span style={{ color: severityColors[result.severity] }}>{result.severity.toUpperCase()}</span>
+                  </div>
+                  <div className={styles.severityTrack}>
+                    <div
+                      className={styles.severityFill}
+                      style={{
+                        width: result.severity === "low" ? "25%" : result.severity === "medium" ? "50%" : result.severity === "high" ? "75%" : "100%",
+                        background: severityColors[result.severity],
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className={styles.resultDesc}>{result.description}</p>
+
+                {/* Symptoms */}
+                <div className={styles.resultCard}>
+                  <div className={styles.cardHeader}>
+                    <ShieldAlert size={18} />
+                    <h4>Symptoms</h4>
+                  </div>
+                  <div className={styles.cardList}>
+                    {result.symptoms.map((s, i) => (
+                      <div key={i} className={styles.cardListItem}>
+                        <div className={styles.checkIcon} style={{ background: "var(--bg-lavender)" }}><AlertTriangle size={14} /></div>
+                        <span>{s}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Treatment */}
+                <div className={styles.resultCard}>
+                  <div className={styles.cardHeader}>
+                    <Pill size={18} />
+                    <h4>Treatment Plan</h4>
+                  </div>
+                  <div className={styles.cardList}>
+                    {result.treatment.map((step: string, i: number) => (
+                      <div key={i} className={styles.cardListItem}>
+                        <div className={styles.checkIcon}><Check size={14} /></div>
+                        <span>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Prevention */}
+                <div className={styles.resultCard}>
+                  <div className={styles.cardHeader}>
+                    <ShieldCheck size={18} />
+                    <h4>Prevention Tips</h4>
+                  </div>
+                  <div className={styles.cardList}>
+                    {result.prevention.map((step: string, i: number) => (
+                      <div key={i} className={styles.cardListItem}>
+                        <div className={styles.checkIcon}><Check size={14} /></div>
+                        <span>{step}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-              {/* Severity */}
-              <div className={styles.severityBar}>
-                <span>Severity</span>
-                <div className={styles.severityTrack}>
-                  <div
-                    className={styles.severityFill}
-                    style={{
-                      width: result.severity === "low" ? "25%" : result.severity === "medium" ? "50%" : result.severity === "high" ? "75%" : "100%",
-                      background: severityColors[result.severity],
-                    }}
-                  />
-                </div>
-                <span className={styles.severityLabel} style={{ color: severityColors[result.severity] }}>
-                  {result.severity.toUpperCase()}
-                </span>
-              </div>
-
-              {/* Description */}
-              <p className={styles.resultDesc}>{result.description}</p>
-
-              {/* Symptoms */}
-              <div className={styles.resultBlock}>
-                <h4>
-                  <ShieldAlert size={16} />
-                  Symptoms
-                </h4>
-                <ul>
-                  {result.symptoms.map((s, i) => (
-                    <li key={i}>
-                      <AlertTriangle size={12} />
-                      {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Treatment */}
-              <div className={styles.adviceSection}>
-                <div className={styles.adviceHeader}>
-                  <Pill size={18} />
-                  <h3>{t.disease.treatment}</h3>
-                </div>
-                <div className={styles.adviceList}>
-                  {result.treatment.map((step: string, i: number) => (
-                    <div key={i} className={styles.adviceItem}>
-                      <div className={styles.checkIcon}><Check size={14} /></div>
-                      <span>{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.adviceSection}>
-                <div className={styles.adviceHeader}>
-                  <ShieldCheck size={18} />
-                  <h3>{t.disease.prevention}</h3>
-                </div>
-                <div className={styles.adviceList}>
-                  {result.prevention.map((step: string, i: number) => (
-                    <div key={i} className={styles.adviceItem}>
-                      <div className={styles.checkIcon}><Check size={14} /></div>
-                      <span>{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Disease Gallery */}
