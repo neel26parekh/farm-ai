@@ -1,0 +1,41 @@
+name: AgroNexus CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Generate Prisma Client
+      run: npx prisma generate
+      env:
+        DATABASE_URL: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+
+    - name: Run Lint
+      run: npm run lint
+
+    - name: Build Project
+      run: npm run build
+      env:
+        # Dummy env vars for build process
+        DATABASE_URL: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+        NEXTAUTH_SECRET: "dummy_secret_for_ci_build"
+        GOOGLE_GEMINI_API_KEY: "dummy_key_for_ci_build"
+        NEXT_PUBLIC_APP_URL: "http://localhost:3000"
