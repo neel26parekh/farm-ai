@@ -107,13 +107,17 @@
 
 .card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  border-radius: 32px;
+  grid-template-columns: 1.1fr 0.9fr;
+  border-radius: var(--radius-2xl);
   overflow: hidden;
-  min-height: 500px;
-  border: 1px solid var(--border);
-  transition: transform 0.3s ease;
+  position: relative;
+  min-height: 480px;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-handdrawn);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+@media (max-width: 900px) {
+  .card { grid-template-columns: 1fr; }
 }
 
 .card:hover {
@@ -147,16 +151,17 @@
 
 .cardIllustration {
   position: relative;
+  /* Action link removed in favor of global .btn */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px;
 }
 
-.cardIllustration img {
+.cardIllustration img, .doodleImg {
   max-width: 100%;
   height: auto;
-  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.05));
+  border-radius: var(--radius-2xl) !important; /* Force rounding on the image itself */
   animation: float 6s ease-in-out infinite;
 }
 
@@ -167,9 +172,14 @@
 }
 
 /* Footer */
+.footerContainer {
+  background: #000;
+  color: #fff;
+  width: 100%;
+}
+
 .footer {
   padding: 6rem 4rem;
-  border-top: 1px solid var(--border);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4rem;
@@ -181,6 +191,7 @@
   font-family: var(--font-heading);
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
+  color: #fff;
 }
 
 .footerList {
@@ -192,12 +203,13 @@
 
 .footerLink {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #888;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .footerLink:hover {
-  color: var(--ink);
+  color: #fff;
 }
 
 @media (max-width: 900px) {

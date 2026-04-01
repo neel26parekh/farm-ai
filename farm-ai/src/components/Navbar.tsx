@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
+import Logo from "./Logo";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -27,33 +28,7 @@ export default function Navbar() {
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
-          <div className={styles.logoContainer}>
-            <div className={styles.logoTextWrapper}>
-              <AnimatePresence mode="wait">
-                {scrolled ? (
-                  <motion.span
-                    key="folded"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    className={styles.logoAccent}
-                  >
-                    AN
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="full"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    className={styles.logoAccent}
-                  >
-                    AgroNexus
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
+          <Logo scrolled={scrolled} />
         </Link>
 
         <div className={styles.navLinks}>

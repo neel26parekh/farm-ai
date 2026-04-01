@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState, useEffect } from "react";
 import {
   TrendingUp,
@@ -12,7 +10,13 @@ import {
   Clock,
   IndianRupee,
   Zap,
+  Search,
+  X,
+  BellRing,
+  Bookmark,
+  BookmarkCheck,
 } from "lucide-react";
+import Image from "next/image";
 import {
   AreaChart,
   Area,
@@ -30,9 +34,45 @@ import styles from "./page.module.css";
 
 export default function MarketPage() {
   const { language, t } = useLanguage();
-  const [selectedCrop, setSelectedCrop] = useState("wheat");
+  const [selectedCrop, setSelectedCrop] = useState("mustard");
   const [forecastData, setForecastData] = useState<any[]>(priceHistory);
   const [loadingForecast, setLoadingForecast] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [viewMode, setViewMode] = useState<"myFarm" | "explorer">("myFarm");
+  const [pinnedCrops, setPinnedCrops] = useState<string[]>([]);
+  const [reminderSet, setReminderSet] = useState(false);
+
+  // Load pinned crops from local storage on mount
+  useEffect(() => {
+    const savedPins = localStorage.getItem("agronexus_pinned_crops");
+    if (savedPins) {
+      setPinnedCrops(JSON.parse(savedPins));
+    } else {
+      setPinnedCrops(["mustard", "wheat"]); // defaults
+    }
+  }, []);
+
+  const allCrops = cropPrices.map(c => c.crop);
+  const filteredCrops = allCrops.filter(c => 
+    c.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  const displayedCrops = viewMode === "myFarm" 
+    ? cropPrices.filter(c => pinnedCrops.includes(c.crop.toLowerCase()))
+    : cropPrices;
+
+  const togglePin = (crop: string) => {
+    const c = crop.toLowerCase();
+    let updatedPins;
+    if (pinnedCrops.includes(c)) {
+      updatedPins = pinnedCrops.filter(p => p !== c);
+    } else {
+      updatedPins = [...pinnedCrops, c];
+    }
+    setPinnedCrops(updatedPins);
+    localStorage.setItem("agronexus_pinned_crops", JSON.stringify(updatedPins));
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -70,11 +110,45 @@ export default function MarketPage() {
   }, [selectedCrop]);
 
   const cropColors: Record<string, string> = {
-    wheat: "#10b981",
-    rice: "#60a5fa",
-    tomato: "#f87171",
-    onion: "#a78bfa",
+    wheat: "#3D5A44", /* Forest */
+    rice: "#8AA382",  /* Sage */
+    tomato: "#BC6C25", /* Earthy Red/Brown */
+    onion: "#606C38",  /* Olive */
+    potato: "#B5A48B", /* Earthy Tan */
+    soybean: "#4A5D4E", /* Dark Sage */
+    cotton: "#D6DBB2", /* Light Lime */
+    gram: "#8B5E3C",   /* Brown */
+    mustard: "#DAA520", /* Golden */
+    jowar: "#A4C639",  /* Greenish */
+    bajra: "#C2B280",  /* Sand */
   };
+
+  // Helper to format crop names consistently
+  const formatCrop = (c: string) => c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
+
+  // Calculate prediction details from forecast
+  const getPrediction = () => {
+    if (!forecastData || forecastData.length < 5) return null;
+    const futureData = forecastData.filter(d => d.month.includes("Fct"));
+    if (futureData.length === 0) return null;
+
+    const prices = futureData.map(d => d[selectedCrop]);
+    const min = Math.round(Math.min(...prices));
+    const max = Math.round(Math.max(...prices));
+    const lastHist = forecastData[3]?.[selectedCrop] || prices[0];
+    const trend = ((max - lastHist) / lastHist) * 100;
+    
+    // Find best time to sell (peak price)
+    const peakIdx = prices.indexOf(Math.max(...prices));
+    return { min, max, trend, peakIdx: peakIdx + 1 };
+  };
+
+  const prediction = getPrediction();
+
+  // Ensure enough items to fill the ticker track seamlessly, even if only 1-2 crops are pinned
+  const tickerItems = Array(Math.max(2, Math.ceil(24 / Math.max(1, displayedCrops.length))))
+    .fill(displayedCrops)
+    .flat();
 
   return (
     <div className={styles.page}>
@@ -88,17 +162,109 @@ export default function MarketPage() {
             {t.market.subtitle}
           </p>
         </div>
-        <div className={styles.lastUpdated}>
-          <Clock size={14} />
-          {t.market.lastUpdated}
+        
+        <div className={styles.viewToggleGroup}>
+          <button 
+            className={`${styles.viewToggleBtn} ${viewMode === "myFarm" ? styles.viewToggleActive : ""}`}
+            onClick={() => setViewMode("myFarm")}
+          >
+            My Farm (Actionable)
+          </button>
+          <button 
+            className={`${styles.viewToggleBtn} ${viewMode === "explorer" ? styles.viewToggleActive : ""}`}
+            onClick={() => setViewMode("explorer")}
+          >
+            Market Explorer
+          </button>
+        </div>
+
+        <div className={styles.headerActions}>
+          <div className={styles.searchWrapper}>
+            <div className={`${styles.searchBar} ${isSearchFocused ? styles.searchFocused : ""}`}>
+              <Search size={18} className={styles.searchIcon} />
+              <input 
+                type="text" 
+                placeholder="Find your crop (e.g. Mustard, Gram...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                className={styles.searchInput}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className={styles.searchClear}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+            
+            {isSearchFocused && searchQuery && (
+              <div className={styles.searchResults}>
+                {filteredCrops.length > 0 ? (
+                  filteredCrops.map((crop) => (
+                    <div 
+                      key={crop} 
+                      className={styles.searchResultItem}
+                      onClick={() => {
+                        setSelectedCrop(crop.toLowerCase());
+                        setSearchQuery("");
+                      }}
+                    >
+                      <Zap size={14} />
+                      {crop}
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.noResults}>No crops found. Try "Wheat" or "Tomato"</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className={styles.lastUpdated}>
+            <Clock size={14} />
+            {t.market.lastUpdated}
+          </div>
         </div>
       </div>
+
+      {/* Smart Alerts (Only in My Farm View) */}
+      {viewMode === "myFarm" && prediction && (
+        <div className={styles.smartAlertCard}>
+          <div className={styles.smartAlertIcon}>
+            <BellRing size={24} />
+          </div>
+          <div className={styles.smartAlertContent}>
+            <h4>Smart Advisory: {formatCrop(selectedCrop)}</h4>
+            <p>
+              Your pinned {formatCrop(selectedCrop)} crop is showing a <strong>{prediction.trend >= 0 ? "Bullish" : "Bearish"} trend</strong>. 
+              Our AI recommends targeting a sale in <strong>{prediction.peakIdx} weeks</strong> to maximize profit around 
+              <span className={styles.alertHighlight}> ₹{prediction.max.toLocaleString("en-IN")}/q</span>.
+            </p>
+          </div>
+          <button 
+            className={`${styles.btnHollowDark} ${reminderSet ? styles.btnSuccess : ""}`}
+            onClick={() => {
+              setReminderSet(true);
+              setTimeout(() => setReminderSet(false), 3000);
+            }}
+          >
+            {reminderSet ? "Reminder Set ✓" : "Set Calendar Reminder"}
+          </button>
+        </div>
+      )}
 
       {/* Price Ticker */}
       <div className={styles.ticker}>
         <div className={styles.tickerTrack}>
-          {[...cropPrices, ...cropPrices].map((crop, i) => (
-            <div key={i} className={styles.tickerItem}>
+          {tickerItems.map((crop, i) => (
+            <div 
+              key={i} 
+              className={`${styles.tickerItem} ${selectedCrop === crop.crop.toLowerCase() ? styles.tickerActive : ""}`}
+              onClick={() => setSelectedCrop(crop.crop.toLowerCase())}
+              role="button"
+              tabIndex={0}
+            >
               <span className={styles.tickerCrop}>{crop.crop}</span>
               <span className={styles.tickerPrice}>₹{crop.price.toLocaleString("en-IN")}</span>
               <span
@@ -115,12 +281,29 @@ export default function MarketPage() {
 
       {/* Price Cards */}
       <div className={styles.priceGrid}>
-        {cropPrices.slice(0, 4).map((crop, i) => (
-          <div key={i} className={styles.priceCard}>
+        {displayedCrops.map((crop, i) => (
+          <div 
+            key={i} 
+            className={`${styles.priceCard} ${selectedCrop === crop.crop.toLowerCase() ? styles.priceCardActive : ""}`}
+            onClick={() => setSelectedCrop(crop.crop.toLowerCase())}
+            role="button"
+            tabIndex={0}
+          >
             <div className={styles.priceCardHeader}>
               <h3>{crop.crop}</h3>
-              <span className={styles.mandiTag}>{crop.mandi}</span>
+              <button 
+                className={styles.pinBtn}
+                onClick={(e) => { e.stopPropagation(); togglePin(crop.crop); }}
+                title={pinnedCrops.includes(crop.crop.toLowerCase()) ? "Unpin from My Farm" : "Pin to My Farm"}
+              >
+                {pinnedCrops.includes(crop.crop.toLowerCase()) ? (
+                  <BookmarkCheck size={20} className={styles.pinnedIcon} />
+                ) : (
+                  <Bookmark size={20} className={styles.unpinnedIcon} />
+                )}
+              </button>
             </div>
+            <div className={styles.mandiTag}>{crop.mandi}</div>
             <p className={styles.priceCardValue}>
               <IndianRupee size={18} />
               {crop.price.toLocaleString("en-IN")}
@@ -143,13 +326,13 @@ export default function MarketPage() {
           <div className={styles.chartHeader}>
             <h3>{t.market.priceTrends}</h3>
             <div className={styles.cropSelector}>
-              {["wheat", "rice", "tomato", "onion"].map((crop) => (
+              {["wheat", "rice", "tomato", "onion", "gram", "mustard"].map((crop) => (
                 <button
                   key={crop}
                   className={`${styles.cropBtn} ${selectedCrop === crop ? styles.cropBtnActive : ""}`}
                   onClick={() => setSelectedCrop(crop)}
                 >
-                  {crop.charAt(0).toUpperCase() + crop.slice(1)}
+                  {formatCrop(crop)}
                 </button>
               ))}
             </div>
@@ -169,14 +352,15 @@ export default function MarketPage() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(16, 185, 129, 0.08)" />
-              <XAxis dataKey="month" stroke="#6ee7b7" fontSize={12} />
-              <YAxis stroke="#6ee7b7" fontSize={12} />
+              <XAxis dataKey="month" stroke="var(--ink)" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="var(--ink)" fontSize={12} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(3, 11, 5, 0.95)",
-                  border: "1px solid rgba(16, 185, 129, 0.2)",
-                  borderRadius: "8px",
-                  color: "#ecfdf5",
+                  background: "white",
+                  border: "var(--border-thick)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--ink)",
+                  boxShadow: "var(--shadow-handdrawn)",
                 }}
               />
               <Area
@@ -196,45 +380,46 @@ export default function MarketPage() {
         {/* AI Prediction */}
         <div className={styles.predictionCard}>
           <div className={styles.predictionHeader}>
-            <Zap size={18} />
-            <h3>{t.market.aiPrediction}</h3>
+            <Image 
+              src="/images/market-bold.png"
+              alt="Market Growth"
+              width={160}
+              height={160}
+              className={styles.doodleImg}
+            />
+            <div className={styles.predictionTitle}>
+              <Zap size={18} />
+              <h3>{t.market.aiPrediction}</h3>
+            </div>
           </div>
           <div className={styles.predictionContent}>
-            <div className={styles.predictionItem}>
-              <p className={styles.predictionLabel}>Wheat (Next 30 Days)</p>
-              <p className={styles.predictionValue} style={{ color: "#10b981" }}>
-                ₹2,350 - ₹2,420
-              </p>
-              <p className={styles.predictionConf}>85% confidence</p>
-              <div className={styles.predictionTrend}>
-                <TrendingUp size={14} />
-                Expected to rise 3-6%
-              </div>
-            </div>
+            {prediction ? (
+              <>
+                <div className={styles.predictionItem}>
+                  <p className={styles.predictionLabel}>{formatCrop(selectedCrop)} (Next 30 Days)</p>
+                  <p className={styles.predictionValue} style={{ color: prediction.trend >= 0 ? "#10b981" : "#ef4444" }}>
+                    ₹{prediction.min.toLocaleString("en-IN")} - ₹{prediction.max.toLocaleString("en-IN")}
+                  </p>
+                  <p className={styles.predictionConf}>92% model confidence</p>
+                  <div className={styles.predictionTrend} style={{ color: prediction.trend >= 0 ? "#10b981" : "#ef4444" }}>
+                    {prediction.trend >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                    Expected to {prediction.trend >= 0 ? "rise" : "drop"} {Math.abs(prediction.trend).toFixed(1)}%
+                  </div>
+                </div>
 
-            <div className={styles.predictionDivider} />
+                <div className={styles.predictionDivider} />
 
-            <div className={styles.predictionItem}>
-              <p className={styles.predictionLabel}>Best Time to Sell</p>
-              <p className={styles.predictionValue} style={{ color: "#fbbf24" }}>
-                April 5-12
-              </p>
-              <p className={styles.predictionConf}>Peak demand period</p>
-            </div>
-
-            <div className={styles.predictionDivider} />
-
-            <div className={styles.predictionItem}>
-              <p className={styles.predictionLabel}>Tomato (Alert)</p>
-              <p className={styles.predictionValue} style={{ color: "#ef4444" }}>
-                Price Drop Expected
-              </p>
-              <p className={styles.predictionConf}>Oversupply from Maharashtra</p>
-              <div className={styles.predictionTrend} style={{ color: "#ef4444" }}>
-                <TrendingDown size={14} />
-                May drop 15-20% by mid-April
-              </div>
-            </div>
+                <div className={styles.predictionItem}>
+                  <p className={styles.predictionLabel}>Best Time to Sell</p>
+                  <p className={styles.predictionValue} style={{ color: "#fbbf24" }}>
+                    In {prediction.peakIdx} Weeks
+                  </p>
+                  <p className={styles.predictionConf}>Peak demand period prediction</p>
+                </div>
+              </>
+            ) : (
+              <p className={styles.predictionConf}>Calculating predictions...</p>
+            )}
           </div>
         </div>
       </div>

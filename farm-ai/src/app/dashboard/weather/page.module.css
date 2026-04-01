@@ -78,6 +78,18 @@
 
 .impactTitle { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; color: var(--ink); }
 
+.doodleContainer {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.doodleImg {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-xl); /* Rounded corners as requested */
+}
+
 .forecastSection { margin-bottom: 40px; }
 .sectionTitle { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; color: var(--ink); }
 
@@ -93,6 +105,14 @@
 }
 .forecastCard:hover { border-color: var(--ink); transform: translateY(-2px); }
 .forecastToday { background: var(--bg-muted); border-color: var(--ink); }
+
+.currentCard, .forecastCard, .impactCard, .rainfallCard, .alertsCard {
+  background: white;
+  border: var(--border-thick);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-handdrawn);
+}
 
 .chartCard, .cropAlerts {
   background: white;

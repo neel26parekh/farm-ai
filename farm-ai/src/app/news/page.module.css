@@ -83,7 +83,7 @@
 
 .card {
   background: white;
-  border-radius: 1.5rem;
+  border-radius: var(--radius-2xl);
   overflow: hidden;
   border: 1px solid var(--border);
   transition: all 0.3s ease;
@@ -188,7 +188,7 @@
 .newsletterCard {
   background: var(--ink);
   padding: 4rem;
-  border-radius: 2rem;
+  border-radius: var(--radius-2xl);
   text-align: center;
   color: white;
 }
@@ -215,7 +215,7 @@
 .inputGroup input {
   flex: 1;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.05);
   color: white;
@@ -227,7 +227,7 @@
   background: var(--green-600);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   font-weight: 700;
   display: flex;
   align-items: center;

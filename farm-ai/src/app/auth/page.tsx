@@ -26,29 +26,29 @@ export default function AuthPage() {
         <div className={styles.brandContent}>
           <Link href="/" className={styles.logo}>
             <div className={styles.logoIcon}>
-              <Sprout size={32} />
+              <span style={{ fontSize: '1.2rem', fontWeight: 900 }}>AN</span>
             </div>
             <span className={styles.logoText}>
-              Farm<span className={styles.logoAccent}>AI</span>
+              AgroNexus
             </span>
           </Link>
           <h1 className={styles.brandHeading}>
-            Your Farm&apos;s AI Assistant.
+            Your Agricultural Partner.
           </h1>
-          <p className={styles.brandSubheading}>
-            Join 5,00,000+ progressive Indian farmers using AI to increase yield and maximize profits.
+          <p className={styles.brandSubheading} style={{ color: 'var(--ink)', opacity: 0.8 }}>
+            Join 5,00,000+ progressive Indian farmers using AgroNexus to increase yield and maximize profits.
           </p>
           <div className={styles.featureList}>
-            <div className={styles.featureItem}>
-              <div className={styles.checkIcon}><ShieldCheck size={16} /></div>
+            <div className={styles.featureItem} style={{ color: 'var(--ink)' }}>
+              <div className={styles.checkIcon} style={{ background: 'var(--ink)', color: 'white' }}><ShieldCheck size={16} /></div>
               Instant crop disease diagnosis
             </div>
-            <div className={styles.featureItem}>
-              <div className={styles.checkIcon}><ShieldCheck size={16} /></div>
+            <div className={styles.featureItem} style={{ color: 'var(--ink)' }}>
+              <div className={styles.checkIcon} style={{ background: 'var(--ink)', color: 'white' }}><ShieldCheck size={16} /></div>
               Real-time mandi price predictions
             </div>
-            <div className={styles.featureItem}>
-              <div className={styles.checkIcon}><ShieldCheck size={16} /></div>
+            <div className={styles.featureItem} style={{ color: 'var(--ink)' }}>
+              <div className={styles.checkIcon} style={{ background: 'var(--ink)', color: 'white' }}><ShieldCheck size={16} /></div>
               Hyper-local weather advisory
             </div>
           </div>

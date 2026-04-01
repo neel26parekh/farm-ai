@@ -134,7 +134,15 @@ export default function DiseaseDetectionPage() {
               </div>
             ) : (
               <div className={styles.uploadContent}>
-                <div className={styles.uploadIcon}><Upload size={32} /></div>
+                <div className={styles.doodleContainer}>
+                  <Image 
+                    src="/images/disease-bold.png"
+                    alt="Leaf Scan"
+                    width={180}
+                    height={180}
+                    className={styles.doodleImg}
+                  />
+                </div>
                 <h3>Upload a photo of a leaf</h3>
                 <p>Drag and drop or click to browse</p>
                 <span className={styles.uploadLimit}>Supports JPG, PNG (Max 5MB)</span>

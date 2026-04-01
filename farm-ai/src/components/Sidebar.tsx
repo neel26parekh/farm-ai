@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import Logo from "./Logo";
 import styles from "./Sidebar.module.css";
 
 export default function Sidebar() {
@@ -46,25 +47,28 @@ export default function Sidebar() {
       {/* Logo */}
       <div className={styles.logoSection}>
         <Link href="/" className={styles.logo}>
-          {!collapsed && (
-            <span className={styles.logoText}>
-              AI <span className={styles.logoAccent}>AgroNexus</span>
-            </span>
-          )}
-          {collapsed && (
-            <div className={styles.logoIcon}>
-              AI
-            </div>
-          )}
+          <Logo collapsed={collapsed} />
         </Link>
-        <button
-          className={styles.collapseBtn}
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label="Toggle sidebar"
-        >
-          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-        </button>
+        {!collapsed && (
+          <button
+            className={styles.collapseBtn}
+            onClick={() => setCollapsed(true)}
+            aria-label="Collapse sidebar"
+          >
+            <ChevronLeft size={14} />
+          </button>
+        )}
       </div>
+
+      {collapsed && (
+        <button
+          className={styles.expandBtn}
+          onClick={() => setCollapsed(false)}
+          aria-label="Expand sidebar"
+        >
+          <ChevronRight size={14} />
+        </button>
+      )}
 
       {/* Navigation */}
       <nav className={styles.nav}>

@@ -10,7 +10,7 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.brandSection}>
           <Link href="/" className={styles.logo}>
-            AI <span className={styles.logoAccent}>AgroNexus</span>
+            <span className={styles.logoAccent}>AgroNexus</span>
           </Link>
           <p className={styles.tagline}>
             Advancing the world's most vital industry through elegant, intuitive intelligence.

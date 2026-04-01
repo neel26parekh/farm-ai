@@ -61,7 +61,7 @@ function AnimatedCounter({ target, suffix = "", prefix = "" }: AnimatedCounterPr
 }
 
 export default function DashboardPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [greeting, setGreeting] = useState("Hello");
   const [dateStr, setDateStr] = useState("");
@@ -75,14 +75,14 @@ export default function DashboardPage() {
     else setGreeting(t.dashboard.welcome.split(",")[0] || "Good Evening");
 
     setDateStr(
-      new Date().toLocaleDateString("en-IN", {
+      new Date().toLocaleDateString(language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : language === "mr" ? "mr-IN" : "te-IN", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       })
     );
-  }, []);
+  }, [language, t.dashboard.welcome]);
 
   const alertIcons: Record<string, React.ReactNode> = {
     disease: <AlertTriangle size={16} />,
@@ -120,14 +120,14 @@ export default function DashboardPage() {
             <Sprout size={22} color="#10b981" />
           </div>
           <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>Active Crops</p>
+            <p className={styles.statCardLabel}>{t.dashboard.stats.activeCrops}</p>
             <p className={styles.statCardValue}>
               {mounted ? <AnimatedCounter target={12} /> : "0"}
             </p>
           </div>
           <div className={styles.statCardTrend} style={{ color: "#10b981" }}>
             <ArrowUpRight size={14} />
-            <span>+2 this season</span>
+            <span>+2 {t.dashboard.stats.thisSeason}</span>
           </div>
         </div>
 
@@ -136,14 +136,14 @@ export default function DashboardPage() {
             <Heart size={22} color="#f87171" />
           </div>
           <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>Crop Health Score</p>
+            <p className={styles.statCardLabel}>{t.dashboard.stats.healthScore}</p>
             <p className={styles.statCardValue}>
               {mounted ? <AnimatedCounter target={92} suffix="%" /> : "0%"}
             </p>
           </div>
           <div className={styles.statCardTrend} style={{ color: "#10b981" }}>
             <ArrowUpRight size={14} />
-            <span>+5% from last week</span>
+            <span>+5% {t.dashboard.stats.lastWeek}</span>
           </div>
         </div>
 
@@ -152,14 +152,14 @@ export default function DashboardPage() {
             <Droplets size={22} color="#60a5fa" />
           </div>
           <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>Soil Moisture</p>
+            <p className={styles.statCardLabel}>{t.dashboard.stats.moisture}</p>
             <p className={styles.statCardValue}>
               {mounted ? <AnimatedCounter target={72} suffix="%" /> : "0%"}
             </p>
           </div>
           <div className={styles.statCardTrend} style={{ color: "#f59e0b" }}>
             <ArrowDownRight size={14} />
-            <span>Irrigation needed in 2 days</span>
+            <span>{t.dashboard.stats.irrigationNeeded}</span>
           </div>
         </div>
 
@@ -168,14 +168,14 @@ export default function DashboardPage() {
             <TrendingUp size={22} color="#fbbf24" />
           </div>
           <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>Revenue This Season</p>
+            <p className={styles.statCardLabel}>{t.dashboard.stats.revenue}</p>
             <p className={styles.statCardValue}>
               {mounted ? <AnimatedCounter target={485000} prefix="₹" /> : "₹0"}
             </p>
           </div>
           <div className={styles.statCardTrend} style={{ color: "#10b981" }}>
             <ArrowUpRight size={14} />
-            <span>+18% from last year</span>
+            <span>+18% {t.dashboard.stats.lastYear}</span>
           </div>
         </div>
       </div>
@@ -185,19 +185,19 @@ export default function DashboardPage() {
         {/* Crop Health Chart */}
         <div className={styles.chartCard}>
           <div className={styles.chartHeader}>
-            <h3>Crop Health Trends</h3>
+            <h3>{t.dashboard.charts.title}</h3>
             <div className={styles.chartLegend}>
               <span className={styles.legendItem}>
                 <span className={styles.legendDot} style={{ background: "#10b981" }} />
-                Health
+                {t.dashboard.charts.health}
               </span>
               <span className={styles.legendItem}>
                 <span className={styles.legendDot} style={{ background: "#60a5fa" }} />
-                Moisture
+                {t.dashboard.charts.moisture}
               </span>
               <span className={styles.legendItem}>
                 <span className={styles.legendDot} style={{ background: "#fbbf24" }} />
-                Nutrients
+                {t.dashboard.charts.nutrients}
               </span>
             </div>
           </div>
@@ -241,7 +241,7 @@ export default function DashboardPage() {
 
         {/* Alerts */}
         <div className={styles.alertsCard}>
-          <h3 className={styles.alertsTitle}>Recent Alerts</h3>
+          <h3 className={styles.alertsTitle}>{t.dashboard.alerts.title}</h3>
           <div className={styles.alertsList}>
             {dashboardAlerts.map((alert) => (
               <div key={alert.id} className={styles.alertItem}>
@@ -268,13 +268,13 @@ export default function DashboardPage() {
         <div className={styles.quickCard}>
           <h3 className={styles.quickTitle}>
             <TrendingUp size={18} />
-            Market Prices
+            {t.dashboard.quickView.market}
           </h3>
           <div className={styles.priceList}>
             {cropPrices.slice(0, 5).map((crop, i) => (
               <div key={i} className={styles.priceItem}>
-                <span className={styles.cropName}>{crop.crop}</span>
-                <span className={styles.cropPrice}>₹{crop.price.toLocaleString("en-IN")}/{crop.unit}</span>
+                <span className={styles.cropName}>{(t.data as any)[crop.crop.toLowerCase()] || crop.crop}</span>
+                <span className={styles.cropPrice}>₹{crop.price} / {(t.data as any).quintal}</span>
                 <span
                   className={styles.cropChange}
                   style={{ color: crop.change >= 0 ? "#10b981" : "#ef4444" }}
@@ -291,7 +291,7 @@ export default function DashboardPage() {
         <div className={styles.quickCard}>
           <h3 className={styles.quickTitle}>
             <CloudSun size={18} />
-            Weather Forecast
+            {t.dashboard.quickView.weather}
           </h3>
           <div className={styles.weatherList}>
             {weatherForecast.slice(0, 5).map((day, i) => (

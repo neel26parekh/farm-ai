@@ -1,0 +1,30 @@
+.logoContainer {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 1.8rem; /* Increased for visibility */
+  color: var(--ink);
+  letter-spacing: -0.04em;
+  user-select: none;
+  padding-bottom: 2px; /* Prevent clipping */
+}
+
+.logoTextWrapper {
+  display: flex;
+  align-items: baseline;
+  line-height: 1.2; /* Fixed 'g' clipping */
+}
+
+.logoLetter {
+  display: inline-block;
+}
+
+.logoCollapse {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 1.5rem; /* Match letter size */
+  letter-spacing: -0.02em;
+}

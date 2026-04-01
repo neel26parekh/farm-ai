@@ -25,11 +25,12 @@
 .headerDate {
   font-size: var(--text-sm);
   color: var(--ink);
-  padding: 8px 16px;
+  padding: 8px 18px;
   background: white;
-  border: 1px solid var(--border);
+  border: var(--border-thick);
   border-radius: var(--radius-full);
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: var(--shadow-handdrawn);
 }
 
 /* Stat Cards */
@@ -42,11 +43,12 @@
 
 .statCard {
   background: white;
-  border: 1px solid var(--border);
-  border-radius: 24px;
+  border: var(--border-thick);
+  border-radius: 40px; /* Large rounded box */
   padding: 24px;
   transition: all var(--transition-base);
   animation: dashFadeInUp 0.4s ease-out both;
+  box-shadow: var(--shadow-handdrawn);
 }
 .statCard:hover { border-color: var(--ink); transform: translateY(-2px); }
 

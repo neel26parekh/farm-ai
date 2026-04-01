@@ -7,7 +7,7 @@ export const translations = {
       diseaseDetection: "Disease Detection",
       marketIntelligence: "Market Intelligence",
       weatherAdvisory: "Weather Advisory",
-      aiAdvisor: "AI Crop Advisor",
+      aiAdvisor: "AgroNexus Advisor",
       settings: "Settings",
       notifications: "Notifications",
       profile: "Farmer",
@@ -15,17 +15,68 @@ export const translations = {
     },
     dashboard: {
       welcome: "Welcome back, Farmer!",
-      subtitle: "Here's what's happening on your farm today.",
+      subtitle: "Your comprehensive agricultural coordination center.",
       weatherTitle: "Weather Advisory",
       marketTitle: "Market Trends",
       diseaseTitle: "Recent Scans",
-      advisorTitle: "AI Advisor",
+      advisorTitle: "Nexus Advisor",
+      stats: {
+        activeCrops: "Active Crops",
+        healthScore: "Crop Health Score",
+        moisture: "Soil Moisture",
+        revenue: "Revenue This Season",
+        thisSeason: "this season",
+        lastWeek: "from last week",
+        irrigationNeeded: "Irrigation needed in 2 days",
+        lastYear: "from last year",
+      },
+      charts: {
+        title: "Crop Health Trends",
+        health: "Health",
+        moisture: "Moisture",
+        nutrients: "Nutrients",
+        week: "week",
+      },
+      alerts: {
+        title: "Recent Alerts",
+      },
+      quickView: {
+        market: "Market Prices",
+        weather: "Weather Forecast",
+      }
+    },
+    home: {
+      heroTitle: "Agricultural intelligence for every farmer",
+      heroSubtitle: "We build advanced models to help farmers detect diseases, track market intelligence, and receive expert agronomic advice—all through a clean, accessible interface designed for the field.",
+      cta: "Start building your farm",
+      features: {
+        advisor: {
+          title: "Expert Advice",
+          desc: "Our AgroNexus Advisor provides hyper-local forecasts and farming-specific impact analysis, helping you make informed decisions about your crops.",
+          action: "Ask the Advisor",
+        },
+        disease: {
+          title: "Disease Detection",
+          desc: "Upload a photo of your crop to identify diseases in seconds. Our models are trained on millions of images to provide high-accuracy diagnosis.",
+          action: "Scan your crops",
+        },
+        market: {
+          title: "Market Pricing",
+          desc: "Track real-time market prices across Mandis in India. Get price predictions to help you decide when and where to sell for maximum profit.",
+          action: "Explore Mandis",
+        },
+        weather: {
+          title: "Weather Advisory",
+          desc: "Receive hyper-local weather alerts and actionable advice on how to protect your crops from upcoming weather events.",
+          action: "Get weather data",
+        }
+      }
     },
     advisor: {
-      title: "AI Crop Advisor",
+      title: "AgroNexus Advisor",
       placeholder: "Ask anything about your crops...",
       send: "Send",
-      mockWarning: "Offline Mode: Add your API key to enable real AI.",
+      mockWarning: "Offline Mode: Connection required for live data.",
     },
     weather: {
       title: "Weather Advisory",
@@ -42,16 +93,16 @@ export const translations = {
     },
     market: {
       title: "Market Intelligence",
-      subtitle: "Real-time mandi prices, trend analysis, and AI-predicted windows",
+      subtitle: "Real-time mandi prices, trend analysis, and predicted windows",
       lastUpdated: "Updated 5 min ago",
       priceTrends: "Price Trends (6 Months)",
-      aiPrediction: "AI Price Prediction",
+      aiPrediction: "Nexus Price Prediction",
       mandiComparison: "Mandi Price Comparison",
       bestTimeToSell: "Best Time to Sell",
     },
     disease: {
       title: "Crop Disease Detection",
-      subtitle: "Instant AI diagnosis and personalized treatment plans",
+      subtitle: "Instant diagnosis and personalized treatment plans",
       upload: "Upload a photo of a leaf",
       scanning: "Scanning...",
       result: "Scan Result",
@@ -59,6 +110,15 @@ export const translations = {
       prevention: "Prevention Tips",
       severity: "Severity",
       confidence: "Confidence",
+    },
+    data: {
+      wheat: "Wheat",
+      rice: "Rice",
+      corn: "Corn",
+      cotton: "Cotton",
+      soybean: "Soybean",
+      quintal: "quintal",
+      pricePer: "per",
     }
   },
   hi: {
@@ -67,7 +127,7 @@ export const translations = {
       diseaseDetection: "रोग पहचान",
       marketIntelligence: "बाजार की जानकारी",
       weatherAdvisory: "मौसम सलाह",
-      aiAdvisor: "AI सलाहकार",
+      aiAdvisor: "AgroNexus सलाहकार",
       settings: "सेटिंग्स",
       notifications: "सूचनाएं",
       profile: "किसान",
@@ -75,17 +135,77 @@ export const translations = {
     },
     dashboard: {
       welcome: "वापसी पर आपका स्वागत है, किसान!",
-      subtitle: "आज आपके खेत में क्या हो रहा है, यहाँ देखें।",
+      subtitle: "आपका व्यापक कृषि समन्वय केंद्र।",
       weatherTitle: "मौसम सलाह",
       marketTitle: "बाजार के रुझान",
       diseaseTitle: "हाल के स्कैन",
-      advisorTitle: "AI सलाहकार",
+      advisorTitle: "Nexus सलाहकार",
+      stats: {
+        activeCrops: "सक्रिय फसलें",
+        healthScore: "फसल स्वास्थ्य स्कोर",
+        moisture: "मिट्टी की नमी",
+        revenue: "इस सीजन का राजस्व",
+        thisSeason: "इस सीजन में",
+        lastWeek: "पिछले सप्ताह से",
+        irrigationNeeded: "2 दिनों में सिंचाई की आवश्यकता",
+        lastYear: "पिछले साल से",
+      },
+      charts: {
+        title: "फसल स्वास्थ्य रुझान",
+        health: "स्वास्थ्य",
+        moisture: "नमी",
+        nutrients: "पोषक तत्व",
+        week: "सप्ताह",
+      },
+      alerts: {
+        title: "हाल के अलर्ट",
+      },
+      quickView: {
+        market: "बाजार भाव",
+        weather: "मौसम पूर्वानुमान",
+      }
+    },
+    home: {
+      heroTitle: "हर किसान के लिए कृषि बुद्धिमत्ता",
+      heroSubtitle: "हम किसानों को रोगों का पता लगाने, बाजार की जानकारी रखने और विशेषज्ञ कृषि सलाह प्राप्त करने में मदद करने के लिए उन्नत मॉडल बनाते हैं।",
+      cta: "अपनी खेती शुरू करें",
+      features: {
+        advisor: {
+          title: "विशेषज्ञ सलाह",
+          desc: "हमारा AgroNexus सलाहकार आपको अपनी फसलों के बारे में सूचित निर्णय लेने में मदद करने के लिए स्थानीय पूर्वानुमान और कृषि-विशिष्ट विश्लेषण प्रदान करता है।",
+          action: "सलाहकार से पूछें",
+        },
+        disease: {
+          title: "रोग पहचान",
+          desc: "सेकंडों में रोगों की पहचान करने के लिए अपनी फसल की फोटो अपलोड करें। हमारे मॉडल उच्च-सटीकता निदान प्रदान करने के लिए प्रशिक्षित हैं।",
+          action: "फसल स्कैन करें",
+        },
+        market: {
+          title: "बाजार मूल्य",
+          desc: "भारत भर की मंडियों में वास्तविक समय के बाजार भाव देखें। आपको अधिकतम लाभ के लिए कब और कहाँ बेचना है, यह तय करने में मदद करने के लिए मूल्य पूर्वानुमान प्राप्त करें।",
+          action: "मंडियां देखें",
+        },
+        weather: {
+          title: "मौसम सलाह",
+          desc: "अपनी फसलों को आने वाली मौसम की घटनाओं से बचाने के लिए स्थानीय मौसम अलर्ट और कार्रवाई योग्य सलाह प्राप्त करें।",
+          action: "मौसम डेटा प्राप्त करें",
+        }
+      }
     },
     advisor: {
-      title: "AI फसल सलाहकार",
+      title: "AgroNexus फसल सलाहकार",
       placeholder: "अपनी फसलों के बारे में कुछ भी पूछें...",
       send: "भेजें",
-      mockWarning: "ऑफ़लाइन मोड: रियल AI के लिए अपनी API कुंजी जोड़ें।",
+      mockWarning: "ऑफ़लाइन मोड: वास्तविक डेटा के लिए कनेक्शन आवश्यक है।",
+    },
+    data: {
+      wheat: "गेहूं",
+      rice: "चावल",
+      corn: "मक्का",
+      cotton: "कपास",
+      soybean: "सोयाबीन",
+      quintal: "क्विंटल",
+      pricePer: "प्रति",
     },
     weather: {
       title: "मौसम सलाह",

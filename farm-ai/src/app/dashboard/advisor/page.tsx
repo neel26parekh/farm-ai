@@ -10,6 +10,7 @@ import {
   RotateCcw,
   Leaf,
 } from "lucide-react";
+import Image from "next/image";
 import { chatPresets, chatResponses, ChatMessage } from "@/lib/mockData";
 import { generateId } from "@/lib/utils";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -173,8 +174,14 @@ export default function AdvisorPage() {
           </div>
 
           <div className={styles.aiInfo}>
-            <div className={styles.aiInfoIcon}>
-              <Bot size={20} />
+            <div className={styles.aiDoodleContainer}>
+              <Image 
+                src="/images/advisor-bold.png" 
+                alt="Soil-Crop Fit" 
+                width={300} 
+                height={300}
+                className={styles.aiDoodle}
+              />
             </div>
             <h4>AgroNexus Advisor</h4>
             <p>

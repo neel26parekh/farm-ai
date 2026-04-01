@@ -16,32 +16,44 @@
 
 .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
-/* Logo */
 .logoSection {
+  padding: 32px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 6px;
-  margin-bottom: 28px;
+  border-bottom: 1.5px solid rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+  transition: padding var(--transition-base);
 }
 
+.sidebar.collapsed .logoSection {
+  padding: 24px 0;
+  justify-content: center;
+  border-bottom: none;
+}
+
+.sidebar.collapsed .collapseBtn {
+  display: none; /* Hide collapse btn when sidebar is thin to maximize space */
+}
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
+  font-family: var(--font-heading);
 }
 
 .logoIcon {
   width: 32px;
   height: 32px;
   min-width: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--ink);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 800;
 }
 
 .logoText {
@@ -69,6 +81,21 @@
   flex-shrink: 0;
 }
 .collapseBtn:hover { border-color: var(--border-hover); color: var(--ink); }
+
+.expandBtn {
+  margin: 0 auto 20px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
 
 /* Navigation */
 .nav {
@@ -99,11 +126,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 10px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-xl);
   color: var(--text-muted);
   font-size: 0.84rem;
-  font-weight: 450;
+  font-weight: 500;
   transition: all 150ms ease;
   position: relative;
   white-space: nowrap;
@@ -111,6 +138,11 @@
   width: 100%;
   text-align: left;
   letter-spacing: -0.01em;
+}
+
+.sidebar.collapsed .navItem {
+  padding: 12px 0;
+  justify-content: center;
 }
 
 .navItem:hover {
@@ -129,6 +161,14 @@
   display: flex;
   gap: 4px;
   padding: 4px 6px;
+  transition: all var(--transition-base);
+}
+
+.sidebar.collapsed .langRow {
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
 }
 
 .langBtn {
@@ -160,16 +200,23 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 6px 4px;
-  border-top: 1px solid #e8e5e0;
+  padding: 16px 8px;
+  border-top: 1px solid rgba(0,0,0,0.05);
   margin-top: 8px;
+  transition: all var(--transition-base);
+}
+
+.sidebar.collapsed .userSection {
+  padding: 12px 0;
+  justify-content: center;
+  border-top: none;
 }
 
 .userAvatar {
   width: 32px;
   height: 32px;
   min-width: 32px;
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   background: #191919;
   color: white;
   display: flex;

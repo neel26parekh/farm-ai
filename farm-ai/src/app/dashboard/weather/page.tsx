@@ -24,6 +24,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Image from "next/image";
 import { weatherForecast } from "@/lib/mockData";
 import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./page.module.css";
@@ -53,22 +54,76 @@ const impactColors: Record<string, string> = {
 
 export default function WeatherPage() {
   const { t } = useLanguage();
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [liveForecast, setLiveForecast] = useState<any[]>(weatherForecast);
+  const [currentWeather, setCurrentWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchWeather() {
       try {
-        // OpenWeatherMap API Integration
-        // Note: In production, the API key should be in .env.local
-        const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "YOUR_OPENWEATHER_API_KEY";
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Ludhiana&units=metric&appid=${API_KEY}`);
+        // Open-Meteo API Integration (100% Free, No API Key Required)
+        // Defaulting to Pune, Maharashtra (major agricultural hub)
+        const lat = 18.5204;
+        const lon = 73.8567;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`;
+        
+        const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          setWeatherData(data);
+          
+          // Map global WMO weather codes to AgroNexus design system icons
+          const getCondition = (code: number) => {
+            if (code === 0) return "sunny";
+            if (code <= 3) return "partly-cloudy";
+            if (code <= 48) return "cloudy";
+            if (code <= 67 || (code >= 80 && code <= 82)) return "rainy";
+            if (code >= 95) return "stormy";
+            return "partly-cloudy";
+          };
+
+          setCurrentWeather({
+            temp: Math.round(data.current.temperature_2m),
+            feelsLike: Math.round(data.current.apparent_temperature),
+            humidity: Math.round(data.current.relative_humidity_2m),
+            windSpeed: Math.round(data.current.wind_speed_10m),
+            condition: getCondition(data.current.weather_code),
+            visibility: 10 // default as OM current doesn't provide visibility by default
+          });
+
+          // Map 7-day daily data
+          const newForecast = data.daily.time.map((dateStr: string, i: number) => {
+            const dateObj = new Date(dateStr);
+            const condition = getCondition(data.daily.weather_code[i]);
+            const rain = data.daily.precipitation_sum[i];
+            
+            // Dynamic farming impacts based on actual live API data thresholds
+            let impact = "good";
+            let advisory = "Perfect day for field work and spraying";
+            if (rain > 20 || condition === "stormy") {
+              impact = "alert";
+              advisory = "Waterlogging risk. Avoid field work entirely.";
+            } else if (rain > 5 || condition === "rainy") {
+              impact = "caution";
+              advisory = "Rain expected. Postpone chemical spraying.";
+            }
+
+            return {
+              day: i === 0 ? "Today" : dateObj.toLocaleDateString('en-US', { weekday: 'short' }),
+              date: dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
+              temp: Math.round(data.daily.temperature_2m_max[i]),
+              tempMin: Math.round(data.daily.temperature_2m_min[i]),
+              humidity: 60 + Math.random() * 10, // Simulated varying humidity for the chart
+              rainfall: rain,
+              condition: condition,
+              farmingImpact: impact,
+              advisory: advisory,
+            };
+          });
+
+          setLiveForecast(newForecast);
         }
       } catch (error) {
-        console.error("Failed to fetch weather:", error);
+        console.error("Failed to fetch weather from Open-Meteo:", error);
       } finally {
         setLoading(false);
       }
@@ -76,11 +131,11 @@ export default function WeatherPage() {
     fetchWeather();
   }, []);
 
-  const today = weatherForecast[0];
-  const rainfallData = weatherForecast.map((d) => ({
+  const todayForecast = liveForecast[0];
+  const rainfallData = liveForecast.map((d) => ({
     day: d.day,
     rainfall: d.rainfall,
-    humidity: d.humidity,
+    humidity: Math.round(d.humidity),
   }));
 
   return (
@@ -96,7 +151,7 @@ export default function WeatherPage() {
           </p>
         </div>
         <div className={styles.locationBadge}>
-          📍 Ludhiana, Punjab
+          📍 Pune, Maharashtra (Live Sync)
         </div>
       </div>
 
@@ -104,38 +159,47 @@ export default function WeatherPage() {
       <div className={styles.currentGrid}>
         <div className={styles.currentCard}>
           <div className={styles.currentMain}>
-            <div className={styles.currentIcon} style={{ color: weatherColors[today.condition] }}>
-              {weatherIcons[today.condition]}
+            <div className={styles.currentIcon} style={{ color: weatherColors[currentWeather ? currentWeather.condition : todayForecast.condition] }}>
+              {weatherIcons[currentWeather ? currentWeather.condition : todayForecast.condition]}
             </div>
             <div>
-              <p className={styles.currentTemp}>{today.temp}°C</p>
+              <p className={styles.currentTemp}>{currentWeather ? currentWeather.temp : todayForecast.temp}°C</p>
               <p className={styles.currentCondition}>
-                {today.condition.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                {(currentWeather ? currentWeather.condition : todayForecast.condition).split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
               </p>
             </div>
           </div>
           <div className={styles.currentDetails}>
             <div className={styles.detailItem}>
               <Thermometer size={16} />
-              <span>{t.weather.feelsLike} {weatherData ? Math.round(weatherData.main.feels_like) : today.temp + 2}°C</span>
+              <span>{t.weather.feelsLike} {currentWeather ? currentWeather.feelsLike : todayForecast.temp + 2}°C</span>
             </div>
             <div className={styles.detailItem}>
               <Droplets size={16} />
-              <span>{t.weather.humidity} {weatherData ? weatherData.main.humidity : today.humidity}%</span>
+              <span>{t.weather.humidity} {currentWeather ? currentWeather.humidity : todayForecast.humidity}%</span>
             </div>
             <div className={styles.detailItem}>
               <Wind size={16} />
-              <span>{t.weather.wind} {weatherData ? Math.round(weatherData.wind.speed * 3.6) : 12} km/h</span>
+              <span>{t.weather.wind} {currentWeather ? currentWeather.windSpeed : 12} km/h</span>
             </div>
             <div className={styles.detailItem}>
               <Eye size={16} />
-              <span>{t.weather.visibility} {weatherData ? (weatherData.visibility / 1000).toFixed(1) : 10} km</span>
+              <span>{t.weather.visibility} {currentWeather ? currentWeather.visibility : 10} km</span>
             </div>
           </div>
         </div>
 
         {/* Farming Impact */}
         <div className={styles.impactCard}>
+          <div className={styles.doodleContainer}>
+            <Image 
+              src="/images/weather-bold.png"
+              alt="Weather Sprout"
+              width={180}
+              height={180}
+              className={styles.doodleImg}
+            />
+          </div>
           <h3 className={styles.impactTitle}>
             <Sprout size={18} />
             {t.weather.impactTitle}
@@ -143,16 +207,16 @@ export default function WeatherPage() {
           <div
             className={styles.impactBadge}
             style={{
-              background: `${impactColors[today.farmingImpact]}15`,
-              color: impactColors[today.farmingImpact],
-              borderColor: `${impactColors[today.farmingImpact]}30`,
+              background: `${impactColors[todayForecast.farmingImpact]}15`,
+              color: impactColors[todayForecast.farmingImpact],
+              borderColor: `${impactColors[todayForecast.farmingImpact]}30`,
             }}
           >
-            {today.farmingImpact === "good" && <Check size={16} />}
-            {today.farmingImpact !== "good" && <AlertTriangle size={16} />}
-            {today.farmingImpact.toUpperCase()} for farming
+            {todayForecast.farmingImpact === "good" && <Check size={16} />}
+            {todayForecast.farmingImpact !== "good" && <AlertTriangle size={16} />}
+            {todayForecast.farmingImpact.toUpperCase()} for farming
           </div>
-          <p className={styles.impactAdvisory}>{today.advisory}</p>
+          <p className={styles.impactAdvisory}>{todayForecast.advisory}</p>
 
           <div className={styles.advisoryList}>
             <div className={styles.advisoryItem}>
@@ -179,7 +243,7 @@ export default function WeatherPage() {
       <div className={styles.forecastSection}>
         <h3 className={styles.sectionTitle}>{t.weather.forecastTitle}</h3>
         <div className={styles.forecastGrid}>
-          {weatherForecast.map((day, i) => (
+          {liveForecast.map((day, i) => (
             <div
               key={i}
               className={`${styles.forecastCard} ${i === 0 ? styles.forecastToday : ""}`}

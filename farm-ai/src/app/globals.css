@@ -6,11 +6,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;550;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-  /* Exact Anthropic Neutrals */
-  --bg-page: #FAF9F6;      /* Bone/Parchment */
+  /* AgroNexus Earthy Pastel Theme - Deepened for saturation */
+  --bg-page: #BFCAB9;      /* More dark/saturated agricultural sage */
   --bg-card: #ffffff;
-  --bg-hover: #F0EFEA;
-  --bg-muted: #EBEAE4;
+  --bg-hover: #A8B69F;
+  --bg-muted: #9BA98D;
   
   /* Anthropic Subject Colors */
   --bg-sage: #E6F0E6;      /* Greenish for "Build with Claude" cards */
@@ -60,22 +60,22 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  /* Borders & Shadows */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
+  /* Maximized Rounding — "Pebble Style" */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 40px;
+  --radius-2xl: 64px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.04);
+  /* Hand-Drawn Bold Buttons */
+  --brand-green-vibrant: #8AA382; /* Lush Sage as per plan */
+  --border-thick: 2.5px solid var(--ink);
+  --shadow-pop: 4px 4px 0px var(--ink);
+  --shadow-handdrawn: 3px 3px 0 var(--ink);
 
-  /* Transitions */
   --transition-fast: 120ms ease;
-  --transition-base: 200ms ease;
+  --transition-base: 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   /* Layout */
   --sidebar-width: 240px;
@@ -145,35 +145,62 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
 
-/* Buttons — Anthropic style */
+/* Buttons — Refined Hand-Drawn / Sticker Style */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 18px;
-  font-size: 0.84rem;
-  font-weight: 500;
-  border-radius: var(--radius-lg);
+  gap: 8px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 800; 
+  text-transform: uppercase;
+  border-radius: var(--radius-full);
+  border: var(--border-thick);
+  background: white;
+  color: var(--ink);
   transition: all var(--transition-base);
   white-space: nowrap;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-pop);
+  position: relative;
+  line-height: 1.2; /* Prevent clipping globally */
 }
 
-.btn:active { transform: scale(0.98); }
+.btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--ink);
+}
 
 .btn-primary {
-  background: var(--ink);
-  color: white;
+  background: var(--brand-green-vibrant);
+  color: var(--ink);
 }
-.btn-primary:hover { background: #333; }
+.btn-primary:hover {
+  background: #9BB394;
+}
+
+.btn-dark {
+  background: transparent;
+  color: var(--ink);
+  border: var(--border-thick);
+}
+
+.btn-dark:hover {
+  background: rgba(0,0,0,0.05);
+}
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--border);
+  border: var(--border-thick);
   color: var(--ink);
 }
-.btn-secondary:hover { border-color: var(--border-hover); background: var(--bg-hover); }
+.btn-secondary:hover { background: rgba(0,0,0,0.05); }
 
 .btn-green { background: var(--green-600); color: white; }
 .btn-green:hover { background: var(--green-700); }
