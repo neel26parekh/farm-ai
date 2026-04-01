@@ -35,8 +35,8 @@ export default function Navbar() {
           <Link href="/#features">Product</Link>
           <Link href="/about">About</Link>
           <Link href="/news">News</Link>
-          <Link href={user ? "/dashboard" : "/auth"} className={styles.cta}>
-            Login
+          <Link href={user ? "/dashboard" : "/auth/login"} className={styles.cta}>
+            {user ? "Dashboard" : "Login"}
           </Link>
         </div>
 

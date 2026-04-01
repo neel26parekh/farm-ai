@@ -27,7 +27,7 @@ export default function HomePage() {
           <p className={styles.heroSubtitle}>
             {t.home.heroSubtitle}
           </p>
-          <Link href="/auth" className="btn btn-primary">
+          <Link href="/auth/signup" className="btn btn-primary">
             {t.home.cta} <ArrowRight size={16} />
           </Link>
         </div>
