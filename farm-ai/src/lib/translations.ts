@@ -37,12 +37,18 @@ export const translations = {
         nutrients: "Nutrients",
         week: "week",
       },
-      alerts: {
-        title: "Recent Alerts",
-      },
       quickView: {
         market: "Market Prices",
         weather: "Weather Forecast",
+      },
+      alerts: {
+        title: "Recent Alerts",
+        messages: {
+          disease: "High humidity may increase fungal risk in wheat",
+          weather: "Heavy rain expected this weekend",
+          market: "Tomato prices surged in nearby mandis",
+          info: "Optimal irrigation window detected"
+        }
       }
     },
     home: {
@@ -117,8 +123,24 @@ export const translations = {
       corn: "Corn",
       cotton: "Cotton",
       soybean: "Soybean",
+      tomato: "Tomato",
+      onion: "Onion",
+      potato: "Potato",
+      sugarcane: "Sugarcane",
       quintal: "quintal",
       pricePer: "per",
+    },
+    severity: {
+      low: "Low",
+      medium: "Medium",
+      high: "High",
+      critical: "Critical",
+    },
+    impact: {
+      good: "Good",
+      moderate: "Moderate",
+      caution: "Caution",
+      alert: "Alert",
     }
   },
   hi: {
@@ -157,12 +179,18 @@ export const translations = {
         nutrients: "पोषक तत्व",
         week: "सप्ताह",
       },
-      alerts: {
-        title: "हाल के अलर्ट",
-      },
       quickView: {
         market: "बाजार भाव",
         weather: "मौसम पूर्वानुमान",
+      },
+      alerts: {
+        title: "हाल के अलर्ट",
+        messages: {
+          disease: "उच्च आर्द्रता से गेहूं में कवक का खतरा बढ़ सकता है",
+          weather: "इस सप्ताह के अंत में भारी बारिश की उम्मीद है",
+          market: "पास की मंडियों में टमाटर के भाव बढ़े",
+          info: "सिंचाई के लिए सही समय पाया गया"
+        }
       }
     },
     home: {
@@ -204,8 +232,24 @@ export const translations = {
       corn: "मक्का",
       cotton: "कपास",
       soybean: "सोयाबीन",
+      tomato: "टमाटर",
+      onion: "प्याज",
+      potato: "आलू",
+      sugarcane: "गन्ना",
       quintal: "क्विंटल",
       pricePer: "प्रति",
+    },
+    severity: {
+      low: "कम",
+      medium: "मध्यम",
+      high: "उच्च",
+      critical: "गंभीर",
+    },
+    impact: {
+      good: "अच्छा",
+      moderate: "सामान्य",
+      caution: "सावधान",
+      alert: "चेतावनी",
     },
     weather: {
       title: "मौसम सलाह",
@@ -247,19 +291,76 @@ export const translations = {
       diseaseDetection: "रोग ओळख",
       marketIntelligence: "बाजार माहिती",
       weatherAdvisory: "हवामान सल्ला",
-      aiAdvisor: "AI सल्लागार",
+      aiAdvisor: "AgroNexus सल्लागार",
       settings: "सेटिंग्ज",
       notifications: "सूचना",
       profile: "शेतकरी",
       proDescription: "प्रगतशील शेतकरी",
     },
     dashboard: {
-      welcome: "परत स्वागत आहे, शेतकरी बंधू!",
-      subtitle: "आज तुमच्या शेतात काय घडत आहे ते पहा.",
+      welcome: "परत स्वागत आहे, शेतकरी!",
+      subtitle: "तुमचे सर्वसमावेशक कृषी समन्वय केंद्र.",
       weatherTitle: "हवामान सल्ला",
       marketTitle: "बाजार कल",
       diseaseTitle: "अलीकडील स्कॅन",
-      advisorTitle: "AI सल्लागार",
+      advisorTitle: "Nexus सल्लागार",
+      stats: {
+        activeCrops: "सक्रिय पिके",
+        healthScore: "पीक आरोग्य गुण",
+        moisture: "जमिनीतील ओलावा",
+        revenue: "या हंगामाचा महसूल",
+        thisSeason: "या हंगामात",
+        lastWeek: "गेल्या आठवड्यापासून",
+        irrigationNeeded: "२ दिवसात सिंचन आवश्यक",
+        lastYear: "गेल्या वर्षापासून",
+      },
+      charts: {
+        title: "पीक आरोग्य कल",
+        health: "आरोग्य",
+        moisture: "ओलावा",
+        nutrients: "पोषक तत्वे",
+        week: "आठवडा",
+      },
+      quickView: {
+        market: "बाजार भाव",
+        weather: "हवामान अंदाज",
+      },
+      alerts: {
+        title: "अलीकडील इशारे",
+        messages: {
+          disease: "जास्त आर्द्रतेमुळे गव्हावर रोगाचा प्रादुर्भाव होऊ शकतो",
+          weather: "या आठवड्यात मुसळधार पावसाची शक्यता आहे",
+          market: "जवळच्या मंडईत टोमॅटोचे भाव वाढले आहेत",
+          info: "सिंचनासाठी योग्य वेळ आढळली"
+        }
+      }
+    },
+    home: {
+      heroTitle: "प्रत्येक शेतकऱ्यासाठी कृषी बुद्धिमत्ता",
+      heroSubtitle: "आम्ही शेतकऱ्यांना रोग ओळखण्यात मदत करण्यासाठी प्रगत मॉडेल तयार करतो.",
+      cta: "आपली शेती सुरू करा",
+      features: {
+        advisor: {
+          title: "तज्ञ सल्ला",
+          desc: "आमचा AgroNexus सल्लागार तुम्हाला माहितीपूर्ण निर्णय घेण्यास मदत करतो.",
+          action: "सल्लागाराला विचारा",
+        },
+        disease: {
+          title: "रोग ओळख",
+          desc: "पिकांचे फोटो अपलोड करून सेकंदात रोग ओळखा.",
+          action: "पिके स्कॅन करा",
+        },
+        market: {
+          title: "बाजार माहिती",
+          desc: "रिअल-टाइम मंडी भाव आणि कल तपासा.",
+          action: "मंडी तपासा",
+        },
+        weather: {
+          title: "हवामान सल्ला",
+          desc: "स्थानिक हवामान इशारे आणि सल्ला मिळवा.",
+          action: "हवामान डेटा मिळवा",
+        }
+      }
     },
     advisor: {
       title: "AI पीक सल्लागार",
@@ -299,6 +400,31 @@ export const translations = {
       prevention: "प्रतिबंधात्मक उपाय",
       severity: "तीव्रता",
       confidence: "विश्वासार्हता",
+    },
+    data: {
+      wheat: "गहू",
+      rice: "तांदूळ",
+      corn: "मका",
+      cotton: "कापूस",
+      soybean: "सोयाबीन",
+      tomato: "टोमॅटो",
+      onion: "कांदा",
+      potato: "बटाटा",
+      sugarcane: "ऊस",
+      quintal: "क्विंटल",
+      pricePer: "प्रति",
+    },
+    severity: {
+      low: "कमी",
+      medium: "मध्यम",
+      high: "जास्त",
+      critical: "गंभीर",
+    },
+    impact: {
+      good: "उत्तम",
+      moderate: "मध्यम",
+      caution: "सावधान",
+      alert: "इशारा",
     }
   },
   te: {
@@ -307,7 +433,7 @@ export const translations = {
       diseaseDetection: "వ్యాధి గుర్తింపు",
       marketIntelligence: "మార్కెట్ సమాచారం",
       weatherAdvisory: "వాతావరణ సలహా",
-      aiAdvisor: "AI సలహాదారు",
+      aiAdvisor: "AgroNexus సలహాదారు",
       settings: "సెట్టింగులు",
       notifications: "నోటిఫికేషన్లు",
       profile: "రైతు",
@@ -315,11 +441,68 @@ export const translations = {
     },
     dashboard: {
       welcome: "తిరిగి స్వాగతం, రైతు సోదరా!",
-      subtitle: "ఈరోజు మీ పొలంలో ఏమి జరుగుతుందో ఇక్కడ చూడండి.",
+      subtitle: "మీ సమగ్ర వ్యవసాయ సమన్వయ కేంద్రం.",
       weatherTitle: "వాతావరణ సలహా",
       marketTitle: "మార్కెట్ ధోరణులు",
       diseaseTitle: "ఇటీవలి స్కాన్లు",
-      advisorTitle: "AI సలహాదారు",
+      advisorTitle: "Nexus సలహాదారు",
+      stats: {
+        activeCrops: "క్రియాశీల పంటలు",
+        healthScore: "పంట ఆరోగ్య స్కోరు",
+        moisture: "నేల తేమ",
+        revenue: "ఈ సీజన్ ఆదాయం",
+        thisSeason: "ఈ సీజన్లో",
+        lastWeek: "గత వారం నుండి",
+        irrigationNeeded: "2 రోజుల్లో నీటి పారుదల అవసరం",
+        lastYear: "గత సంవత్సరం నుండి",
+      },
+      charts: {
+        title: "పంట ఆరోగ్య ధోరణులు",
+        health: "ఆరోగ్యం",
+        moisture: "తేమ",
+        nutrients: "పోషకాలు",
+        week: "వారం",
+      },
+      quickView: {
+        market: "మార్కెట్ ధరలు",
+        weather: "వాతావరణ సూచన",
+      },
+      alerts: {
+        title: "ఇటీవలి హెచ్చరికలు",
+        messages: {
+          disease: "అధిక తేమ వల్ల గోధుమ పంటకు తెగుళ్ల ముప్పు ఉండవచ్చు",
+          weather: "ఈ వారాంతంలో భారీ వర్షాలు కురిసే అవకాశం ఉంది",
+          market: "సమీపంలోని మండిలలో టమోటా ధరలు పెరిగాయి",
+          info: "నీటి పారుదలకు సరైన సమయం గుర్తించబడింది"
+        }
+      }
+    },
+    home: {
+      heroTitle: "ప్రతి రైతు కోసం వ్యవసాయ మేధస్సు",
+      heroSubtitle: "మేము వ్యాధులను గుర్తించడానికి రైతులకు సహాయపడే నమూనాలను నిర్మిస్తాము.",
+      cta: "మీ వ్యవసాయాన్ని ప్రారంభించండి",
+      features: {
+        advisor: {
+          title: "నిపుణుల సలహా",
+          desc: "మా AgroNexus సలహాదారు మీకు సరైన నిర్ణయాలు తీసుకోవడంలో సహాయపడుతుంది.",
+          action: "సలహాదారుని అడగండి",
+        },
+        disease: {
+          title: "వ్యాధి గుర్తింపు",
+          desc: "సెకన్లలో వ్యాధులను గుర్తించడానికి ఫోటోలను అప్‌లోడ్ చేయండి.",
+          action: "పంటలను స్కాన్ చేయండి",
+        },
+        market: {
+          title: "మార్కెట్ సమాచారం",
+          desc: "రియల్ టైమ్ మండి ధరలను ట్రాక్ చేయండి.",
+          action: "మండిలను చూడండి",
+        },
+        weather: {
+          title: "వాతావరణ సలహా",
+          desc: "స్థానిక వాతావరణ హెచ్చరికలను పొందండి.",
+          action: "డేటా పొందండి",
+        }
+      }
     },
     advisor: {
       title: "AI పంట సలహాదారు",
@@ -359,6 +542,31 @@ export const translations = {
       prevention: "ముందస్తు జాగ్రత్తలు",
       severity: "తీవ్రత",
       confidence: "నమ్మకం",
+    },
+    data: {
+      wheat: "గోధుమ",
+      rice: "వరి",
+      corn: "మొక్కజొన్న",
+      cotton: "పత్తి",
+      soybean: "సోయాబీన్",
+      tomato: "టమోటా",
+      onion: "ఉల్లిపాయ",
+      potato: "బంగాళదుంప",
+      sugarcane: "చెరకు",
+      quintal: "క్వింటాల్",
+      pricePer: "ప్రతి",
+    },
+    severity: {
+      low: "తక్కువ",
+      medium: "మధ్యస్థం",
+      high: "ఎక్కువ",
+      critical: "తీవ్రమైన",
+    },
+    impact: {
+      good: "మంచిది",
+      moderate: "మధ్యస్థం",
+      caution: "జాగ్రత్త",
+      alert: "హెచ్చరిక",
     }
   }
 };

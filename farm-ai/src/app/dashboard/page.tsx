@@ -23,6 +23,8 @@ import {
 import { cropHealthData, dashboardAlerts, cropPrices, weatherForecast } from "@/lib/mockData";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import Skeleton from "@/components/Skeleton";
+import LiveIndicator from "@/components/LiveIndicator";
 import styles from "./page.module.css";
 
 interface AnimatedCounterProps {
@@ -63,16 +65,21 @@ function AnimatedCounter({ target, suffix = "", prefix = "" }: AnimatedCounterPr
 export default function DashboardPage() {
   const { t, language } = useLanguage();
   const [mounted, setMounted] = useState(false);
-  const [greeting, setGreeting] = useState("Hello");
+  const [loading, setLoading] = useState(true);
+  const [greeting, setGreeting] = useState("");
   const [dateStr, setDateStr] = useState("");
   const { user } = useAuth();
 
   useEffect(() => {
     setMounted(true);
+    // Simulate real-time data fetch delay for skeleton demo
+    const timer = setTimeout(() => setLoading(false), 1200);
+
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting(t.dashboard.welcome.split(",")[0] || "Good Morning");
-    else if (hour < 17) setGreeting(t.dashboard.welcome.split(",")[0] || "Good Afternoon");
-    else setGreeting(t.dashboard.welcome.split(",")[0] || "Good Evening");
+    const welcomeText = t.dashboard.welcome.split(",")[1] || t.dashboard.welcome;
+    if (hour < 12) setGreeting(language === 'en' ? "Good Morning" : t.dashboard.welcome.split(",")[0]);
+    else if (hour < 17) setGreeting(language === 'en' ? "Good Afternoon" : t.dashboard.welcome.split(",")[0]);
+    else setGreeting(language === 'en' ? "Good Evening" : t.dashboard.welcome.split(",")[0]);
 
     setDateStr(
       new Date().toLocaleDateString(language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : language === "mr" ? "mr-IN" : "te-IN", {
@@ -82,6 +89,8 @@ export default function DashboardPage() {
         day: "numeric",
       })
     );
+
+    return () => clearTimeout(timer);
   }, [language, t.dashboard.welcome]);
 
   const alertIcons: Record<string, React.ReactNode> = {
@@ -98,111 +107,79 @@ export default function DashboardPage() {
     info: "#8b5cf6",
   };
 
+  // Helper to translate alert data
+  const getAlertMessage = (type: string) => {
+    return t.dashboard.alerts.messages?.[type] || "Alert notification";
+  };
+
+  if (!mounted) return null;
+
   return (
     <div className={styles.dashboard}>
       {/* Header */}
       <div className={styles.header}>
         <div>
-          <h1 className={styles.greeting}>{greeting}, {user ? user.name.split(" ")[0] : "Farmer"}</h1>
+          <h1 className={styles.greeting}>
+            {loading ? <Skeleton width={250} height={32} /> : `${greeting}, ${user ? user.name.split(" ")[0] : t.sidebar.profile}`}
+          </h1>
           <p className={styles.subGreeting}>
-            {t.dashboard.subtitle}
+            {loading ? <Skeleton width={320} height={20} className={styles.mtShort} /> : t.dashboard.subtitle}
           </p>
         </div>
         <div className={styles.headerDate}>
-          {dateStr || "Loading..."}
+          {loading ? <Skeleton width={180} height={20} /> : dateStr}
         </div>
       </div>
 
       {/* Stat Cards */}
       <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statCardIcon} style={{ background: "rgba(16, 185, 129, 0.12)" }}>
-            <Sprout size={22} color="#10b981" />
+        {[
+          { icon: <Sprout size={22} color="#10b981" />, bg: "rgba(16, 185, 129, 0.12)", label: t.dashboard.stats.activeCrops, value: 12, trend: `+2 ${t.dashboard.stats.thisSeason}`, trendColor: "#10b981", tIcon: <ArrowUpRight size={14} /> },
+          { icon: <Heart size={22} color="#f87171" />, bg: "rgba(239, 68, 68, 0.12)", label: t.dashboard.stats.healthScore, value: 92, suffix: "%", trend: `+5% ${t.dashboard.stats.lastWeek}`, trendColor: "#10b981", tIcon: <ArrowUpRight size={14} /> },
+          { icon: <Droplets size={22} color="#60a5fa" />, bg: "rgba(59, 130, 246, 0.12)", label: t.dashboard.stats.moisture, value: 72, suffix: "%", trend: t.dashboard.stats.irrigationNeeded, trendColor: "#f59e0b", tIcon: <ArrowDownRight size={14} /> },
+          { icon: <TrendingUp size={22} color="#fbbf24" />, bg: "rgba(245, 158, 11, 0.12)", label: t.dashboard.stats.revenue, value: 485000, prefix: "₹", trend: `+18% ${t.dashboard.stats.lastYear}`, trendColor: "#10b981", tIcon: <ArrowUpRight size={14} /> },
+        ].map((stat, i) => (
+          <div key={i} className={styles.statCard}>
+            <div className={styles.statCardIcon} style={{ background: stat.bg }}>
+              {stat.icon}
+            </div>
+            <div className={styles.statCardInfo}>
+              <p className={styles.statCardLabel}>{stat.label}</p>
+              <p className={styles.statCardValue}>
+                {loading ? <Skeleton width={60} height={28} /> : <AnimatedCounter target={stat.value} suffix={stat.suffix} prefix={stat.prefix} />}
+              </p>
+            </div>
+            <div className={styles.statCardTrend} style={{ color: stat.trendColor }}>
+              {stat.tIcon}
+              <span>{stat.trend}</span>
+            </div>
           </div>
-          <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>{t.dashboard.stats.activeCrops}</p>
-            <p className={styles.statCardValue}>
-              {mounted ? <AnimatedCounter target={12} /> : "0"}
-            </p>
-          </div>
-          <div className={styles.statCardTrend} style={{ color: "#10b981" }}>
-            <ArrowUpRight size={14} />
-            <span>+2 {t.dashboard.stats.thisSeason}</span>
-          </div>
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.statCardIcon} style={{ background: "rgba(239, 68, 68, 0.12)" }}>
-            <Heart size={22} color="#f87171" />
-          </div>
-          <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>{t.dashboard.stats.healthScore}</p>
-            <p className={styles.statCardValue}>
-              {mounted ? <AnimatedCounter target={92} suffix="%" /> : "0%"}
-            </p>
-          </div>
-          <div className={styles.statCardTrend} style={{ color: "#10b981" }}>
-            <ArrowUpRight size={14} />
-            <span>+5% {t.dashboard.stats.lastWeek}</span>
-          </div>
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.statCardIcon} style={{ background: "rgba(59, 130, 246, 0.12)" }}>
-            <Droplets size={22} color="#60a5fa" />
-          </div>
-          <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>{t.dashboard.stats.moisture}</p>
-            <p className={styles.statCardValue}>
-              {mounted ? <AnimatedCounter target={72} suffix="%" /> : "0%"}
-            </p>
-          </div>
-          <div className={styles.statCardTrend} style={{ color: "#f59e0b" }}>
-            <ArrowDownRight size={14} />
-            <span>{t.dashboard.stats.irrigationNeeded}</span>
-          </div>
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.statCardIcon} style={{ background: "rgba(245, 158, 11, 0.12)" }}>
-            <TrendingUp size={22} color="#fbbf24" />
-          </div>
-          <div className={styles.statCardInfo}>
-            <p className={styles.statCardLabel}>{t.dashboard.stats.revenue}</p>
-            <p className={styles.statCardValue}>
-              {mounted ? <AnimatedCounter target={485000} prefix="₹" /> : "₹0"}
-            </p>
-          </div>
-          <div className={styles.statCardTrend} style={{ color: "#10b981" }}>
-            <ArrowUpRight size={14} />
-            <span>+18% {t.dashboard.stats.lastYear}</span>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Charts + Alerts */}
       <div className={styles.mainGrid}>
         {/* Crop Health Chart */}
-        <div className={styles.chartCard}>
+        <div className={styles.chartCard} style={{ opacity: loading ? 0.6 : 1, transition: 'opacity 0.3s' }}>
           <div className={styles.chartHeader}>
-            <h3>{t.dashboard.charts.title}</h3>
+            <h3>{loading ? <Skeleton width={200} height={24} /> : t.dashboard.charts.title}</h3>
             <div className={styles.chartLegend}>
-              <span className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: "#10b981" }} />
-                {t.dashboard.charts.health}
-              </span>
-              <span className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: "#60a5fa" }} />
-                {t.dashboard.charts.moisture}
-              </span>
-              <span className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: "#fbbf24" }} />
-                {t.dashboard.charts.nutrients}
-              </span>
+              {[
+                { dot: "#10b981", label: t.dashboard.charts.health },
+                { dot: "#60a5fa", label: t.dashboard.charts.moisture },
+                { dot: "#fbbf24", label: t.dashboard.charts.nutrients },
+              ].map((item, i) => (
+                <span key={i} className={styles.legendItem}>
+                  <span className={styles.legendDot} style={{ background: item.dot }} />
+                  {loading ? <Skeleton width={50} height={14} /> : item.label}
+                </span>
+              ))}
             </div>
           </div>
           <div className={styles.chartWrap}>
-            {mounted && (
+            {loading ? (
+              <Skeleton width="100%" height={280} borderRadius={12} />
+            ) : (
               <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={cropHealthData}>
                   <defs>
@@ -241,23 +218,42 @@ export default function DashboardPage() {
 
         {/* Alerts */}
         <div className={styles.alertsCard}>
-          <h3 className={styles.alertsTitle}>{t.dashboard.alerts.title}</h3>
+          <h3 className={styles.alertsTitle}>{loading ? <Skeleton width={120} height={24} /> : t.dashboard.alerts.title}</h3>
           <div className={styles.alertsList}>
-            {dashboardAlerts.map((alert) => (
-              <div key={alert.id} className={styles.alertItem}>
-                <div
-                  className={styles.alertIcon}
-                  style={{ color: alertColors[alert.type], background: `${alertColors[alert.type]}15` }}
-                >
-                  {alertIcons[alert.type]}
+            {loading ? (
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className={styles.alertItem}>
+                  <Skeleton width={40} height={40} circle />
+                  <div className={styles.alertContent}>
+                    <Skeleton width={150} height={16} />
+                    <Skeleton width={200} height={14} className={styles.mtSmall} />
+                  </div>
                 </div>
-                <div className={styles.alertContent}>
-                  <p className={styles.alertTitle}>{alert.title}</p>
-                  <p className={styles.alertMessage}>{alert.message}</p>
-                  <p className={styles.alertTime}>{alert.time}</p>
+              ))
+            ) : dashboardAlerts.length > 0 ? (
+              dashboardAlerts.map((alert) => (
+                <div key={alert.id} className={styles.alertItem}>
+                  <div
+                    className={styles.alertIcon}
+                    style={{ color: alertColors[alert.type], background: `${alertColors[alert.type]}15` }}
+                  >
+                    {alertIcons[alert.type]}
+                  </div>
+                  <div className={styles.alertContent}>
+                    <p className={styles.alertTitle}>{alert.title}</p>
+                    <p className={styles.alertMessage}>{getAlertMessage(alert.type)}</p>
+                    <p className={styles.alertTime}>{alert.time}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <EmptyState 
+                title="All Clear" 
+                description="No active alerts for your farm at this time. We'll notify you if anything changes."
+                image="/images/advisor-bold.png"
+                className={styles.compactEmpty}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -266,61 +262,76 @@ export default function DashboardPage() {
       <div className={styles.bottomGrid}>
         {/* Market Prices */}
         <div className={styles.quickCard}>
-          <h3 className={styles.quickTitle}>
-            <TrendingUp size={18} />
-            {t.dashboard.quickView.market}
-          </h3>
+          <div className={styles.quickCardHeader}>
+            <h3 className={styles.quickTitle}>
+              <TrendingUp size={18} />
+              {t.dashboard.quickView.market}
+            </h3>
+            <LiveIndicator />
+          </div>
           <div className={styles.priceList}>
-            {cropPrices.slice(0, 5).map((crop, i) => (
-              <div key={i} className={styles.priceItem}>
-                <span className={styles.cropName}>{(t.data as any)[crop.crop.toLowerCase()] || crop.crop}</span>
-                <span className={styles.cropPrice}>₹{crop.price} / {(t.data as any).quintal}</span>
-                <span
-                  className={styles.cropChange}
-                  style={{ color: crop.change >= 0 ? "#10b981" : "#ef4444" }}
-                >
-                  {crop.change >= 0 ? "+" : ""}
-                  {crop.change}%
-                </span>
-              </div>
-            ))}
+            {loading ? (
+              Array(4).fill(0).map((_, i) => <Skeleton key={i} width="100%" height={32} className={styles.mbSmall} />)
+            ) : (
+              cropPrices.slice(0, 5).map((crop, i) => (
+                <div key={i} className={styles.priceItem}>
+                  <span className={styles.cropName}>{t?.data ? (t.data as any)[crop.crop.toLowerCase()] || crop.crop : crop.crop}</span>
+                  <span className={styles.cropPrice}>₹{crop.price} / {t?.data?.quintal || "quintal"}</span>
+                  <span
+                    className={styles.cropChange}
+                    style={{ color: crop.change >= 0 ? "#10b981" : "#ef4444" }}
+                  >
+                    {crop.change >= 0 ? "+" : ""}
+                    {crop.change}%
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
         {/* Weather Quick */}
         <div className={styles.quickCard}>
-          <h3 className={styles.quickTitle}>
-            <CloudSun size={18} />
-            {t.dashboard.quickView.weather}
-          </h3>
+          <div className={styles.quickCardHeader}>
+            <h3 className={styles.quickTitle}>
+              <CloudSun size={18} />
+              {t.dashboard?.quickView?.weather || "Weather"}
+            </h3>
+            <LiveIndicator />
+          </div>
           <div className={styles.weatherList}>
-            {weatherForecast.slice(0, 5).map((day, i) => (
-              <div key={i} className={styles.weatherItem}>
-                <span className={styles.weatherDay}>{day.day}</span>
-                <span className={styles.weatherCondition}>
-                  {day.condition === "sunny" && "☀️"}
-                  {day.condition === "cloudy" && "☁️"}
-                  {day.condition === "rainy" && "🌧️"}
-                  {day.condition === "partly-cloudy" && "⛅"}
-                  {day.condition === "stormy" && "⛈️"}
-                </span>
-                <span className={styles.weatherTemp}>{day.temp}°C</span>
-                <span
-                  className={`badge ${
-                    day.farmingImpact === "good"
-                      ? ""
-                      : day.farmingImpact === "moderate"
-                      ? "badge-warning"
-                      : "badge-danger"
-                  }`}
-                >
-                  {day.farmingImpact}
-                </span>
-              </div>
-            ))}
+            {loading ? (
+              Array(4).fill(0).map((_, i) => <Skeleton key={i} width="100%" height={32} className={styles.mbSmall} />)
+            ) : (
+              weatherForecast.slice(0, 5).map((day, i) => (
+                <div key={i} className={styles.weatherItem}>
+                  <span className={styles.weatherDay}>{day.day}</span>
+                  <span className={styles.weatherCondition}>
+                    {day.condition === "sunny" && "☀️"}
+                    {day.condition === "cloudy" && "☁️"}
+                    {day.condition === "rainy" && "🌧️"}
+                    {day.condition === "partly-cloudy" && "⛅"}
+                    {day.condition === "stormy" && "⛈️"}
+                  </span>
+                  <span className={styles.weatherTemp}>{day.temp}°C</span>
+                  <span
+                    className={`badge ${
+                      day.farmingImpact === "good"
+                        ? ""
+                        : day.farmingImpact === "moderate"
+                        ? "badge-warning"
+                        : "badge-danger"
+                    }`}
+                  >
+                    {t?.impact ? t.impact[day.farmingImpact as keyof typeof t.impact] || day.farmingImpact : day.farmingImpact}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
