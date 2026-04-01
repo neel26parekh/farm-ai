@@ -16,10 +16,10 @@ export default function DashboardLayout({
         style={{
           flex: 1,
           marginLeft: collapsed ? "var(--sidebar-collapsed)" : "var(--sidebar-width)",
-          padding: "32px 40px",
-          transition: "margin-left var(--transition-base)",
+          padding: "var(--space-6) var(--space-5)", /* Responsive padding via variables */
+          transition: "margin-left var(--transition-base), padding 0.3s ease",
           minWidth: 0,
-          background: "#fafaf8",
+          background: "var(--bg-page)",
         }}
       >
         {children}

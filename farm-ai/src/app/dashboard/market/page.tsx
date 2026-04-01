@@ -421,7 +421,7 @@ export default function MarketPage() {
       <div className={styles.chartGrid}>
         <div className={styles.chartCard}>
           <div className={styles.chartHeader}>
-            <h3>{t.market.priceTrends}</h3>
+            <h3>ML Prophet Price Forecasting</h3>
             <div className={styles.cropSelector}>
               {["wheat", "rice", "tomato", "onion", "gram", "mustard"].map((crop) => (
                 <button

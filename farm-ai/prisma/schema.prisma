@@ -48,6 +48,9 @@ model User {
   sessions      Session[]
   pinnedCrops   PinnedCrop[]
   chatMessages  ChatMessage[]
+  
+  farmProfile   FarmProfile?
+  settings      Settings?
 }
 
 model VerificationToken {
@@ -77,4 +80,28 @@ model ChatMessage {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   timestamp DateTime @default(now())
+}
+
+model FarmProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location    String?
+  farmSize    Float?
+  soilType    String?
+  primaryCrop String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Settings {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pushNotifications    Boolean  @default(false)
+  smsAlerts            Boolean  @default(false)
+  marketCurrency       String   @default("INR")
+  mlTrainingConsent    Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }

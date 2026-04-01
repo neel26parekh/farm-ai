@@ -115,11 +115,15 @@
   100% { top: 100%; opacity: 0; }
 }
 
-.corner { position: absolute; width: 32px; height: 32px; border-color: white; z-index: 26; }
-.topLeft { top: 20px; left: 20px; border-top: 3px solid; border-left: 3px solid; border-radius: 4px 0 0 0; }
-.topRight { top: 20px; right: 20px; border-top: 3px solid; border-right: 3px solid; border-radius: 0 4px 0 0; }
-.bottomLeft { bottom: 20px; left: 20px; border-bottom: 3px solid; border-left: 3px solid; border-radius: 0 0 0 4px; }
-.bottomRight { bottom: 20px; right: 20px; border-bottom: 3px solid; border-right: 3px solid; border-radius: 0 0 4px 0; }
+.corner { position: absolute; width: 40px; height: 40px; border-color: var(--brand-green-vibrant); z-index: 26; animation: cvPulse 1.5s infinite alternate; }
+@keyframes cvPulse {
+  from { opacity: 0.5; border-color: white; }
+  to { opacity: 1; border-color: var(--brand-green-vibrant); box-shadow: 0 0 12px var(--brand-green-vibrant) inset; }
+}
+.topLeft { top: 20px; left: 20px; border-top: 4px solid; border-left: 4px solid; border-radius: 4px 0 0 0; }
+.topRight { top: 20px; right: 20px; border-top: 4px solid; border-right: 4px solid; border-radius: 0 4px 0 0; }
+.bottomLeft { bottom: 20px; left: 20px; border-bottom: 4px solid; border-left: 4px solid; border-radius: 0 0 0 4px; }
+.bottomRight { bottom: 20px; right: 20px; border-bottom: 4px solid; border-right: 4px solid; border-radius: 0 0 4px 0; }
 
 /* Result Section */
 .resultSection { display: flex; flex-direction: column; gap: 24px; }

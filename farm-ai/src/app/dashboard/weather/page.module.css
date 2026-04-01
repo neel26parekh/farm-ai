@@ -32,7 +32,15 @@
 
 .currentGrid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; margin-bottom: 40px; }
 
-.currentCard, .impactCard, .chartCard, .cropAlerts {
+.currentCard {
+  background: var(--bg-sky);
+  border: var(--border-thick);
+  border-radius: var(--radius-2xl);
+  padding: 32px;
+  box-shadow: var(--shadow-pop);
+}
+
+.impactCard, .chartCard, .cropAlerts {
   background: white;
   border: var(--border-thick);
   border-radius: var(--radius-2xl);

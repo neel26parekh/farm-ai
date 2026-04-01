@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, User, MapPin, Sprout, Languages, ShieldCheck, Loader2 } from "lucide-react";
+import { Save, User, MapPin, Sprout, Languages, ShieldCheck, Loader2, Bell, Smartphone, Database, Sparkles } from "lucide-react";
 import styles from "./page.module.css";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -11,6 +11,10 @@ interface UserSettings {
   farmSize: string;
   primaryCrop: string;
   language: string;
+  pushNotifications: boolean;
+  smsAlerts: boolean;
+  aiDataConsent: boolean;
+  currency: string;
 }
 
 export default function SettingsPage() {
@@ -23,25 +27,29 @@ export default function SettingsPage() {
     farmSize: "5",
     primaryCrop: "Wheat",
     language: "English",
+    pushNotifications: true,
+    smsAlerts: false,
+    aiDataConsent: true,
+    currency: "INR",
   });
 
   useEffect(() => {
-    // Sync with Auth Context if available
     if (user?.name) {
       setSettings(prev => ({ ...prev, fullName: prev.fullName || user.name }));
     }
 
-    // Load from local storage
     const saved = localStorage.getItem("farm_ai_settings");
     if (saved) {
       try {
-        setSettings(JSON.parse(saved));
+        setSettings({ ...settings, ...JSON.parse(saved) });
       } catch (e) {}
     }
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const target = e.target;
+    const value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value;
+    const name = target.name;
     setSettings(prev => ({ ...prev, [name]: value }));
   };
 
@@ -49,7 +57,6 @@ export default function SettingsPage() {
     e.preventDefault();
     setIsSaving(true);
     
-    // Simulate real API latency
     setTimeout(() => {
       localStorage.setItem("farm_ai_settings", JSON.stringify(settings));
       setIsSaving(false);
@@ -62,9 +69,9 @@ export default function SettingsPage() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Farm Configuration</h1>
+        <h1 className={styles.title}>Platform Settings</h1>
         <p className={styles.subtitle}>
-          Customize your profile to receive hyper-personalized AI advice, market alerts, and disease models.
+          Configure your preferences for AgroNexus's AI models, global market algorithms, and SMS alerts.
         </p>
       </div>
 
@@ -74,12 +81,12 @@ export default function SettingsPage() {
             <div className={styles.avatarWrap}>
               <User size={32} className={styles.avatarIcon} />
             </div>
-            <h3 className={styles.sidebarName}>{settings.fullName || "Farmer"}</h3>
+            <h3 className={styles.sidebarName}>{settings.fullName || "AgroNexus Commander"}</h3>
             <p className={styles.sidebarRole}>Pro Member</p>
             
             <div className={styles.sidebarBadges}>
               <div className={styles.badge}>
-                <ShieldCheck size={14} /> AI Enhanced Profile
+                <ShieldCheck size={14} /> Platform Authenticated
               </div>
             </div>
           </div>
@@ -121,7 +128,7 @@ export default function SettingsPage() {
 
           <h2 className={styles.formTitle}>Farm Details (AI Context)</h2>
           <p className={styles.formDesc}>
-            The Gemini AI uses this data to customize its agronomic recommendations based on your local climate and scale.
+            Our ML models customize agronomic recommendations based on your local climate, scale, and currency.
           </p>
           
           <div className={styles.formGrid}>
@@ -170,6 +177,66 @@ export default function SettingsPage() {
                 />
               </div>
             </div>
+            
+            <div className={styles.inputGroup}>
+              <label>Market Currency</label>
+              <div className={styles.inputWrap}>
+                <Database size={18} className={styles.inputIcon} />
+                <select name="currency" value={settings.currency} onChange={handleChange}>
+                  <option value="INR">INR (₹)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <h2 className={styles.formTitle}>Notifications & Alerts</h2>
+          <div className={styles.toggleGroup}>
+            <div className={styles.toggleRow}>
+              <div className={styles.toggleInfo}>
+                <Bell size={18} />
+                <div>
+                  <strong>Push Notifications</strong>
+                  <p>Receive extreme weather and disease alerts in the browser.</p>
+                </div>
+              </div>
+              <label className={styles.switch}>
+                <input type="checkbox" name="pushNotifications" checked={settings.pushNotifications} onChange={handleChange} />
+                <span className={styles.slider}></span>
+              </label>
+            </div>
+            
+            <div className={styles.toggleRow}>
+              <div className={styles.toggleInfo}>
+                <Smartphone size={18} />
+                <div>
+                  <strong>Market Spike SMS Alerts</strong>
+                  <p>Get an SMS when your primary crop price jumps significantly.</p>
+                </div>
+              </div>
+              <label className={styles.switch}>
+                <input type="checkbox" name="smsAlerts" checked={settings.smsAlerts} onChange={handleChange} />
+                <span className={styles.slider}></span>
+              </label>
+            </div>
+          </div>
+
+          <h2 className={styles.formTitle}>Data & Machine Learning</h2>
+          <div className={styles.toggleGroup}>
+            <div className={styles.toggleRow}>
+              <div className={styles.toggleInfo}>
+                <Sparkles size={18} style={{ color: "var(--brand-green-vibrant)" }} />
+                <div>
+                  <strong>Global ML Training Consent</strong>
+                  <p>Allow AgroNexus to anonymize and use your crop yield and disease data to train better predictive models.</p>
+                </div>
+              </div>
+              <label className={styles.switch}>
+                <input type="checkbox" name="aiDataConsent" checked={settings.aiDataConsent} onChange={handleChange} />
+                <span className={styles.slider}></span>
+              </label>
+            </div>
           </div>
 
           <div className={styles.formFooter}>
@@ -179,7 +246,7 @@ export default function SettingsPage() {
               disabled={isSaving}
             >
               {isSaving ? (
-                <><Loader2 size={18} className="spin" /> Saving...</>
+                <><Loader2 size={18} className="spin" /> Syncing with Platform...</>
               ) : (
                 <><Save size={18} /> Save Settings</>
               )}
@@ -187,7 +254,7 @@ export default function SettingsPage() {
             
             {showToast && (
               <span className={styles.successToast}>
-                <ShieldCheck size={16} /> Configuration saved to AI context
+                <ShieldCheck size={16} /> Configuration synced successfully
               </span>
             )}
           </div>
