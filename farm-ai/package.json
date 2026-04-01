@@ -12,6 +12,7 @@
     "@ai-sdk/google": "^3.0.55",
     "@ai-sdk/react": "^3.0.144",
     "@auth/prisma-adapter": "^2.11.1",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.16.0",
     "ai": "^6.0.142",
     "framer-motion": "^12.38.0",

@@ -1,10 +1,4 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateText } from 'ai';
-import { auth } from "@/auth";
-
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export const maxDuration = 30;
 
@@ -16,25 +10,29 @@ export async function POST(req: Request) {
     return Response.json({ error: "No image provided" }, { status: 400 });
   }
 
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return Response.json({ error: "API key not configured" }, { status: 500 });
+  }
+
   // Convert the uploaded file to base64
   const bytes = await imageFile.arrayBuffer();
   const base64 = Buffer.from(bytes).toString("base64");
-  const mimeType = imageFile.type || "image/jpeg";
+  const mimeType = (imageFile.type || "image/jpeg") as string;
 
   try {
-    const { text } = await generateText({
-      model: google("gemini-2.5-flash"),
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "image",
-              image: `data:${mimeType};base64,${base64}`,
-            },
-            {
-              type: "text",
-              text: `You are an expert plant pathologist AI. Analyze this plant/crop image and provide a diagnosis.
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const result = await model.generateContent([
+      {
+        inlineData: {
+          data: base64,
+          mimeType: mimeType,
+        },
+      },
+      {
+        text: `You are an expert plant pathologist AI. Analyze this plant/crop image and provide a diagnosis.
 
 IMPORTANT: Respond ONLY in valid JSON format with this exact structure (no markdown, no code blocks, just raw JSON):
 {
@@ -50,21 +48,21 @@ IMPORTANT: Respond ONLY in valid JSON format with this exact structure (no markd
 
 If the image is not a plant or crop, still return the JSON with name "Not a Plant Image" and appropriate fields.
 Be specific about Indian agriculture treatments and locally available solutions.`,
-            },
-          ],
-        },
-      ],
-    });
+      },
+    ]);
+
+    const response = result.response;
+    const text = response.text();
 
     // Parse the JSON response from Gemini
-    let result;
+    let parsed;
     try {
       // Strip any markdown code block markers if present
       const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-      result = JSON.parse(cleaned);
+      parsed = JSON.parse(cleaned);
     } catch {
       // If parsing fails, create a structured fallback
-      result = {
+      parsed = {
         name: "Analysis Complete",
         crop: "Unknown",
         description: text.slice(0, 200),
@@ -76,11 +74,11 @@ Be specific about Indian agriculture treatments and locally available solutions.
       };
     }
 
-    return Response.json({ result });
+    return Response.json({ result: parsed });
   } catch (error: any) {
-    console.error("Vision analysis error:", error);
+    console.error("Vision analysis error:", error?.message || error);
     return Response.json(
-      { error: "Failed to analyze image. Please try again." },
+      { error: `Failed to analyze image: ${error?.message || "Unknown error"}` },
       { status: 500 }
     );
   }
