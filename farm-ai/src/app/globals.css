@@ -231,6 +231,23 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
 .badge-warning { background: #fef9c3; color: #92400e; border-color: #fde68a; }
 .badge-danger { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
 
+.model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  color: #166534;
+  border: 1.5px solid #bbf7d0;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 /* Section */
 .section { padding: var(--space-24) var(--space-6); max-width: var(--max-width); margin: 0 auto; }
 .section-title { font-size: var(--text-4xl); font-weight: 700; margin-bottom: var(--space-4); }

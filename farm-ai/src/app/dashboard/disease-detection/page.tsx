@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import Image from "next/image";
-import { CheckIcon, AlertTriangle, Upload, X, Sprout, Info, Shield, Droplets, Loader2, Leaf, ShieldAlert, Pill, ShieldCheck, Check } from "lucide-react";
+import { CheckIcon, AlertTriangle, Upload, X, Sprout, Info, Shield, Droplets, Loader2, Leaf, ShieldAlert, Pill, ShieldCheck, Check, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { sampleDiseaseResults, DiseaseResult } from "@/lib/mockData";
 import styles from "./page.module.css";
@@ -43,25 +43,28 @@ export default function DiseaseDetectionPage() {
       const formData = new FormData();
       formData.append("image", file);
 
-      const res = await fetch("http://localhost:8000/api/predict-disease", {
+      const res = await fetch("/api/vision/analyze", {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to analyze image");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to analyze image");
+      }
 
       const data = await res.json();
       setResult(data.result);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setResult({
         name: "Analysis Failed",
         crop: "Unknown",
-        description: "There was an error connecting to the AgroNexus ML backend. Please check your connection or try again later.",
+        description: error.message || "There was an error analyzing your image. Please try again.",
         symptoms: [],
         confidence: 0,
         severity: "critical",
-        treatment: ["Please try uploading the image again or check your local server status."],
+        treatment: ["Please try uploading the image again."],
         prevention: []
       });
     } finally {
@@ -91,7 +94,7 @@ export default function DiseaseDetectionPage() {
             {t.disease.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            {t.disease.subtitle}
+            {t.disease.subtitle} <span className="model-badge"><Sparkles size={10} />Gemini Vision AI</span>
           </p>
         </div>
       </div>

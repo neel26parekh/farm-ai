@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import MobileNav from "@/components/MobileNav";
 
 export default function DashboardLayout({
   children,
@@ -16,7 +17,8 @@ export default function DashboardLayout({
         style={{
           flex: 1,
           marginLeft: collapsed ? "var(--sidebar-collapsed)" : "var(--sidebar-width)",
-          padding: "var(--space-6) var(--space-5)", /* Responsive padding via variables */
+          padding: "var(--space-6) var(--space-5)",
+          paddingBottom: "80px", /* Space for mobile nav */
           transition: "margin-left var(--transition-base), padding 0.3s ease",
           minWidth: 0,
           background: "var(--bg-page)",
@@ -24,6 +26,7 @@ export default function DashboardLayout({
       >
         {children}
       </main>
+      <MobileNav />
     </div>
   );
 }

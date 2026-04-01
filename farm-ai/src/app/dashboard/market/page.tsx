@@ -540,7 +540,7 @@ export default function MarketPage() {
               </tr>
             </thead>
             <tbody>
-              {(liveMandiData.length > 0 ? liveMandiData : []).map((mandi, i) => (
+              {(liveMandiData.length > 0 ? liveMandiData : mandiPrices).map((mandi: any, i: number) => (
                 <tr key={i}>
                   <td className={styles.mandiName}>{mandi.mandi}</td>
                   <td>{mandi.commodity}</td>
@@ -551,13 +551,6 @@ export default function MarketPage() {
                   <td>{mandi.arrival}</td>
                 </tr>
               ))}
-              {liveMandiData.length === 0 && (
-                <tr>
-                  <td colSpan={5} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
-                    {syncingPrices ? "Syncing with Agmarknet..." : "No live data available."}
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>

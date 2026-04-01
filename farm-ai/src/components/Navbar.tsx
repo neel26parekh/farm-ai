@@ -10,12 +10,14 @@ import Logo from "./Logo";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -35,9 +37,15 @@ export default function Navbar() {
           <Link href="/#features">Product</Link>
           <Link href="/about">About</Link>
           <Link href="/news">News</Link>
-          <Link href={user ? "/dashboard" : "/auth/login"} className={styles.cta}>
-            {user ? "Dashboard" : "Login"}
-          </Link>
+          {mounted ? (
+            <Link href={user ? "/dashboard" : "/auth/login"} className={styles.cta}>
+              {user ? "Dashboard" : "Login"}
+            </Link>
+          ) : (
+             <Link href="/auth/login" className={styles.cta}>
+              Login
+            </Link>
+          )}
         </div>
 
         <button

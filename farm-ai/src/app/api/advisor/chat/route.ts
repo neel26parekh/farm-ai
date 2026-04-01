@@ -3,55 +3,64 @@ import { streamText } from 'ai';
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
-// Create a custom Google Generative AI provider using the key provided by the user
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+  const { messages, farmContext } = await req.json();
+
+  if (!messages || messages.length === 0) {
+    return new Response("No messages provided", { status: 400 });
   }
 
-  const userId = session.user.id;
+  // Get session for DB persistence - non-blocking
+  let userId: string | null = null;
+  try {
+    const session = await auth();
+    userId = session?.user?.id ?? null;
+  } catch { /* non-blocking */ }
 
-  const { messages } = await req.json();
   const lastMessage = messages[messages.length - 1];
 
-  // Save the user's message to the database immediately
-  await prisma.chatMessage.create({
-    data: {
-      userId: userId,
-      content: lastMessage.content,
-      role: "user"
-    }
-  });
+  // Fire DB write in background — do NOT await before streaming
+  if (userId) {
+    prisma.chatMessage.create({
+      data: { userId, content: lastMessage.content, role: "user" },
+    }).catch(() => {});
+  }
 
+  // Build personalized system prompt from user's farm settings
+  let farmInfo = "";
+  if (farmContext && typeof farmContext === "object") {
+    const fc = farmContext as any;
+    if (fc.primaryCrop) farmInfo += `The farmer's primary crop is ${fc.primaryCrop}. `;
+    if (fc.location) farmInfo += `Their farm is located in ${fc.location}. `;
+    if (fc.farmSize) farmInfo += `Farm size is approximately ${fc.farmSize} acres. `;
+    if (fc.fullName) farmInfo += `The farmer's name is ${fc.fullName}. `;
+  }
 
+  // Start streaming immediately — no DB wait
   const result = streamText({
-    model: google('gemini-1.5-flash'),
+    model: google('gemini-2.5-flash'),
     system: `You are the AgroNexus AI Advisor, an expert agronomist specialized in Indian agriculture. 
+${farmInfo ? `\nFARMER CONTEXT: ${farmInfo}\nUse this context to give personalized, location-specific advice when relevant.\n` : ""}
 You provide brief, actionable, and scientifically accurate farming advice.
-- Keep your answers concise unless explicitly asked for a long explanation.
-- Use bullet points when suggesting steps or treatments.
-- If asked about prices, remind them to check the Market Intelligence dashboard.
-- Speak professionally, as a trusted AI assistant.`,
+- Keep answers concise and practical.
+- Use bullet points for steps or treatments.
+- If asked about prices, refer them to the Market Intelligence dashboard.
+- Speak as a trusted, professional AI assistant for farmers.`,
     messages,
     onFinish: async ({ text }) => {
-      // Save the AI's response to the database once the stream completes
-      await prisma.chatMessage.create({
-        data: {
-          userId: userId,
-          content: text,
-          role: "assistant"
-        }
-      });
-    }
+      if (userId) {
+        prisma.chatMessage.create({
+          data: { userId, content: text, role: "assistant" },
+        }).catch(() => {});
+      }
+    },
   });
 
-  return result.toDataStreamResponse();
+  return result.toTextStreamResponse();
 }
