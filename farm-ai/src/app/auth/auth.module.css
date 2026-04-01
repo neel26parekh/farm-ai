@@ -3,10 +3,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-main);
+  background: var(--bg-page);
   padding: 20px;
-  background-image: radial-gradient(var(--emerald-500) 0.5px, transparent 0.5px);
-  background-size: 24px 24px;
 }
 
 .authCard {
@@ -16,7 +14,7 @@
   padding: 48px;
   width: 100%;
   max-width: 480px;
-  box-shadow: 12px 12px 0 var(--ink);
+  box-shadow: var(--shadow-pop);
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -82,20 +80,22 @@
 }
 
 .input:focus {
-  border-color: var(--emerald-500);
-  box-shadow: 4px 4px 0 var(--emerald-100);
+  border-color: var(--brand-green-vibrant);
+  box-shadow: 4px 4px 0 var(--bg-sage);
   transform: translateY(-1px);
 }
 
 .submitBtn {
   width: 100%;
   padding: 16px;
-  background: var(--ink);
-  color: white;
+  background: var(--brand-green-vibrant);
+  color: var(--ink);
   border: var(--border-thick);
   border-radius: var(--radius-xl);
   font-family: var(--font-heading);
   font-size: var(--text-base);
+  font-weight: 800;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all var(--transition-base);
   margin-top: 12px;
@@ -103,11 +103,17 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  box-shadow: var(--shadow-pop);
 }
 
 .submitBtn:hover {
-  transform: translateY(-4px);
-  box-shadow: 8px 8px 0 var(--emerald-500);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.submitBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
 }
 
 .footer {
@@ -118,16 +124,15 @@
 }
 
 .link {
-  color: var(--emerald-600);
+  color: var(--ink);
   font-weight: 700;
-  text-decoration: none;
+  text-decoration: underline;
   margin-left: 4px;
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: var(--emerald-700);
-  text-decoration: underline;
+  color: var(--brand-green-vibrant);
 }
 
 .socialAuth {

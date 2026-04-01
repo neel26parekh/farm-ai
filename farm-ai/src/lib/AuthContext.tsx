@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, createContext, useContext, useEffect, ReactNode } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { createContext, useContext, ReactNode } from "react";
+import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
 
 interface User {
   id: string;
@@ -19,50 +19,45 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
+function AuthInternalProvider({ children }: { children: ReactNode }) {
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
 
-  useEffect(() => {
-    // Check local storage for persistent mock session
-    const storedUser = localStorage.getItem("farmai_user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
-
-  // Protected route logic
-  useEffect(() => {
-    if (!isLoading) {
-      if (!user && pathname.startsWith("/dashboard")) {
-        router.push("/auth/login");
-      }
-      if (user && pathname.startsWith("/auth")) {
-        router.push("/dashboard");
-      }
-    }
-  }, [user, isLoading, pathname, router]);
-
-  const login = (email: string, name: string) => {
-    const newUser = { id: Math.random().toString(36).substring(7), name, email, role: "Progressive Farmer" };
-    setUser(newUser);
-    localStorage.setItem("farmai_user", JSON.stringify(newUser));
-    router.push("/dashboard");
+  const login = async (email: string, name: string) => {
+    // NextAuth handle the redirect
+    await signIn("credentials", { 
+      email, 
+      name, 
+      password: "password123", // Basic baseline for now
+      callbackUrl: "/dashboard" 
+    });
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("farmai_user");
-    router.push("/");
+  const logout = async () => {
+    await signOut({ callbackUrl: "/" });
   };
+
+  const user = session?.user ? {
+    id: session.user.id!,
+    name: session.user.name!,
+    email: session.user.email!,
+    role: (session.user as any).role || "Farmer"
+  } : null;
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthInternalProvider>
+        {children}
+      </AuthInternalProvider>
+    </SessionProvider>
   );
 }
 

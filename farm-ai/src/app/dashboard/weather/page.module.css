@@ -32,11 +32,12 @@
 
 .currentGrid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; margin-bottom: 40px; }
 
-.currentCard {
+.currentCard, .impactCard, .chartCard, .cropAlerts {
   background: white;
-  border: 1px solid var(--border);
-  border-radius: 24px;
+  border: var(--border-thick);
+  border-radius: var(--radius-2xl);
   padding: 32px;
+  box-shadow: var(--shadow-pop);
 }
 
 .currentMain { display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
@@ -44,36 +45,50 @@
 .currentIcon {
   width: 80px;
   height: 80px;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   background: var(--bg-sky);
   color: var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: var(--border-thick);
   animation: float 4s ease-in-out infinite;
 }
 
-.currentTemp { font-family: var(--font-heading); font-size: 4.5rem; font-weight: 700; line-height: 1; color: var(--ink); letter-spacing: -0.05em; }
-.currentCondition { font-size: 1.1rem; color: var(--text-muted); margin-top: 8px; font-weight: 500; }
+.currentTemp { 
+  font-family: var(--font-heading); 
+  font-size: 5rem; 
+  font-weight: 800; 
+  line-height: 1; 
+  color: var(--ink); 
+  letter-spacing: -0.05em; 
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+}
+.currentCondition { 
+  font-size: 1.25rem; 
+  color: var(--ink); 
+  margin-top: 12px; 
+  font-weight: 700; 
+  text-transform: capitalize;
+}
 
 .detailItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  padding: 10px 14px;
-  background: var(--bg-page);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  font-weight: 500;
+  justify-content: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  color: var(--ink);
+  padding: 16px;
+  background: white;
+  border-radius: var(--radius-xl);
+  border: var(--border-thick);
+  font-weight: 800;
+  box-shadow: var(--shadow-sm);
 }
 
-.impactCard { 
-  background: var(--bg-sand); 
-  border: 1px solid var(--border); 
-  border-radius: 24px; 
-  padding: 32px; 
+.detailItem svg {
+  color: var(--brand-green-vibrant);
 }
 
 .impactTitle { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; color: var(--ink); }
@@ -87,7 +102,7 @@
 .doodleImg {
   width: 100%;
   height: auto;
-  border-radius: var(--radius-xl); /* Rounded corners as requested */
+  border-radius: var(--radius-xl); 
 }
 
 .forecastSection { margin-bottom: 40px; }
@@ -97,29 +112,15 @@
 
 .forecastCard {
   background: white;
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: var(--border-thick);
+  border-radius: var(--radius-xl);
   padding: 16px;
   text-align: center;
   transition: all var(--transition-base);
+  box-shadow: 2px 2px 0 var(--border);
 }
-.forecastCard:hover { border-color: var(--ink); transform: translateY(-2px); }
-.forecastToday { background: var(--bg-muted); border-color: var(--ink); }
-
-.currentCard, .forecastCard, .impactCard, .rainfallCard, .alertsCard {
-  background: white;
-  border: var(--border-thick);
-  border-radius: var(--radius-xl);
-  padding: 32px;
-  box-shadow: var(--shadow-handdrawn);
-}
-
-.chartCard, .cropAlerts {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 32px;
-}
+.forecastCard:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
+.forecastToday { background: var(--bg-sage); border-color: var(--ink); }
 
 @media (max-width: 1024px) {
   .currentGrid { grid-template-columns: 1fr; }

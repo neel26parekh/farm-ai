@@ -269,16 +269,43 @@
 .chatInput::placeholder { color: var(--text-dim); }
 
 .micBtn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-dim);
   transition: all var(--transition-fast);
+  position: relative;
+  border: 1.5px solid transparent;
+  cursor: pointer;
 }
 .micBtn:hover { color: var(--ink); background: var(--bg-muted); }
+
+.micBtnActive {
+  background: #fee2e2;
+  color: #ef4444 !important;
+  border-color: #fecaca;
+}
+
+.micPulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 2px solid #ef4444;
+  animation: micPulseAnim 1.5s infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes micPulseAnim {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
 
 .sendBtn {
   width: 32px;

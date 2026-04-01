@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import styles from "./Footer.module.css";
-import { Mail, MessageSquare, Globe } from "lucide-react";
+import { Globe, MessageSquare, Mail } from "lucide-react";
+import Logo from "./Logo";
 
 export default function Footer() {
   return (
@@ -10,15 +11,21 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.brandSection}>
           <Link href="/" className={styles.logo}>
-            <span className={styles.logoAccent}>AgroNexus</span>
+            <Logo />
           </Link>
           <p className={styles.tagline}>
             Advancing the world's most vital industry through elegant, intuitive intelligence.
           </p>
           <div className={styles.socials}>
-            <Mail size={18} />
-            <MessageSquare size={18} />
-            <Globe size={18} />
+            <a href="https://twitter.com/agronexus" target="_blank" rel="noopener noreferrer">
+              <MessageSquare size={18} />
+            </a>
+            <a href="https://linkedin.com/company/agronexus" target="_blank" rel="noopener noreferrer">
+              <Globe size={18} />
+            </a>
+            <a href="https://github.com/agronexus" target="_blank" rel="noopener noreferrer">
+              <Mail size={18} />
+            </a>
           </div>
         </div>
 
@@ -32,8 +39,10 @@ export default function Footer() {
           <div className={styles.column}>
             <h3>Company</h3>
             <Link href="/about">About Us</Link>
+            <Link href="/blog">Our Journal</Link>
+            <Link href="/press">Press Room</Link>
             <Link href="/careers">Careers</Link>
-            <Link href="/contact">Contact</Link>
+            <Link href="/contact">Contact Support</Link>
           </div>
           <div className={styles.column}>
             <h3>Legal</h3>

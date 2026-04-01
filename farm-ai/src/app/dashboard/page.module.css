@@ -36,9 +36,18 @@
 /* Stat Cards */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--stats-columns, 4), 1fr);
   gap: 24px;
   margin-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid { --stats-columns: 2; }
+}
+
+@media (max-width: 640px) {
+  .statsGrid { --stats-columns: 1; }
+  .header { flex-direction: column; gap: 16px; }
 }
 
 .statCard {
@@ -88,7 +97,45 @@
   padding: 32px;
 }
 
-.chartHeader h3, .alertsTitle, .quickTitle {
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.chartHeader h3 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0;
+}
+
+.chartLegend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.alertsTitle, .quickTitle {
   font-family: var(--font-heading);
   font-size: 1.4rem;
   font-weight: 700;

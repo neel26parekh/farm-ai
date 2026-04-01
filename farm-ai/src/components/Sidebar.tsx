@@ -20,8 +20,12 @@ import { useLanguage } from "@/lib/LanguageContext";
 import Logo from "./Logo";
 import styles from "./Sidebar.module.css";
 
-export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+interface SidebarProps {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+}
+
+export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
@@ -43,10 +47,9 @@ export default function Sidebar() {
 
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
-
       {/* Logo */}
       <div className={styles.logoSection}>
-        <Link href="/" className={styles.logo}>
+        <Link href="/" className={styles.logo} title="AgroNexus Home">
           <Logo collapsed={collapsed} />
         </Link>
         {!collapsed && (
@@ -65,6 +68,7 @@ export default function Sidebar() {
           className={styles.expandBtn}
           onClick={() => setCollapsed(false)}
           aria-label="Expand sidebar"
+          title="Expand sidebar"
         >
           <ChevronRight size={14} />
         </button>
@@ -83,7 +87,7 @@ export default function Sidebar() {
                 className={`${styles.navItem} ${isActive ? styles.active : ""}`}
                 title={collapsed ? item.label : undefined}
               >
-                <item.icon size={18} strokeWidth={1.8} />
+                <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 {!collapsed && <span>{item.label}</span>}
               </Link>
             );
@@ -92,28 +96,31 @@ export default function Sidebar() {
 
         <div className={styles.navBottom}>
           {/* Language toggle */}
-          {!collapsed && <p className={styles.navSectionLabel}>Language</p>}
-          <div className={styles.langRow}>
-            {languages.map((lang) => (
-              <button
-                key={lang.code}
-                className={`${styles.langBtn} ${language === lang.code ? styles.langActive : ""}`}
-                onClick={() => setLanguage(lang.code as any)}
-                title={lang.label}
-              >
-                {lang.label}
-              </button>
-            ))}
-          </div>
-
-          <div className={styles.navDivider} />
+          {!collapsed && (
+            <>
+              <p className={styles.navSectionLabel}>Language</p>
+              <div className={styles.langRow}>
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    className={`${styles.langBtn} ${language === lang.code ? styles.langActive : ""}`}
+                    onClick={() => setLanguage(lang.code as any)}
+                    title={lang.label}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+              <div className={styles.navDivider} />
+            </>
+          )}
 
           <Link
             href="/dashboard/settings"
             className={`${styles.navItem} ${pathname === "/dashboard/settings" ? styles.active : ""}`}
             title={collapsed ? t.sidebar.settings : undefined}
           >
-            <Settings size={18} strokeWidth={1.8} />
+            <Settings size={20} strokeWidth={pathname === "/dashboard/settings" ? 2.5 : 2} />
             {!collapsed && <span>{t.sidebar.settings}</span>}
           </Link>
         </div>
@@ -122,18 +129,18 @@ export default function Sidebar() {
       {/* User */}
       <div className={styles.userSection}>
         <div className={styles.userAvatar}>
-          {user ? user.name.substring(0, 2).toUpperCase() : "?"}
+          {user ? user.name.substring(0, 2).toUpperCase() : "AG"}
         </div>
         {!collapsed && (
-          <div className={styles.userInfo}>
-            <p className={styles.userName}>{user ? user.name : "Loading..."}</p>
-            <p className={styles.userRole}>{user ? user.role : t.sidebar.profile}</p>
-          </div>
-        )}
-        {!collapsed && (
-          <button className={styles.logoutBtn} title="Logout" onClick={logout}>
-            <LogOut size={15} strokeWidth={1.8} />
-          </button>
+          <>
+            <div className={styles.userInfo}>
+              <p className={styles.userName}>{user ? user.name : "AgroNexus Fleet"}</p>
+              <p className={styles.userRole}>{user ? user.role : "Command Center"}</p>
+            </div>
+            <button className={styles.logoutBtn} title="Logout" onClick={logout}>
+              <LogOut size={15} strokeWidth={1.8} />
+            </button>
+          </>
         )}
       </div>
     </aside>

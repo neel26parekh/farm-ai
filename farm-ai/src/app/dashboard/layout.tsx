@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 
 export default function DashboardLayout({
@@ -6,13 +7,15 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <main
         style={{
           flex: 1,
-          marginLeft: "var(--sidebar-width)",
+          marginLeft: collapsed ? "var(--sidebar-collapsed)" : "var(--sidebar-width)",
           padding: "32px 40px",
           transition: "margin-left var(--transition-base)",
           minWidth: 0,

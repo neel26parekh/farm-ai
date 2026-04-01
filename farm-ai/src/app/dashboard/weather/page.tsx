@@ -57,21 +57,19 @@ export default function WeatherPage() {
   const [liveForecast, setLiveForecast] = useState<any[]>(weatherForecast);
   const [currentWeather, setCurrentWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [locationName, setLocationName] = useState("Pune, Maharashtra (Default)");
 
   useEffect(() => {
-    async function fetchWeather() {
+    async function fetchWeather(lat: number, lon: number, name?: string) {
+      setLoading(true);
       try {
-        // Open-Meteo API Integration (100% Free, No API Key Required)
-        // Defaulting to Pune, Maharashtra (major agricultural hub)
-        const lat = 18.5204;
-        const lon = 73.8567;
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`;
         
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          
-          // Map global WMO weather codes to AgroNexus design system icons
+          if (name) setLocationName(name);
+
           const getCondition = (code: number) => {
             if (code === 0) return "sunny";
             if (code <= 3) return "partly-cloudy";
@@ -87,16 +85,14 @@ export default function WeatherPage() {
             humidity: Math.round(data.current.relative_humidity_2m),
             windSpeed: Math.round(data.current.wind_speed_10m),
             condition: getCondition(data.current.weather_code),
-            visibility: 10 // default as OM current doesn't provide visibility by default
+            visibility: 10
           });
 
-          // Map 7-day daily data
           const newForecast = data.daily.time.map((dateStr: string, i: number) => {
             const dateObj = new Date(dateStr);
             const condition = getCondition(data.daily.weather_code[i]);
             const rain = data.daily.precipitation_sum[i];
             
-            // Dynamic farming impacts based on actual live API data thresholds
             let impact = "good";
             let advisory = "Perfect day for field work and spraying";
             if (rain > 20 || condition === "stormy") {
@@ -112,7 +108,7 @@ export default function WeatherPage() {
               date: dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
               temp: Math.round(data.daily.temperature_2m_max[i]),
               tempMin: Math.round(data.daily.temperature_2m_min[i]),
-              humidity: 60 + Math.random() * 10, // Simulated varying humidity for the chart
+              humidity: 60 + Math.random() * 10,
               rainfall: rain,
               condition: condition,
               farmingImpact: impact,
@@ -123,13 +119,27 @@ export default function WeatherPage() {
           setLiveForecast(newForecast);
         }
       } catch (error) {
-        console.error("Failed to fetch weather from Open-Meteo:", error);
+        console.error("Failed to fetch weather:", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchWeather();
-  }, []);
+
+    // Attempt Geolocation
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchWeather(position.coords.latitude, position.coords.longitude, "Your Farm (Live Sync)");
+        },
+        (error) => {
+          console.warn("Geolocation denied, using default (Pune).", error);
+          fetchWeather(18.5204, 73.8567);
+        }
+      );
+    } else {
+      fetchWeather(18.5204, 73.8567);
+    }
+  }, [t.weather.placeholder]);
 
   const todayForecast = liveForecast[0];
   const rainfallData = liveForecast.map((d) => ({
@@ -151,7 +161,7 @@ export default function WeatherPage() {
           </p>
         </div>
         <div className={styles.locationBadge}>
-          📍 Pune, Maharashtra (Live Sync)
+          📍 {locationName}
         </div>
       </div>
 

@@ -15,6 +15,9 @@ import {
   BellRing,
   Bookmark,
   BookmarkCheck,
+  Loader2,
+  Info,
+  Calendar,
 } from "lucide-react";
 import Image from "next/image";
 import {
@@ -29,6 +32,7 @@ import {
   Bar,
 } from "recharts";
 import { cropPrices, priceHistory, mandiPrices } from "@/lib/mockData";
+import { fetchLiveMarketPrices, fetchMarketForecast, MandiPrice } from "@/lib/marketService";
 import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./page.module.css";
 
@@ -42,15 +46,39 @@ export default function MarketPage() {
   const [viewMode, setViewMode] = useState<"myFarm" | "explorer">("myFarm");
   const [pinnedCrops, setPinnedCrops] = useState<string[]>([]);
   const [reminderSet, setReminderSet] = useState(false);
+  const [liveMandiData, setLiveMandiData] = useState<MandiPrice[]>([]);
+  const [syncingPrices, setSyncingPrices] = useState(false);
 
-  // Load pinned crops from local storage on mount
+  // Load pinned crops from database on mount
   useEffect(() => {
-    const savedPins = localStorage.getItem("agronexus_pinned_crops");
-    if (savedPins) {
-      setPinnedCrops(JSON.parse(savedPins));
-    } else {
-      setPinnedCrops(["mustard", "wheat"]); // defaults
-    }
+    const fetchPins = async () => {
+      try {
+        const res = await fetch("/api/market/pins");
+        if (res.ok) {
+          const data = await res.json();
+          setPinnedCrops(data);
+        } else {
+          setPinnedCrops(["mustard", "wheat"]);
+        }
+      } catch (e) {
+        setPinnedCrops(["mustard", "wheat"]);
+      }
+    };
+    
+    const syncLiveMarket = async () => {
+      setSyncingPrices(true);
+      try {
+        const data = await fetchLiveMarketPrices();
+        setLiveMandiData(data);
+      } catch (e) {
+        console.error("Live market sync failed", e);
+      } finally {
+        setSyncingPrices(false);
+      }
+    };
+
+    fetchPins();
+    syncLiveMarket();
   }, []);
 
   const allCrops = cropPrices.map(c => c.crop);
@@ -62,8 +90,10 @@ export default function MarketPage() {
     ? cropPrices.filter(c => pinnedCrops.includes(c.crop.toLowerCase()))
     : cropPrices;
 
-  const togglePin = (crop: string) => {
+  const togglePin = async (crop: string) => {
     const c = crop.toLowerCase();
+    
+    // Optimistic UI update
     let updatedPins;
     if (pinnedCrops.includes(c)) {
       updatedPins = pinnedCrops.filter(p => p !== c);
@@ -71,7 +101,17 @@ export default function MarketPage() {
       updatedPins = [...pinnedCrops, c];
     }
     setPinnedCrops(updatedPins);
-    localStorage.setItem("agronexus_pinned_crops", JSON.stringify(updatedPins));
+
+    // Persist to DB
+    try {
+      await fetch("/api/market/pins", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cropName: c })
+      });
+    } catch (e) {
+      console.error("Failed to sync pin", e);
+    }
   };
 
   useEffect(() => {
@@ -79,23 +119,18 @@ export default function MarketPage() {
     const fetchForecast = async () => {
       setLoadingForecast(true);
       try {
-        const res = await fetch("http://localhost:8000/api/market-forecast", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ crop: selectedCrop, days_to_forecast: 6 }),
-        });
-        if (!res.ok) throw new Error("Failed to fetch forecast");
-        const data = await res.json();
+        const data = await fetchMarketForecast(selectedCrop);
         
         // Merge history with Prophet forecast
-        if (isMounted && data.forecast) {
+        if (isMounted && data && data.forecast) {
           const newForecast = priceHistory.slice(0, 4).map(h => ({ ...h } as any));
           data.forecast.forEach((f: any, i: number) => {
             const dateObj = new Date(f.ds);
-            const monthName = dateObj.toLocaleString('default', { month: 'short' });
             newForecast.push({ month: `Fct ${i+1}`, [selectedCrop]: f.yhat });
           });
           setForecastData(newForecast);
+        } else {
+          setForecastData(priceHistory);
         }
       } catch (err) {
         console.error(err);
@@ -147,8 +182,54 @@ export default function MarketPage() {
 
   // Ensure enough items to fill the ticker track seamlessly, even if only 1-2 crops are pinned
   const tickerItems = Array(Math.max(2, Math.ceil(24 / Math.max(1, displayedCrops.length))))
-    .fill(displayedCrops)
+    .fill(displayedCrops.length > 0 ? displayedCrops : cropPrices.slice(0, 5))
     .flat();
+
+  const getGoogleCalendarUrl = () => {
+    if (!prediction) return "";
+    const peakDate = new Date();
+    peakDate.setDate(peakDate.getDate() + (prediction.peakIdx * 7));
+    const dateStr = peakDate.toISOString().replace(/-|:|\.\d+/g, "");
+    const title = encodeURIComponent(`AgroNexus: Sell ${formatCrop(selectedCrop)} Today`);
+    const details = encodeURIComponent(`AI predicted peak price of ₹${prediction.max}/q for your ${selectedCrop} crop. Check live Mandi rates in AgroNexus!`);
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${dateStr}&details=${details}`;
+  };
+
+  const handleSetReminder = (type: "google" | "ics") => {
+    if (!prediction) return;
+    setReminderSet(true);
+    
+    // 1. Calculate the peak date (prediction.peakIdx is weeks from now)
+    const peakDate = new Date();
+    peakDate.setDate(peakDate.getDate() + (prediction.peakIdx * 7));
+    
+    if (type === "google") {
+      window.open(getGoogleCalendarUrl(), "_blank");
+    } else {
+      // 2. Generate .ics file content for real calendar integration
+      const icsContent = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        `DTSTART:${peakDate.toISOString().replace(/-|:|\.\d+/g, "")}`,
+        `SUMMARY:AgroNexus: Sell ${formatCrop(selectedCrop)} Today`,
+        `DESCRIPTION:AI predicted peak price of ₹${prediction.max}/q for your ${selectedCrop} crop. Check live Mandi rates in AgroNexus!`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+
+      const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `agronexus-sell-${selectedCrop}.ics`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    setTimeout(() => setReminderSet(false), 3000);
+  };
 
   return (
     <div className={styles.page}>
@@ -177,7 +258,7 @@ export default function MarketPage() {
             Market Explorer
           </button>
         </div>
-
+ 
         <div className={styles.headerActions}>
           <div className={styles.searchWrapper}>
             <div className={`${styles.searchBar} ${isSearchFocused ? styles.searchFocused : ""}`}>
@@ -220,37 +301,53 @@ export default function MarketPage() {
               </div>
             )}
           </div>
-
+ 
           <div className={styles.lastUpdated}>
             <Clock size={14} />
             {t.market.lastUpdated}
           </div>
         </div>
       </div>
-
+ 
       {/* Smart Alerts (Only in My Farm View) */}
       {viewMode === "myFarm" && prediction && (
         <div className={styles.smartAlertCard}>
           <div className={styles.smartAlertIcon}>
             <BellRing size={24} />
+            <div className={styles.pulseIndicator} />
           </div>
           <div className={styles.smartAlertContent}>
-            <h4>Smart Advisory: {formatCrop(selectedCrop)}</h4>
+            <div className={styles.advisoryHeader}>
+              <h4>Smart Advisory: {formatCrop(selectedCrop)}</h4>
+              <div className={styles.infoTooltip}>
+                <Info size={16} />
+                <span className={styles.tooltipText}>
+                  AgroNexus AI analyzes historical Mandi trends and current seasonality to predict the highest selling price window for your crop.
+                </span>
+              </div>
+            </div>
             <p>
               Your pinned {formatCrop(selectedCrop)} crop is showing a <strong>{prediction.trend >= 0 ? "Bullish" : "Bearish"} trend</strong>. 
               Our AI recommends targeting a sale in <strong>{prediction.peakIdx} weeks</strong> to maximize profit around 
               <span className={styles.alertHighlight}> ₹{prediction.max.toLocaleString("en-IN")}/q</span>.
             </p>
           </div>
-          <button 
-            className={`${styles.btnHollowDark} ${reminderSet ? styles.btnSuccess : ""}`}
-            onClick={() => {
-              setReminderSet(true);
-              setTimeout(() => setReminderSet(false), 3000);
-            }}
-          >
-            {reminderSet ? "Reminder Set ✓" : "Set Calendar Reminder"}
-          </button>
+          <div className={styles.reminderActions}>
+            <button 
+              className={`${styles.btnPrimary} ${reminderSet ? styles.btnSuccess : ""}`}
+              onClick={() => handleSetReminder("google")}
+            >
+              <Calendar size={18} />
+              {reminderSet ? "Added ✓" : "Add to Google Calendar"}
+            </button>
+            <button 
+              className={styles.btnSecondary}
+              onClick={() => handleSetReminder("ics")}
+              title="Download .ics for Outlook/Apple Calendar"
+            >
+              Download .ics
+            </button>
+          </div>
         </div>
       )}
 
@@ -338,9 +435,10 @@ export default function MarketPage() {
             </div>
           </div>
           {loadingForecast ? (
-            <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--emerald-500)" }}>
-              <div className={styles.spinner} style={{ animation: "spin 1s linear infinite" }}>⚙️</div>
-              <span style={{ marginLeft: 10 }}>Running Prophet Model...</span>
+            <div className={styles.loaderWrap}>
+              <Loader2 className={styles.spinner} size={32} />
+              <p>Analyzing Market Volatility...</p>
+              <span>Syncing with Agmarknet Global Node</span>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
@@ -435,22 +533,31 @@ export default function MarketPage() {
             <thead>
               <tr>
                 <th>Mandi</th>
-                <th>Wheat (₹/q)</th>
-                <th>Rice (₹/q)</th>
-                <th>Tomato (₹/q)</th>
-                <th>Onion (₹/q)</th>
+                <th>Commodity</th>
+                <th>Price (₹/q)</th>
+                <th>Daily Change</th>
+                <th>Arrival</th>
               </tr>
             </thead>
             <tbody>
-              {mandiPrices.map((mandi, i) => (
+              {(liveMandiData.length > 0 ? liveMandiData : []).map((mandi, i) => (
                 <tr key={i}>
                   <td className={styles.mandiName}>{mandi.mandi}</td>
-                  <td>₹{mandi.wheat.toLocaleString("en-IN")}</td>
-                  <td>₹{mandi.rice.toLocaleString("en-IN")}</td>
-                  <td>₹{mandi.tomato.toLocaleString("en-IN")}</td>
-                  <td>₹{mandi.onion.toLocaleString("en-IN")}</td>
+                  <td>{mandi.commodity}</td>
+                  <td style={{ fontWeight: 700 }}>₹{mandi.price.toLocaleString("en-IN")}</td>
+                  <td style={{ color: mandi.trend === "up" ? "#10b981" : "#ef4444" }}>
+                    {mandi.trend === "up" ? "▲" : "▼"} {mandi.change}
+                  </td>
+                  <td>{mandi.arrival}</td>
                 </tr>
               ))}
+              {liveMandiData.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
+                    {syncingPrices ? "Syncing with Agmarknet..." : "No live data available."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

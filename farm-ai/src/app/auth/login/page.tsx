@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowRight, LogIn, Mail, Lock } from "lucide-react";
 import styles from "../auth.module.css";
 import { useAuth } from "@/lib/AuthContext";
+import Logo from "@/components/Logo";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -25,7 +27,7 @@ export default function LoginPage() {
     <div className={styles.container}>
       <div className={styles.authCard}>
         <div className={styles.logoArea}>
-          <h1 className={styles.logoTitle}>AgroNexus</h1>
+          <Logo />
           <p className={styles.logoSub}>Agricultural Intelligence SaaS</p>
         </div>
 
@@ -33,9 +35,12 @@ export default function LoginPage() {
         <p className={styles.subtitle}>Enter your details to access your farm intelligence.</p>
 
         <div className={styles.socialAuth}>
-          <button className={styles.socialBtn}>
+          <button 
+            className={styles.socialBtn}
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          >
             <img src="https://www.google.com/favicon.ico" alt="Google" width={16} />
-            Google
+            Continue with Google
           </button>
         </div>
 
