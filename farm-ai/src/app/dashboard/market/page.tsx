@@ -540,7 +540,13 @@ export default function MarketPage() {
               </tr>
             </thead>
             <tbody>
-              {(liveMandiData.length > 0 ? liveMandiData : mandiPrices).map((mandi: any, i: number) => (
+              {(liveMandiData.length > 0 ? liveMandiData : [
+                { mandi: "Azadpur, Delhi", commodity: "Wheat", price: 2275, trend: "up" as const, change: "+1.2%", arrival: "350 Tons" },
+                { mandi: "Vashi, Mumbai", commodity: "Tomato", price: 2600, trend: "down" as const, change: "-0.8%", arrival: "220 Tons" },
+                { mandi: "Yeshwanthpur, Bangalore", commodity: "Rice", price: 4100, trend: "up" as const, change: "+2.1%", arrival: "180 Tons" },
+                { mandi: "Lasalgaon, Nashik", commodity: "Onion", price: 1650, trend: "down" as const, change: "-1.5%", arrival: "480 Tons" },
+                { mandi: "Indore, MP", commodity: "Soybean", price: 4520, trend: "up" as const, change: "+0.9%", arrival: "310 Tons" },
+              ]).map((mandi: any, i: number) => (
                 <tr key={i}>
                   <td className={styles.mandiName}>{mandi.mandi}</td>
                   <td>{mandi.commodity}</td>
