@@ -488,12 +488,37 @@
 
 @media (max-width: 1024px) {
   .chartGrid { grid-template-columns: 1fr; }
+
+  .priceCard {
+    flex-basis: 280px;
+    padding: 20px;
+  }
 }
 @media (max-width: 768px) {
+  .pageTitle { font-size: var(--text-3xl); }
   .pageHeader { flex-direction: column; align-items: stretch; gap: 16px; }
   .headerActions { flex-direction: column; width: 100%; align-items: stretch; }
   .searchWrapper { width: 100%; }
   .viewToggleGroup { width: 100%; display: flex; justify-content: space-between; }
   .viewToggleBtn { flex: 1; text-align: center; font-size: 0.9rem; padding: 8px 0; }
   .smartAlertCard { flex-direction: column; text-align: center; padding: 20px; }
+
+  .tickerTrack { gap: 20px; }
+
+  .priceGrid { gap: 14px; }
+  .priceCard {
+    flex: 0 0 min(85vw, 280px);
+    padding: 18px;
+  }
+
+  .chartCard,
+  .predictionCard,
+  .mandiSection { padding: 20px; }
+
+  .cropSelector { gap: 8px; padding: 6px; }
+  .cropBtn {
+    min-width: 44px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
 }

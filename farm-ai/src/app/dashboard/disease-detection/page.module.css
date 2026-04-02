@@ -197,3 +197,36 @@
 @media (max-width: 900px) {
   .mainGrid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 768px) {
+  .pageTitle { font-size: var(--text-2xl); }
+  .pageSubtitle { font-size: var(--text-sm); }
+
+  .uploadZone { min-height: 250px; }
+  .uploadContent { padding: 24px 16px; }
+  .uploadIcon { width: 44px; height: 44px; margin-bottom: 14px; }
+
+  .imagePreviewWrapper,
+  .placeholder { height: 280px; }
+
+  .corner { width: 28px; height: 28px; }
+  .topLeft,
+  .topRight { top: 12px; }
+  .bottomLeft,
+  .bottomRight { bottom: 12px; }
+  .topLeft,
+  .bottomLeft { left: 12px; }
+  .topRight,
+  .bottomRight { right: 12px; }
+
+  .uploadCard,
+  .resultCard,
+  .treatmentCard,
+  .preventionCard { padding: 20px; }
+
+  .resultHeader { gap: 12px; }
+  .resultInfo h3 { font-size: 1.4rem; }
+  .resultDesc { font-size: 0.95rem; margin-bottom: 20px; }
+
+  .galleryGrid { grid-template-columns: 1fr; }
+}

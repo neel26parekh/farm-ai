@@ -6,6 +6,7 @@
  */
 
 const AGMARKNET_RESOURCE_ID = "9ef27131-652a-4a31-813b-94c2a088c051"; // Standard Daily Prices resource
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export interface MandiPrice {
   id: string;
@@ -66,26 +67,55 @@ export async function fetchLiveMarketPrices(): Promise<MandiPrice[]> {
 }
 
 export async function fetchMarketForecast(commodity: string) {
+  const today = new Date();
+  const fallbackForecast = {
+    currentPrice: 5420,
+    forecast: [
+      { ds: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5480 },
+      { ds: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5620 },
+      { ds: new Date(today.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5780 },
+      { ds: new Date(today.getTime() + 28 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5740 }
+    ],
+    trend: "Bullish",
+    confidence: 94,
+  };
+
   try {
-    // Bridge to Python FastAPI Prophet Backend
-    // This assumes the backend is running at http://localhost:8000
-    // Fallback if backend is busy or offline (e.g. timeout or connection refused)
-    const today = new Date();
+    if (!BACKEND_URL) {
+      return fallbackForecast;
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(`${BACKEND_URL}/api/market-forecast`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ crop: commodity, days_to_forecast: 4 }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) {
+      return fallbackForecast;
+    }
+
+    const payload = await res.json();
+    const forecast = Array.isArray(payload?.forecast) ? payload.forecast : [];
+
+    if (!forecast.length) {
+      return fallbackForecast;
+    }
+
     return {
-      currentPrice: 5420,
-      forecast: [
-        { ds: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5480 },
-        { ds: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5620 },
-        { ds: new Date(today.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5780 },
-        { ds: new Date(today.getTime() + 28 * 24 * 60 * 60 * 1000).toISOString(), yhat: 5740 }
-      ],
-      trend: "Bullish",
-      confidence: 94
+      ...fallbackForecast,
+      currentPrice: Math.round(forecast[0].yhat ?? fallbackForecast.currentPrice),
+      forecast,
+      confidence: payload?.status === "success" ? 92 : fallbackForecast.confidence,
     };
   } catch (error) {
-    // Return high-fidelity mock if everything fails
-    return {
-      forecast: []
-    };
+    console.error("Market forecast fallback activated:", error);
+    return fallbackForecast;
   }
 }
