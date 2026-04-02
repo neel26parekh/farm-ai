@@ -22,7 +22,7 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 # Configure Gemini if key exists
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY_NEW") or os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY and genai:
     genai.configure(api_key=GEMINI_API_KEY)
     

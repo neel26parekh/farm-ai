@@ -3,8 +3,10 @@ import { streamText } from 'ai';
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
+const geminiKey = process.env.GEMINI_API_KEY_NEW || process.env.GEMINI_API_KEY;
+
 const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
+  apiKey: geminiKey,
 });
 
 export const maxDuration = 30;

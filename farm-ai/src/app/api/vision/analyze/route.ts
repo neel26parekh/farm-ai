@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "No image provided" }, { status: 400 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY_NEW || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return Response.json({ error: "API key not configured" }, { status: 500 });
   }
