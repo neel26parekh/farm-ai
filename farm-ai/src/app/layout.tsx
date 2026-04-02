@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
+import PWAPrompt from "@/components/PWAPrompt";
 
 export const metadata: Metadata = {
   title: "AgroNexus — Precision Agricultural Intelligence & ML Market Forecasts",
@@ -56,6 +57,7 @@ export default function RootLayout({
         <AuthProvider>
           <LanguageProvider>
             {children}
+            <PWAPrompt />
           </LanguageProvider>
         </AuthProvider>
       </body>

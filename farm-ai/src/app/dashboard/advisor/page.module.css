@@ -396,3 +396,25 @@
   justify-content: flex-end;
   margin-left: auto;
 }
+
+.readAloudBtn {
+  position: absolute;
+  bottom: -15px;
+  right: -10px;
+  background: var(--bg-lavender);
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.1s;
+  opacity: 0;
+}
+.messageBubble:hover .readAloudBtn {
+  opacity: 1;
+}
+.readAloudBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}

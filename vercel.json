@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "public": true,
-  "name": "farm-ai-frontend",
-  "framework": "nextjs",
-  "rootDirectory": "farm-ai",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build"
-}

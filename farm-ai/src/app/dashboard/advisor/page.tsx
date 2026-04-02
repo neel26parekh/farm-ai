@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, Mic, Sparkles, User, RotateCcw, Leaf } from "lucide-react";
+import { Bot, Send, Mic, Sparkles, User, RotateCcw, Leaf, Volume2 } from "lucide-react";
 import Image from "next/image";
 import { chatPresets } from "@/lib/mockData";
 import { useLanguage } from "@/lib/LanguageContext";
 import Skeleton from "@/components/Skeleton";
+import VoiceReader from "./VoiceReader";
 import styles from "./page.module.css";
 
 interface ChatMessage {
@@ -253,10 +254,15 @@ export default function AdvisorPage() {
                       {msg.createdAt.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
-                  <div className={styles.messageBubble}>
+                  <div className={styles.messageBubble} style={{ position: "relative" }}>
                     {msg.content === "" && msg.role === "assistant"
                       ? <div className={styles.typingIndicator}><span /><span /><span /></div>
-                      : renderContent(msg.content)
+                      : (
+                        <>
+                          {renderContent(msg.content)}
+                          {msg.role === "assistant" && msg.content && <VoiceReader text={msg.content} />}
+                        </>
+                      )
                     }
                   </div>
                 </div>

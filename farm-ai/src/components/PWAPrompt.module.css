@@ -1,0 +1,64 @@
+.promptCard {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 2px solid var(--ink);
+  padding: 12px 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 4px 4px 0 var(--ink);
+  z-index: 10000;
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: 90%;
+  max-width: 360px;
+}
+.iconBox {
+  background: var(--bg-sage);
+  color: var(--ink);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.content strong {
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.content span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.btnSm {
+  background: var(--brand-sage);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px;
+}
+@keyframes slideUp {
+  0% { transform: translate(-50%, 100%); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}

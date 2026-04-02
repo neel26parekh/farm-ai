@@ -80,6 +80,7 @@ export default function DiseaseDetectionPage() {
 
       const data = await res.json();
       setResult(data.result);
+      if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate([100, 50, 100]); // double buzz on completion
     } catch (error: any) {
       console.error(error);
       setResult({
