@@ -9,7 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 import pandas as pd
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
 
 # Load Env Vars
 from dotenv import load_dotenv
@@ -20,7 +23,7 @@ load_dotenv(dotenv_path=dotenv_path)
 
 # Configure Gemini if key exists
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY:
+if GEMINI_API_KEY and genai:
     genai.configure(api_key=GEMINI_API_KEY)
     
 app = FastAPI(title="FarmAI ML Backend", version="1.0.0")
@@ -46,7 +49,7 @@ async def predict_disease(image: UploadFile = File(...)):
     contents = await image.read()
     
     # Try using Gemini Vision if configured
-    if GEMINI_API_KEY:
+    if GEMINI_API_KEY and genai:
         try:
             # We can use the same model as the chat endpoint since flash models are multimodal
             model = genai.GenerativeModel('gemini-3-flash-preview')
@@ -214,7 +217,7 @@ async def chat_advisor(req: ChatRequest):
     query = req.message
     
     # Try using genuine Google Gemini API if configured
-    if GEMINI_API_KEY:
+    if GEMINI_API_KEY and genai:
         try:
             model = genai.GenerativeModel('gemini-3-flash-preview')
             
