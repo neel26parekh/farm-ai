@@ -18,9 +18,15 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { sampleDiseaseResults, DiseaseResult } from "@/lib/mockData";
+import { useCountUp } from "@/lib/useCountUp";
 import EmptyState from "@/components/EmptyState";
 import Skeleton from "@/components/Skeleton";
 import styles from "./page.module.css";
+
+const ConfidenceScore = ({ score }: { score: number }) => {
+  const count = useCountUp(score, 1200);
+  return <span className={styles.confidenceScore}>{count}% Match</span>;
+};
 
 export default function DiseaseDetectionPage() {
   const { t, language } = useLanguage();
@@ -142,8 +148,15 @@ export default function DiseaseDetectionPage() {
                 <Image src={imagePreview} alt="Crop preview" fill style={{ objectFit: "cover" }} className={styles.previewImage} />
                 {scanning && (
                   <div className={styles.scanningOverlay}>
+                    <div className={styles.scannerGrid} />
                     <div className={styles.scanLine} />
                   </div>
+                )}
+                {!scanning && result && (
+                    <div className={styles.boundingBox}>
+                      <div className={styles.boxBottomLeft} />
+                      <div className={styles.boxBottomRight} />
+                    </div>
                 )}
                 {!scanning && (
                   <button className={styles.clearBtn} onClick={(e) => { e.stopPropagation(); clearImage(); }}>
@@ -187,7 +200,7 @@ export default function DiseaseDetectionPage() {
                   <h3 className={styles.resultName}>{result.name}</h3>
                   <div className={styles.resultMeta}>
                     <span className="badge badge-danger">{t.severity[result.severity as keyof typeof t.severity]}</span>
-                    <span className={styles.resultConf}>{t.disease.confidence}: {result.confidence}%</span>
+                    <span className={styles.resultConf}>{t.disease.confidence}: <ConfidenceScore score={result.confidence} /></span>
                   </div>
                 </div>
               </div>

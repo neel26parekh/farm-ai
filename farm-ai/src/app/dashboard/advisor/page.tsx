@@ -5,6 +5,7 @@ import { Bot, Send, Mic, Sparkles, User, RotateCcw, Leaf } from "lucide-react";
 import Image from "next/image";
 import { chatPresets } from "@/lib/mockData";
 import { useLanguage } from "@/lib/LanguageContext";
+import Skeleton from "@/components/Skeleton";
 import styles from "./page.module.css";
 
 interface ChatMessage {
@@ -231,7 +232,13 @@ export default function AdvisorPage() {
         {/* Chat area */}
         <div className={styles.chatArea}>
           <div className={styles.messagesList}>
-            {messages.map((msg) => (
+            {!isLoaded ? (
+              <div className={styles.skeletonChatContainer}>
+                <div className={styles.skeletonLeft}><Skeleton height="60px" width="80%" borderRadius="16px 16px 16px 0" /></div>
+                <div className={styles.skeletonRight}><Skeleton height="50px" width="60%" borderRadius="16px 16px 0 16px" /></div>
+                <div className={styles.skeletonLeft}><Skeleton height="90px" width="90%" borderRadius="16px 16px 16px 0" /></div>
+              </div>
+            ) : messages.map((msg) => (
               <div key={msg.id} className={`${styles.message} ${msg.role === "user" ? styles.userMessage : styles.botMessage}`}>
                 <div className={styles.messageAvatar}>
                   {msg.role === "user"

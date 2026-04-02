@@ -379,3 +379,20 @@
   .inputArea { padding: 12px 12px 18px; }
   .chatInput { font-size: var(--text-base); }
 }
+
+.skeletonChatContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 0;
+  opacity: 0.7;
+}
+.skeletonLeft {
+  display: flex;
+  justify-content: flex-start;
+}
+.skeletonRight {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
+}

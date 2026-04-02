@@ -34,7 +34,14 @@ import {
 import { cropPrices, priceHistory, mandiPrices } from "@/lib/mockData";
 import { fetchLiveMarketPrices, fetchMarketForecast, MandiPrice } from "@/lib/marketService";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useCountUp } from "@/lib/useCountUp";
+import Skeleton from "@/components/Skeleton";
 import styles from "./page.module.css";
+
+const AnimatedPrice = ({ value }: { value: number }) => {
+  const count = useCountUp(value, 1500);
+  return <>{count.toLocaleString("en-IN")}</>;
+};
 
 export default function MarketPage() {
   const { language, t } = useLanguage();
@@ -363,7 +370,7 @@ export default function MarketPage() {
               tabIndex={0}
             >
               <span className={styles.tickerCrop}>{crop.crop}</span>
-              <span className={styles.tickerPrice}>₹{crop.price.toLocaleString("en-IN")}</span>
+              <span className={styles.tickerPrice}>₹<AnimatedPrice value={crop.price} /></span>
               <span
                 className={styles.tickerChange}
                 style={{ color: crop.change >= 0 ? "#10b981" : "#ef4444" }}
@@ -550,7 +557,7 @@ export default function MarketPage() {
                 <tr key={i}>
                   <td className={styles.mandiName}>{mandi.mandi}</td>
                   <td>{mandi.commodity}</td>
-                  <td style={{ fontWeight: 700 }}>₹{mandi.price.toLocaleString("en-IN")}</td>
+                  <td style={{ fontWeight: 700 }}>₹<AnimatedPrice value={mandi.price} /></td>
                   <td style={{ color: mandi.trend === "up" ? "#10b981" : "#ef4444" }}>
                     {mandi.trend === "up" ? "▲" : "▼"} {mandi.change}
                   </td>

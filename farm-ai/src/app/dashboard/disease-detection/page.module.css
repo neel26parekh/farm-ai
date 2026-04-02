@@ -230,3 +230,52 @@
 
   .galleryGrid { grid-template-columns: 1fr; }
 }
+
+.scannerGrid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(22, 163, 74, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 163, 74, 0.4) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 22;
+  opacity: 0.6;
+  animation: gridMove 4s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(30px); }
+}
+
+.boundingBox {
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  right: 20%;
+  bottom: 25%;
+  border: 3px solid #16a34a;
+  z-index: 30;
+  box-shadow: 0 0 15px rgba(22, 163, 74, 0.5), inset 0 0 15px rgba(22, 163, 74, 0.3);
+  animation: boxPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.boundingBox::before,
+.boundingBox::after {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border: 3px solid #16a34a;
+}
+
+.boundingBox::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+.boundingBox::after { top: -3px; right: -3px; border-left: none; border-bottom: none; }
+
+.boxBottomLeft { position: absolute; bottom: -3px; left: -3px; width: 15px; height: 15px; border: 3px solid #16a34a; border-right: none; border-top: none; }
+.boxBottomRight { position: absolute; bottom: -3px; right: -3px; width: 15px; height: 15px; border: 3px solid #16a34a; border-left: none; border-top: none; }
+
+@keyframes boxPop {
+  0% { transform: scale(1.1); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
