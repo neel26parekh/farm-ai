@@ -40,19 +40,59 @@ app.add_middleware(
 @app.post("/api/predict-disease")
 async def predict_disease(image: UploadFile = File(...)):
     """
-    Industry Implementation:
-    1. Read 'image.file.read()' into PIL Image or bytes.
-    2. Pass through AutoImageProcessor.
-    3. Run Inference via AutoModelForImageClassification (HuggingFace).
-    4. Return top-1 class and confidence score.
+    Industry Implementation replaced:
+    Using Gemini Vision for lightweight, cloud-based inference constraints.
     """
-    # Read file bytes to simulate processing time
     contents = await image.read()
     
-    # --- ML Stub Logic ---
-    # For now, we simulate the CNN output to return a realistic structural payload
-    # In production, replace below with: model(inputs)
-    
+    # Try using Gemini Vision if configured
+    if GEMINI_API_KEY:
+        try:
+            # We can use the same model as the chat endpoint since flash models are multimodal
+            model = genai.GenerativeModel('gemini-3-flash-preview')
+            
+            prompt = """You are an expert plant pathologist. Analyze this plant image and detect any disease.
+            Respond ONLY with a valid JSON object. Do not include markdown formatting or extra text.
+            The JSON must match this structure exactly:
+            {
+                "name": "Name of the disease (or 'Healthy Plant')",
+                "confidence": 95.5,
+                "severity": "low", 
+                "crop": "Name of the crop",
+                "description": "Brief description of the health status",
+                "symptoms": ["Symptom 1", "Symptom 2"],
+                "treatment": ["Treatment 1", "Treatment 2"],
+                "prevention": ["Prevention 1", "Prevention 2"]
+            }
+            Make severity either 'low', 'medium', or 'high'."""
+
+            # Prepare the image payload for Gemini
+            image_part = {
+                "mime_type": image.content_type or "image/jpeg",
+                "data": contents
+            }
+            
+            response = model.generate_content([prompt, image_part])
+            
+            # Clean possible markdown block markers
+            text_response = response.text.strip()
+            if text_response.startswith("```json"):
+                text_response = text_response.replace("```json\n", "").replace("```", "")
+            elif text_response.startswith("```"):
+                text_response = text_response.replace("```\n", "").replace("```", "")
+                
+            prediction = json.loads(text_response)
+            
+            return {
+                "status": "success",
+                "model_used": "gemini-vision",
+                "result": prediction
+            }
+        except Exception as e:
+            print(f"Gemini Vision API Error: {e}")
+            # Fall back to simulation below if API fails
+
+    # --- Fallback ML Stub Logic if API fails or no key provided ---
     simulated_classes = [
         {
             "name": "Wheat Rust",
@@ -86,13 +126,12 @@ async def predict_disease(image: UploadFile = File(...)):
         }
     ]
     
-    # Deterministic mock based on file size/name length for demo variance
     idx = len(image.filename) % len(simulated_classes)
     prediction = simulated_classes[idx]
     
     return {
         "status": "success",
-        "model_used": "resnet50-plant-disease",
+        "model_used": "resnet50-plant-disease-stub",
         "result": prediction
     }
 
@@ -106,15 +145,13 @@ class MarketRequest(BaseModel):
 @app.post("/api/market-forecast")
 async def forecast_market(req: MarketRequest):
     """
-    Industry Implementation:
-    1. Load historical AGMARKNET API data for 'req.crop' into a pandas DataFrame.
-    2. Format DataFrame to `ds` and `y` exact columns for Prophet.
-    3. Initialize Prophet() and fit.
-    4. Create future dataframe and predict next N days.
+    Implementation:
+    Provides an ultra-lightweight market simulation algorithm (0% CPU load).
+    Uses trigonometric seasonality, daily drift, and baseline trends to mimic 
+    a real market API without the overhead of heavy local neural networks.
     """
     
-    # --- AGMARKNET Live Scraper Simulation & Prophet Logic ---
-    # In a full deployment, this matrix is replaced by live HTTP parsing from datameet/agmarknet
+    # Baseline market data for Indian crops (Prices in INR per quintal approx)
     real_market_baselines = {
         "wheat": {"price": 2275, "volatility": 15, "trend": "up"},
         "rice": {"price": 3850, "volatility": 20, "trend": "stable"},
@@ -159,7 +196,7 @@ async def forecast_market(req: MarketRequest):
         
     return {
         "status": "success",
-        "model_used": "meta-prophet-v1.1",
+        "model_used": "lightweight-math-simulation",
         "crop": req.crop,
         "forecast": predictions
     }
@@ -212,7 +249,7 @@ async def chat_advisor(req: ChatRequest):
             clean_text = re.sub(r'^#{1,6}\s*', '', response.text, flags=re.MULTILINE)
             return {
                 "status": "success",
-                "model_used": "gemini-1.5-flash",
+                "model_used": "gemini-3-flash-preview",
                 "response": clean_text
             }
         except Exception as e:
@@ -242,4 +279,5 @@ def health_check():
     return {"status": "ok", "service": "FarmAI ML Core"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
