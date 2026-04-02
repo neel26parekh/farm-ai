@@ -88,3 +88,5 @@ Farm-AI is built with a "Plug-and-Play" architecture. While the current version 
 - **AI Advisor (NLP)**: Switch from mock to live advice by adding a `GEMINI_API_KEY` to the backend `.env`.
 - **Disease Detection (CV)**: Swap the deterministic mock for a live CNN model (e.g., via the `transformers` library) in `main.py`.
 - **Market Intelligence**: Integrate real-time Mandi prices by connecting the backend to the **Agmarknet API** (data.gov.in).
+
+---------------------------------------------------------------
