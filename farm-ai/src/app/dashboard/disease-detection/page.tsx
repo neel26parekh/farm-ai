@@ -18,8 +18,8 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { sampleDiseaseResults, DiseaseResult } from "@/lib/mockData";
-import Skeleton from "@/components/Skeleton";
 import EmptyState from "@/components/EmptyState";
+import Skeleton from "@/components/Skeleton";
 import styles from "./page.module.css";
 
 export default function DiseaseDetectionPage() {
@@ -35,13 +35,13 @@ export default function DiseaseDetectionPage() {
     setMounted(true);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0]);
     }
-  }, []);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

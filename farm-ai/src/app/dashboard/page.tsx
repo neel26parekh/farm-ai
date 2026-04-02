@@ -25,6 +25,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import Skeleton from "@/components/Skeleton";
 import LiveIndicator from "@/components/LiveIndicator";
+import EmptyState from "@/components/EmptyState";
 import styles from "./page.module.css";
 
 interface AnimatedCounterProps {
