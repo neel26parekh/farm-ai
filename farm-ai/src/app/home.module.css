@@ -114,14 +114,16 @@
   min-height: 480px;
   border: var(--border-thick);
   box-shadow: var(--shadow-handdrawn);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @media (max-width: 900px) {
   .card { grid-template-columns: 1fr; }
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0px 0px var(--ink);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Specific Card Backgrounds */
@@ -225,4 +227,43 @@
   .footer {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: 2px solid var(--ink);
+  background: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.badgePulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  animation: pulse 2s infinite;
+}
+
+.heroActions {
+  margin-top: 2rem;
+}
+
+.cardIconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: white;
+  border: 2px solid var(--ink);
+  margin-bottom: 1.5rem;
+  box-shadow: 2px 2px 0 var(--ink);
 }
