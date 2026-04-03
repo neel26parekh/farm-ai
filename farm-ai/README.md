@@ -24,7 +24,7 @@ Indian farmers lose **₹92,000 crore annually** due to crop diseases, market ti
 
 ## 💡 The Solution
 
-AgroNexus is a **free, multilingual SaaS platform** that brings enterprise-grade agricultural AI to every farmer's phone. It combines:
+AgroNexus is a **completely free, open-source community platform** that brings enterprise-grade agricultural AI to every farmer's phone. It combines:
 
 - 🤖 **AI Crop Advisor** — Gemini 2.5 Flash-powered chat with personalized farming advice
 - 🔬 **Disease Detection** — Upload a leaf photo, get instant AI diagnosis via Gemini Vision
@@ -133,21 +133,21 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 | **Auth** | NextAuth.js (Google OAuth + Credentials) |
 | **Weather** | Open-Meteo API (free, no key needed) |
 | **Charts** | Recharts |
-| **Styling** | CSS Modules + Custom Design System |
-| **Icons** | Lucide React |
-| **Fonts** | Inter + Source Serif 4 |
+| **Styling** | Custom High-Contrast CSS (Built for direct sunlight glare) |
+| **Accessibility** | Native Web Speech API (VoiceReader in Indian-English) |
+| **Fonts** | Inter (Ultra-legible Sans-Serif for low-literacy users) |
 | **Deploy** | Vercel |
 
 ---
 
-## 📱 Mobile First
+## 📱 Built for the Fields
 
-AgroNexus was built with Indian farmers in mind — farmers who primarily use **affordable Android phones** in the field. The platform features:
+AgroNexus was built with Indian farmers in mind — farmers who primarily use **affordable Android phones** outdoors in the mud and blazing sun. The platform features:
 
-- Responsive sidebar → mobile bottom navigation
-- Touch-friendly tap targets
-- Voice input (Web Speech API) for the AI Advisor
-- Offline-resilient fallback data for market prices
+- **☀️ High-Contrast, Glare-Resistant UI:** Specially engineered design system with large tap targets and deep green contrast to ensure readability in direct sunlight.
+- **🗣️ Voice-First Accessibility:** Integrated `SpeechSynthesis` reads advisories, market prices, and weather alerts aloud for farmers with limited literacy.
+- **🌐 Offline-Resilient:** Caches and stores data like market prices to combat erratic village networks.
+- **💬 WhatsApp Connectivity:** "Send a photo, get an answer." Designed to integrate where farmers already spend their digital time via low-bandwidth connection.
 
 ---
 
