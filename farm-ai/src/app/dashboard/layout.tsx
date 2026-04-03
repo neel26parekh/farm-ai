@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
-import { Volume2 } from "lucide-react";
 import VoiceReader from "./advisor/VoiceReader";
 
 export default function DashboardLayout({
@@ -10,6 +11,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { status } = useSession();
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -21,6 +25,20 @@ export default function DashboardLayout({
     mediaQuery.addEventListener("change", updateLayout);
     return () => mediaQuery.removeEventListener("change", updateLayout);
   }, []);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace(`/auth/login?callbackUrl=${encodeURIComponent(pathname || "/dashboard")}`);
+    }
+  }, [status, router, pathname]);
+
+  if (status === "loading") {
+    return null;
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
