@@ -52,6 +52,8 @@ const impactColors: Record<string, string> = {
   alert: "#ef4444",
 };
 
+import VoiceReader from "../advisor/VoiceReader";
+
 export default function WeatherPage() {
   const { t } = useLanguage();
   const [liveForecast, setLiveForecast] = useState<any[]>(weatherForecast);
@@ -226,7 +228,10 @@ export default function WeatherPage() {
             {todayForecast.farmingImpact !== "good" && <AlertTriangle size={16} />}
             {todayForecast.farmingImpact.toUpperCase()} for farming
           </div>
-          <p className={styles.impactAdvisory}>{todayForecast.advisory}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+            <p className={styles.impactAdvisory} style={{ margin: 0, color: '#374151', fontSize: '1.25rem', fontWeight: 600 }}>{todayForecast.advisory}</p>
+            <VoiceReader text={todayForecast.advisory} />
+          </div>
 
           <div className={styles.advisoryList}>
             <div className={styles.advisoryItem}>

@@ -38,6 +38,8 @@ import { useCountUp } from "@/lib/useCountUp";
 import Skeleton from "@/components/Skeleton";
 import styles from "./page.module.css";
 
+import VoiceReader from "../advisor/VoiceReader";
+
 const AnimatedPrice = ({ value }: { value: number }) => {
   const count = useCountUp(value, 1500);
   return <>{count.toLocaleString("en-IN")}</>;
@@ -492,9 +494,10 @@ export default function MarketPage() {
               height={160}
               className={styles.doodleImg}
             />
-            <div className={styles.predictionTitle}>
+            <div className={styles.predictionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Zap size={18} />
               <h3>{t.market.aiPrediction}</h3>
+              <VoiceReader text={`AI predicts a peak price of ${prediction?.max} for ${selectedCrop}.`} />
             </div>
           </div>
           <div className={styles.predictionContent}>
