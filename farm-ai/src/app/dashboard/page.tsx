@@ -20,6 +20,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { motion } from "framer-motion";
 import { cropHealthData, dashboardAlerts, cropPrices, weatherForecast } from "@/lib/mockData";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -208,7 +209,13 @@ export default function DashboardPage() {
           { icon: <Droplets size={22} color="#60a5fa" />, bg: "rgba(59, 130, 246, 0.12)", label: t.dashboard.stats.moisture, value: 72, suffix: "%", trend: t.dashboard.stats.irrigationNeeded, trendColor: "#f59e0b", tIcon: <ArrowDownRight size={14} /> },
           { icon: <TrendingUp size={22} color="#fbbf24" />, bg: "rgba(245, 158, 11, 0.12)", label: t.dashboard.stats.revenue, value: 485000, prefix: "₹", trend: `+18% ${t.dashboard.stats.lastYear}`, trendColor: "#10b981", tIcon: <ArrowUpRight size={14} /> },
         ].map((stat, i) => (
-          <div key={i} className={styles.statCard}>
+          <motion.div 
+            key={i} 
+            className={styles.statCard}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1, duration: 0.4 }}
+          >
             <div className={styles.statCardIcon} style={{ background: stat.bg }}>
               {stat.icon}
             </div>
@@ -222,7 +229,7 @@ export default function DashboardPage() {
               {stat.tIcon}
               <span>{stat.trend}</span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 

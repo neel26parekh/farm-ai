@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import styles from "./Skeleton.module.css";
 
 interface SkeletonProps {
@@ -22,7 +23,14 @@ const Skeleton: React.FC<SkeletonProps> = ({
     borderRadius: circle ? "50%" : borderRadius ?? "var(--radius-sm)",
   };
 
-  return <div className={`${styles.skeleton} ${className || ""}`} style={style} />;
+  return (
+    <motion.div 
+      className={`${styles.skeleton} ${className || ""}`} 
+      style={style}
+      animate={{ opacity: [0.5, 0.8, 0.5] }}
+      transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+    />
+  );
 };
 
 export default Skeleton;
