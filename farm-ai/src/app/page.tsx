@@ -38,6 +38,27 @@ const popIn = {
 export default function HomePage() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  
+  // Fake A/B Testing for the CTA
+  const [ctaVariant, setCtaVariant] = useState<"A" | "B">("A");
+  
+  useEffect(() => {
+    // Randomize 50/50 for A/B testing
+    const variant = Math.random() > 0.5 ? "B" : "A";
+    setCtaVariant(variant);
+    // In a real app we would log this assignment to Mixpanel/PostHog
+    console.log("A/B Test Variant Assigned: ", variant);
+  }, []);
+
+  const handleCtaClick = () => {
+    // In a real app we'd log conversion
+    console.log(`Conversion Tracked on Variant: ${ctaVariant}`);
+  };
+
+  const getCtaText = () => {
+    if (ctaVariant === "A") return t.home.cta;
+    return "Try Farm AI For Free"; // Variant B test
+  };
 
   return (
     <div className={styles.main}>
@@ -64,8 +85,8 @@ export default function HomePage() {
           </motion.p>
           
           <motion.div variants={fadeUp} className={styles.heroActions} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Link href="/auth/signup" className="btn btn-primary">
-              {t.home.cta} <ArrowRight size={18} />
+            <Link href={user ? "/dashboard" : "/auth/signup"} className="btn btn-primary" onClick={handleCtaClick}>
+              {getCtaText()} <ArrowRight size={18} />
             </Link>
           </motion.div>
         </motion.div>

@@ -51,15 +51,24 @@ export default function DashboardLayout({
           borderRadius: '30px',
           boxShadow: '0 10px 25px rgba(5, 150, 105, 0.4)',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          gap: '12px',
-          cursor: 'pointer',
-          fontWeight: 600,
+          justifyContent: 'center',
+          animation: 'bounce 2s infinite',
         }}>
-          <VoiceReader text="Welcome to your Dashboard. Here you can check your crop health, get weather advisories, check mandi market prices, and run a disease scan on your crops." />
-          <span style={{ fontSize: '0.9rem', marginRight: '6px' }}>Audio Tour</span>
+          <VoiceReader 
+            text="Welcome to your Dashboard. Here you can check your crop health, get weather advisories, check mandi market prices, and run a disease scan on your crops." 
+            label="Audio Tour"
+          />
+          <span style={{ fontSize: '0.75rem', marginTop: '4px', opacity: 0.9, fontWeight: 400 }}>Tap to listen</span>
         </div>
       </main>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+      `}} />
       <MobileNav />
     </div>
   );

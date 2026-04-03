@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { 
   ArrowRight, 
@@ -120,8 +121,8 @@ export default function BlogPage() {
                 transition={{ delay: 0.3 }}
                 className={styles.featuredCard}
               >
-                <div className={styles.featuredImage}>
-                  <img src={featuredPost.image} alt={featuredPost.title} />
+                <div className={styles.featuredImage} style={{ position: 'relative', width: '100%', height: '100%' }}>
+                  <Image src={featuredPost.image} alt={featuredPost.title} fill className={styles.imageInner} style={{ objectFit: 'cover' }} unoptimized/>
                 </div>
                 <div className={styles.featuredContent}>
                   <span className={styles.category}>{featuredPost.category}</span>
@@ -156,8 +157,8 @@ export default function BlogPage() {
                 transition={{ delay: index * 0.1 }}
                 className={styles.card}
               >
-                <div className={styles.cardImage}>
-                  <img src={post.image} alt={post.title} />
+                <div className={styles.cardImage} style={{ position: 'relative', width: '100%', height: '240px' }}>
+                  <Image src={post.image} alt={post.title} fill className={styles.imageInner} style={{ objectFit: 'cover' }} unoptimized/>
                 </div>
                 <div className={styles.cardContent}>
                   <span className={styles.category}>{post.category}</span>

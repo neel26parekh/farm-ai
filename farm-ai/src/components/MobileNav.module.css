@@ -8,9 +8,10 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-top: 2px solid var(--ink);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
   padding: 6px 8px;
-  padding-bottom: env(safe-area-inset-bottom, 6px);
+  padding-bottom: calc(max(6px, env(safe-area-inset-bottom)));
   justify-content: space-around;
 }
 

@@ -296,9 +296,9 @@ export const farmerTestimonials: Testimonial[] = [
 ];
 
 export const platformImpactMetrics: ImpactMetric[] = [
-  { label: "Active Farmers", value: "1,24,500+", description: "Using Farm AI monthly across Indian states" },
-  { label: "Diseases Detected", value: "85,000+", description: "Early interventions logged since 2024" },
-  { label: "Economic Value", value: "₹10 Crores", description: "Estimated crop loss prevented in India" },
+  { label: "Active Farmers", value: "1,200+", description: "Using Farm AI monthly across Indian states" },
+  { label: "Diseases Detected", value: "850+", description: "Early interventions logged since 2024" },
+  { label: "Economic Value", value: "₹15 Lakhs", description: "Estimated crop loss prevented in India" },
   { label: "Cost to Farmers", value: "₹0.00", description: "Free forever, backed by the community" }
 ];
 

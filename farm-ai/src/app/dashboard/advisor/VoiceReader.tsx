@@ -2,50 +2,71 @@ import { useState, useEffect } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import styles from "./page.module.css";
 
-export default function VoiceReader({ text }: { text: string }) {
+export default function VoiceReader({ text, label }: { text: string, label?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [synth, setSynth] = useState<SpeechSynthesis | null>(null);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setSynth(window.speechSynthesis);
+  const handlePlay = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-  }, []);
-
-  const handlePlay = () => {
-    if (!synth) return;
+    
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
     
     if (isPlaying) {
-      synth.cancel();
+      window.speechSynthesis.cancel();
       setIsPlaying(false);
       return;
     }
 
+    // Cancel any previous
+    window.speechSynthesis.cancel();
+
     const unformatted = text.replace(/[*#_]/g, ""); // strip simple markdown
     const utterance = new SpeechSynthesisUtterance(unformatted);
-    // try to get Indian English voice if available
-    const voices = synth.getVoices();
-    const indianVoice = voices.find(v => v.lang === "en-IN");
-    if (indianVoice) utterance.voice = indianVoice;
     
-    utterance.rate = 1.0;
-    utterance.onend = () => setIsPlaying(false);
-    
-    synth.speak(utterance);
-    setIsPlaying(true);
-    
-    // haptic feedback for physical feel
-    if (navigator.vibrate) navigator.vibrate(50);
+    // Process voices
+    let voices = window.speechSynthesis.getVoices();
+    const tryPlay = () => {
+      const indianVoice = voices.find(v => v.lang === "en-IN" || (v.name && v.name.includes("India")));
+      if (indianVoice) utterance.voice = indianVoice;
+      
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      
+      utterance.onend = () => setIsPlaying(false);
+      utterance.onerror = () => setIsPlaying(false);
+      
+      window.speechSynthesis.speak(utterance);
+      setIsPlaying(true);
+      
+      if (navigator.vibrate) navigator.vibrate(50);
+    };
+
+    if (voices.length === 0) {
+      // Voices not loaded yet
+      window.speechSynthesis.onvoiceschanged = () => {
+        voices = window.speechSynthesis.getVoices();
+        tryPlay();
+      };
+      // Fallback
+      setTimeout(tryPlay, 1000);
+    } else {
+      tryPlay();
+    }
   };
 
   return (
     <button 
-      className={styles.readAloudBtn} 
+      className={`${styles.readAloudBtn} ${label ? styles.labeledBtn : ''}`}
       onClick={handlePlay} 
       title="Read Aloud"
       aria-label="Read Aloud"
+      style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: "bold" }}
     >
-      {isPlaying ? <VolumeX size={14} /> : <Volume2 size={14} />}
+      {isPlaying ? <VolumeX size={label ? 18 : 14} /> : <Volume2 size={label ? 18 : 14} />}
+      {label && <span>{label}</span>}
     </button>
   );
 }

@@ -46,6 +46,8 @@
   --text-3xl: 2.5rem;
   --text-4xl: 3.5rem;
   --text-5xl: 4.5rem;
+  --text-6xl: 5.5rem;
+  --text-7xl: 6.5rem;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -71,9 +73,9 @@
 
   /* Hand-Drawn Bold Buttons */
   --brand-green-vibrant: #8AA382; /* Lush Sage as per plan */
-  --border-thick: 2.5px solid var(--ink);
-  --shadow-pop: 4px 4px 0px var(--ink);
-  --shadow-handdrawn: 3px 3px 0 var(--ink);
+  --border-thick: 1px solid var(--border);
+  --shadow-pop: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-handdrawn: 0 4px 6px rgba(0, 0, 0, 0.02);
 
   --transition-fast: 120ms ease;
   --transition-base: 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -93,7 +95,7 @@
 
 /* Reset */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
 body {
   font-family: var(--font-body);
@@ -101,6 +103,7 @@ body {
   color: var(--text-body);
   min-height: 100vh;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 .noise-overlay {
@@ -188,13 +191,13 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
 }
 
 .btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0 var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn:active {
-  transform: translate(3px, 3px);
-  box-shadow: 0 0 0 var(--ink);
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary {
@@ -290,7 +293,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  :root {
+    --text-6xl: 4.5rem;
+    --text-7xl: 5.5rem;
+  }
+}
 @media (max-width: 768px) {
-  :root { --text-4xl: 1.75rem; --text-5xl: 2rem; }
-  .section { padding: var(--space-16) var(--space-4); }
+  :root { 
+    --text-3xl: 2rem;
+    --text-4xl: 2.5rem; 
+    --text-5xl: 3rem; 
+    --text-6xl: 3.5rem;
+    --text-7xl: 4rem;
+  }
+  .section { padding: var(--space-8) var(--space-4); }
+}
+@media (max-width: 480px) {
+  :root {
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.75rem;
+    --text-4xl: 2rem; 
+    --text-5xl: 2.25rem; 
+    --text-6xl: 2.75rem;
+    --text-7xl: 3rem;
+  }
 }

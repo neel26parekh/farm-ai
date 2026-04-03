@@ -1,7 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
+
+export const viewport: Viewport = {
+  themeColor: "#065f46",
+};
 
 export const metadata: Metadata = {
   title: "AgroNexus — Precision Agricultural Intelligence & ML Market Forecasts",
@@ -17,7 +21,7 @@ export const metadata: Metadata = {
     "agtech saas",
   ],
   manifest: "/manifest.json",
-  themeColor: "#065f46", // Dark Emerald
+  metadataBase: new URL("https://agronexus.ai"),
   authors: [{ name: "AgroNexus Global" }],
   openGraph: {
     title: "AgroNexus — High-Precision Farm Intelligence",
