@@ -7,6 +7,7 @@ import { ArrowRight, Bot, Scan, TrendingUp, CloudSun } from "lucide-react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { farmerTestimonials } from '@/lib/mockData';
 import styles from "./home.module.css";
 import Navbar from "@/components/Navbar";
 import { useRef } from "react";
@@ -179,6 +180,48 @@ export default function HomePage() {
           </div>
         </motion.section>
 
+      </motion.div>
+
+      {/* Real Farmer Impact Section */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '4rem 0 2rem 0' }}>
+        <motion.div 
+          className={styles.heroBadge}
+          style={{ backgroundColor: '#e6f4ea', color: '#137333', marginBottom: '1rem' }}
+          variants={fadeUp}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          Community Impact
+        </motion.div>
+        
+        <motion.h2 variants={fadeUp} style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '2rem', color: '#111827', fontWeight: 'bold' }}>
+          Trusted by Farmers Across India
+        </motion.h2>
+      </div>
+
+      <motion.div className={styles.grid} variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true }} style={{ marginBottom: '4rem' }}>
+        {farmerTestimonials.map((testimonial) => (
+          <motion.div 
+            key={testimonial.id} 
+            className={styles.card} 
+            variants={fadeUp}
+            style={{ backgroundColor: testimonial.imageColor, minHeight: 'auto', display: 'flex', flexDirection: 'column', padding: '2rem' }}
+          >
+            <div className={styles.cardContent} style={{ maxWidth: '100%', marginBottom: 0 }}>
+              <h3 className={styles.cardTitle} style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{testimonial.farmer}</h3>
+              <p style={{ fontSize: '0.875rem', color: '#4b5563', marginBottom: '1rem', fontWeight: 500 }}>
+                📍 {testimonial.location} &nbsp;•&nbsp; 🌾 {testimonial.crop}
+              </p>
+              <p className={styles.cardDesc} style={{ fontStyle: 'italic', color: '#1f2937', marginBottom: '1.5rem', fontSize: '1.125rem' }}>
+                "{testimonial.quote}"
+              </p>
+              <div style={{ marginTop: 'auto', padding: '0.75rem 1rem', backgroundColor: 'rgba(255,255,255,0.6)', borderRadius: '8px', fontSize: '0.875rem', fontWeight: '600', color: '#047857', display: 'inline-block', alignSelf: 'flex-start' }}>
+                Impact: {testimonial.impact}
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </motion.div>
 
       {/* Footer */}

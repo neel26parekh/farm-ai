@@ -247,3 +247,58 @@ export const landingStats = [
   { label: "Crop Loss Prevented", value: "₹2,000 Cr", icon: "Shield" },
   { label: "Mandis Tracked", value: "500+", icon: "BarChart3" },
 ];
+
+// ---- Non-Profit Impact & Live Activity Data ----
+export interface Testimonial {
+  id: string;
+  farmer: string;
+  location: string;
+  crop: string;
+  quote: string;
+  impact: string;
+  imageColor: string;
+}
+
+export interface ImpactMetric {
+  label: string;
+  value: string;
+  description: string;
+}
+
+export const farmerTestimonials: Testimonial[] = [
+  {
+    id: "t1",
+    farmer: "Rajesh Kumar",
+    location: "Punjab, India",
+    crop: "Wheat",
+    quote: "Farm AI's disease scanner caught Yellow Rust two weeks before it spread to my entire field.",
+    impact: "Saved ₹45,000 in potential losses",
+    imageColor: "#e6f4ea" // Sage
+  },
+  {
+    id: "t2",
+    farmer: "Pooja Patil",
+    location: "Maharashtra, India",
+    crop: "Tomato",
+    quote: "Knowing the exact mandi prices at the regional hub helped me negotiate a 15% better rate.",
+    impact: "Increased seasonal profit by 15%",
+    imageColor: "#f3e8ff" // Lavender
+  },
+  {
+    id: "t3",
+    farmer: "Anil Reddy",
+    location: "Telangana, India",
+    crop: "Cotton",
+    quote: "The voice reader in Telugu means our elders can use the weather advisor without knowing how to read.",
+    impact: "Accessible to 50+ local families",
+    imageColor: "#fef3c7" // Sand
+  }
+];
+
+export const platformImpactMetrics: ImpactMetric[] = [
+  { label: "Active Farmers", value: "1,24,500+", description: "Using Farm AI monthly across Indian states" },
+  { label: "Diseases Detected", value: "85,000+", description: "Early interventions logged since 2024" },
+  { label: "Economic Value", value: "₹10 Crores", description: "Estimated crop loss prevented in India" },
+  { label: "Cost to Farmers", value: "₹0.00", description: "Free forever, backed by the community" }
+];
+

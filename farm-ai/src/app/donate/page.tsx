@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, ShieldCheck, CreditCard, Lock, Loader2 } from "lucide-react";
 import styles from "./page.module.css";
 
-export default function CheckoutPage() {
+export default function DonatePage() {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -34,9 +34,9 @@ export default function CheckoutPage() {
           <div className={styles.successIconWrap}>
             <Check size={48} className={styles.successIcon} />
           </div>
-          <h1 className={styles.successTitle}>Payment Successful!</h1>
+          <h1 className={styles.successTitle}>Donation Successful!</h1>
           <p className={styles.successDesc}>
-            Welcome to AgroNexus Pro. Your account has been upgraded.
+            Thank you for supporting Farm AI. Your contribution keeps our servers running for Indian farmers.
             <br />
             Redirecting to your dashboard...
           </p>
@@ -51,37 +51,37 @@ export default function CheckoutPage() {
       <div className={styles.container}>
         {/* Left Column - Order Summary */}
         <div className={styles.summaryCol}>
-          <Link href="/#pricing" className={styles.backLink}>
+          <Link href="/" className={styles.backLink}>
             <ArrowLeft size={16} /> Back
           </Link>
           
-          <h1 className={styles.title}>Complete your upgrade</h1>
-          <p className={styles.subtitle}>Join thousands of top farmers maximizing their yield.</p>
+          <h1 className={styles.title}>Support Farm AI</h1>
+          <p className={styles.subtitle}>Help us keep agriculture intelligence free for farmers across India.</p>
           
           <div className={styles.planCard}>
             <div className={styles.planHeader}>
               <div>
-                <h3 className={styles.planName}>AgroNexus Pro</h3>
-                <p className={styles.planBilled}>Billed monthly</p>
+                <h3 className={styles.planName}>One-time Donation</h3>
+                <p className={styles.planBilled}>Any amount helps</p>
               </div>
               <div className={styles.planPrice}>
-                ₹299<span className={styles.period}>/mo</span>
+                ₹100<span className={styles.period}>+</span>
               </div>
             </div>
             
             <ul className={styles.planFeatures}>
-              <li><Check size={16} /> Unlimited AI Disease Scans</li>
-              <li><Check size={16} /> 30-Day Market Forecasting</li>
-              <li><Check size={16} /> Priority 24/7 Gemini Agronomist</li>
-              <li><Check size={16} /> SMS Weather Alerts</li>
+              <li><Check size={16} /> Keep AI scans free</li>
+              <li><Check size={16} /> Support market intelligence</li>
+              <li><Check size={16} /> Expand language support</li>
+              <li><Check size={16} /> Fund mobile infrastructure</li>
             </ul>
           </div>
           
           <div className={styles.secureNote}>
             <ShieldCheck size={20} />
             <div>
-              <strong>Bank-grade security</strong>
-              <p>Your payment information is encrypted and securely processed.</p>
+              <strong>Community Backed</strong>
+              <p>We are a 100% open-source, non-profit initiative. This is the only place we ask for money.</p>
             </div>
           </div>
         </div>
@@ -89,13 +89,18 @@ export default function CheckoutPage() {
         {/* Right Column - Payment Form */}
         <div className={styles.paymentCol}>
           <form className={styles.paymentForm} onSubmit={handleSubmit}>
-            <h2 className={styles.formTitle}>Payment Details</h2>
+            <h2 className={styles.formTitle}>Donation Details</h2>
             
             <div className={styles.inputGroup}>
               <label>Email Address</label>
-              <input type="email" placeholder="farmer@example.com" required defaultValue="" />
+              <input type="email" placeholder="sponsor@example.com" required defaultValue="" />
             </div>
             
+            <div className={styles.inputGroup}>
+              <label>Amount</label>
+              <input type="number" placeholder="500" min="10" required defaultValue="" />
+            </div>
+
             <div className={styles.inputGroup}>
               <label>Card Information</label>
               <div className={styles.cardInputWrapper}>
@@ -116,12 +121,7 @@ export default function CheckoutPage() {
             
             <div className={styles.inputGroup}>
               <label>Name on Card</label>
-              <input type="text" placeholder="Rajesh Kumar" required />
-            </div>
-            
-            <div className={styles.inputGroup}>
-              <label>Billing Address / PIN Code</label>
-              <input type="text" placeholder="110001" required />
+              <input type="text" placeholder="Jane Doe" required />
             </div>
             
             <button 
@@ -132,12 +132,12 @@ export default function CheckoutPage() {
               {isProcessing ? (
                 <>Processing... <Loader2 size={18} className="spin" /></>
               ) : (
-                <>Subscribe • ₹299</>
+                <>Donate Now</>
               )}
             </button>
             
             <p className={styles.termsNote}>
-              <Lock size={12} /> Payments are secure and encrypted. By subscribing, you agree to our Terms of Service. You can cancel anytime.
+              <Lock size={12} /> Donations are securely processed. Thank you for your support.
             </p>
           </form>
         </div>
