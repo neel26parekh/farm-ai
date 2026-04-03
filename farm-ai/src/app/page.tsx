@@ -10,6 +10,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { farmerTestimonials } from '@/lib/mockData';
 import styles from "./home.module.css";
 import Navbar from "@/components/Navbar";
+import PWAPrompt from "@/components/PWAPrompt";
 import { useRef } from "react";
 
 // Animation variants
@@ -256,6 +257,7 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      <PWAPrompt />
     </div>
   );
 }

@@ -6,43 +6,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;550;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-  /* AgroNexus Earthy Pastel Theme - Deepened for saturation */
-  --bg-page: #BFCAB9;      /* More dark/saturated agricultural sage */
+  /* High-Contrast Outdoors Theme */
+  --bg-page: #f4f7f4;      /* Light, glare-resistant off-white */
   --bg-card: #ffffff;
-  --bg-hover: #A8B69F;
-  --bg-muted: #9BA98D;
+  --bg-hover: #eef2eb;
+  --bg-muted: #d9e2d5;
   
-  /* Anthropic Subject Colors */
-  --bg-sage: #E6F0E6;      /* Greenish for "Build with Claude" cards */
-  --bg-lavender: #F0E6F5;  /* Purplish */
-  --bg-sand: #F5F0E6;      /* Brownish */
-  --bg-sky: #E6F0F5;       /* Bluish */
+  /* Distinct Subject Colors for quick visual scanning */
+  --bg-sage: #ecfdf5;      
+  --bg-lavender: #f5f3ff;  
+  --bg-sand: #fffbeb;      
+  --bg-sky: #f0f9ff;       
 
-  /* Ink & text */
-  --ink: #191919;
-  --text-body: #3d3d3d;
-  --text-muted: #666;
-  --text-dim: #999;
+  /* High legibility ink */
+  --ink: #064e3b;          /* Deep dark green instead of black */
+  --text-body: #1f2937;
+  --text-muted: #4b5563;
+  --text-dim: #9ca3af;
 
-  /* Borders */
-  --border: #E8E5E0;
-  --border-hover: #D0CDC6;
+  /* Fat, touch-friendly Borders */
+  --border: #d1d5db;
+  --border-hover: #9ca3af;
 
-  /* Accent */
-  --green-600: #16a34a;
-  --green-700: #15803d;
+  /* Action accents */
+  --green-600: #10b981;    /* Vibrant, unmistakable success green */
+  --green-700: #059669;
 
-  /* Typography */
-  --font-body: 'Inter', -apple-system, sans-serif;
-  --font-heading: 'Source Serif 4', Georgia, serif;
+  /* Typography overhaul: Completely drop Serif fonts. Stick to highly legible sans-serif */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
   
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 2.25rem;
+  /* Make text larger across the board for low-literacy eyesight */
+  --text-xs: 0.85rem;
+  --text-sm: 0.95rem;
+  --text-base: 1.1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.5rem;
   --text-4xl: 3.5rem;
   --text-5xl: 4.5rem;
 
@@ -271,6 +272,22 @@ button { font-family: var(--font-body); cursor: pointer; border: none; backgroun
 .section { padding: var(--space-24) var(--space-6); max-width: var(--max-width); margin: 0 auto; }
 .section-title { font-size: var(--text-4xl); font-weight: 700; margin-bottom: var(--space-4); }
 .section-subtitle { font-size: var(--text-lg); color: var(--text-muted); max-width: 600px; }
+
+/* Force headings to be thicker */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+/* Make all buttons huge touch-targets */
+.btn {
+  padding: 1rem 2rem !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
 /* Responsive */
 @media (max-width: 768px) {
