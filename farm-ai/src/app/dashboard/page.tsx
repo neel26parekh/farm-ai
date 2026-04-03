@@ -115,6 +115,17 @@ export default function DashboardPage() {
     return t.dashboard.alerts.messages?.[type] || "Alert notification";
   };
 
+  const whatsappNumber = "919876543210";
+  const whatsappMessage = encodeURIComponent(
+    "Namaste Farm AI team, I need help diagnosing my crop."
+  );
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
+  const handleWhatsappConnect = () => {
+    if (typeof window === "undefined") return;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
+
   if (!mounted) return null;
 
   return (
@@ -171,7 +182,9 @@ export default function DashboardPage() {
           alignItems: 'center',
           justifyContent: 'space-between',
           color: 'white',
-          boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.4)'
+          boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.4)',
+          gap: '12px',
+          flexWrap: 'wrap'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ backgroundColor: 'white', borderRadius: '50%', padding: '10px', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -195,7 +208,7 @@ export default function DashboardPage() {
             cursor: 'pointer',
             fontSize: '1rem',
             whiteSpace: 'nowrap'
-          }}>
+          }} onClick={handleWhatsappConnect} type="button" aria-label="Open WhatsApp chat">
             Connect Now
           </button>
         </div>
