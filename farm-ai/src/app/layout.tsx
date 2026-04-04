@@ -56,7 +56,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning>
-        <div className="noise-overlay" />
         <AuthProvider>
           <LanguageProvider>
             {children}
