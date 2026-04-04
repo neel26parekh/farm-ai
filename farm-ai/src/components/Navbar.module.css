@@ -2,6 +2,7 @@
   position: sticky;
   top: 0;
   width: 100%;
+  min-height: var(--navbar-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,10 +19,11 @@
 .container {
   max-width: 1400px;
   width: 100%;
+  min-height: var(--navbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 4rem;
+  padding: 0 4rem;
 }
 
 .logo {
@@ -147,7 +149,7 @@
 }
 
 @media (max-width: 1024px) {
-  .container { padding: 1rem 2rem; }
+  .container { padding: 0 1rem; }
   .navLinks { display: none; }
   .mobileToggle { display: inline-flex; }
 }
