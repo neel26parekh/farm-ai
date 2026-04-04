@@ -48,3 +48,63 @@
 .active svg {
   color: var(--green-600);
 }
+
+.moreSheet {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 78px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  z-index: 1100;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.moreHeader {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.moreLangRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.langBtn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.langBtnActive {
+  background: var(--bg-sage);
+  border-color: var(--green-600);
+}
+
+.moreItem {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0 12px;
+}

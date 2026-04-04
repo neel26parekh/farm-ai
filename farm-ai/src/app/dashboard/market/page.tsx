@@ -57,9 +57,23 @@ export default function MarketPage() {
   const [reminderSet, setReminderSet] = useState(false);
   const [liveMandiData, setLiveMandiData] = useState<MandiPrice[]>([]);
   const [syncingPrices, setSyncingPrices] = useState(false);
+  const [farmerLocation, setFarmerLocation] = useState("India");
 
   // Load pinned crops from database on mount
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("farm_ai_settings");
+      if (saved) {
+        const farm = JSON.parse(saved);
+        const crop = (farm.primaryCrop || "").toString().toLowerCase();
+        if (crop && cropPrices.some((c) => c.crop.toLowerCase() === crop)) {
+          setSelectedCrop(crop);
+          setPinnedCrops((prev) => Array.from(new Set([...prev, crop])));
+        }
+        if (farm.location) setFarmerLocation(farm.location);
+      }
+    } catch {}
+
     const fetchPins = async () => {
       try {
         const res = await fetch("/api/market/pins");
@@ -249,7 +263,7 @@ export default function MarketPage() {
             {t.market.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            {t.market.subtitle}
+            {t.market.subtitle} Personalized for {farmerLocation}.
           </p>
         </div>
         

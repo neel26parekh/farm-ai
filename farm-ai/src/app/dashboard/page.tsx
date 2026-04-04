@@ -71,6 +71,11 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState("");
   const [dateStr, setDateStr] = useState("");
+  const [communityAlert, setCommunityAlert] = useState({
+    title: "Community Outbreak Alert",
+    message:
+      "Model risk estimate loading for your farm...",
+  });
   const { user } = useAuth();
 
   useEffect(() => {
@@ -92,6 +97,73 @@ export default function DashboardPage() {
         day: "numeric",
       })
     );
+
+    const loadLiveAlert = async () => {
+      try {
+        const saved = localStorage.getItem("farm_ai_settings");
+        const farm = saved ? JSON.parse(saved) : {};
+        const crop = (farm.primaryCrop || "Wheat").toString();
+        const location = (farm.location || "your location").toString();
+
+        const getRiskFromData = (temp: number, humidity: number, wind: number) => {
+          let score = 0;
+          if (humidity >= 75) score += 2;
+          if (temp >= 14 && temp <= 24) score += 1;
+          if (wind <= 8) score += 1;
+          if (score >= 3) return "high";
+          if (score >= 2) return "moderate";
+          return "low";
+        };
+
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            try {
+              const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m`);
+              const data = await res.json();
+              const temp = Number(data?.current?.temperature_2m ?? 24);
+              const humidity = Number(data?.current?.relative_humidity_2m ?? 65);
+              const wind = Number(data?.current?.wind_speed_10m ?? 10);
+              const risk = getRiskFromData(temp, humidity, wind);
+
+              if (risk === "high") {
+                setCommunityAlert({
+                  title: "Live Disease Risk Alert",
+                  message: `High fungal risk for ${crop} in ${location} right now (Humidity ${humidity}%, Temp ${temp}°C). Inspect field today and prioritize preventive spray in the morning.`,
+                });
+              } else if (risk === "moderate") {
+                setCommunityAlert({
+                  title: "Live Crop Risk Watch",
+                  message: `Moderate disease risk for ${crop} in ${location} (Humidity ${humidity}%, Temp ${temp}°C). Monitor leaves over next 48 hours and avoid late-evening irrigation.`,
+                });
+              } else {
+                setCommunityAlert({
+                  title: "Live Farm Health Update",
+                  message: `Current conditions are relatively stable for ${crop} in ${location} (Humidity ${humidity}%, Temp ${temp}°C). Continue scheduled field checks.`,
+                });
+              }
+            } catch {
+              setCommunityAlert({
+                title: "Community Outbreak Alert",
+                message: `Local model estimate for ${crop}: monitor crop closely in ${location} and report unusual leaf spots early for faster intervention.`,
+              });
+            }
+          },
+          () => {
+            setCommunityAlert({
+              title: "Community Outbreak Alert",
+              message: `Location permission is off. Enable location for live alerts. For now, keep daily scouting active for ${crop}.`,
+            });
+          }
+        );
+      } catch {
+        setCommunityAlert({
+          title: "Community Outbreak Alert",
+          message: "Unable to load personalized alert right now. Keep disease scouting active this week.",
+        });
+      }
+    };
+
+    loadLiveAlert();
 
     return () => clearTimeout(timer);
   }, [language, t.dashboard.welcome]);
@@ -115,9 +187,9 @@ export default function DashboardPage() {
     return t.dashboard.alerts.messages?.[type] || "Alert notification";
   };
 
-  const whatsappNumber = "919876543210";
+  const whatsappNumber = "918320936239";
   const whatsappMessage = encodeURIComponent(
-    "Namaste Farm AI team, I need help diagnosing my crop."
+    "Namaste AgroNexus team, I need help diagnosing my crop."
   );
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
@@ -163,9 +235,9 @@ export default function DashboardPage() {
             <AlertTriangle size={24} />
           </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700, color: '#991b1b' }}>Community Outbreak Alert</h3>
+            <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700, color: '#991b1b' }}>{communityAlert.title}</h3>
             <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem', color: '#7f1d1d' }}>
-              ⚠️ <strong>3 farmers within 10km</strong> of your location just reported <em>Yellow Rust</em> in their Wheat crops. We recommend checking your field and spraying a preventative fungicide today.
+              ⚠️ {communityAlert.message}
             </p>
           </div>
         </div>
@@ -195,7 +267,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700 }}>Farm AI is on WhatsApp</h3>
-              <p style={{ margin: '4px 0 0 0', opacity: 0.9 }}>Send a photo of your sick crop to <strong>+91 98765-43210</strong> to get instant AI agronomy advice.</p>
+              <p style={{ margin: '4px 0 0 0', opacity: 0.9 }}>Send a photo of your sick crop to <strong>+91 8320936239</strong> to get instant AI agronomy advice.</p>
             </div>
           </div>
           <button style={{ 

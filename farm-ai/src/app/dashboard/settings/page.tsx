@@ -71,7 +71,7 @@ export default function SettingsPage() {
       <div className={styles.header}>
         <h1 className={styles.title}>Platform Settings</h1>
         <p className={styles.subtitle}>
-          Configure your preferences for AgroNexus's AI models, global market algorithms, and SMS alerts.
+          Configure your farm profile so advice, weather, and market recommendations are personalized for your needs.
         </p>
       </div>
 
@@ -82,7 +82,7 @@ export default function SettingsPage() {
               <User size={32} className={styles.avatarIcon} />
             </div>
             <h3 className={styles.sidebarName}>{settings.fullName || "AgroNexus Commander"}</h3>
-            <p className={styles.sidebarRole}>Pro Member</p>
+            <p className={styles.sidebarRole}>Farmer Profile</p>
             
             <div className={styles.sidebarBadges}>
               <div className={styles.badge}>
@@ -118,6 +118,7 @@ export default function SettingsPage() {
                 <select name="language" value={settings.language} onChange={handleChange}>
                   <option value="English">English</option>
                   <option value="Hindi">Hindi (हिंदी)</option>
+                  <option value="Gujarati">Gujarati (ગુજરાતી)</option>
                   <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
                   <option value="Marathi">Marathi (मराठी)</option>
                   <option value="Tamil">Tamil (தமிழ்)</option>

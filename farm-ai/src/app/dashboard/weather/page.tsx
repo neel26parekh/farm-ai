@@ -127,19 +127,42 @@ export default function WeatherPage() {
       }
     }
 
+    const fetchFromSavedLocation = async () => {
+      try {
+        const saved = localStorage.getItem("farm_ai_settings");
+        if (!saved) return false;
+        const farm = JSON.parse(saved);
+        const name = (farm.location || "").toString().trim();
+        if (!name) return false;
+
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`);
+        if (!geoRes.ok) return false;
+        const geoData = await geoRes.json();
+        const first = geoData?.results?.[0];
+        if (!first?.latitude || !first?.longitude) return false;
+        await fetchWeather(first.latitude, first.longitude, `${first.name}, ${first.admin1 || "India"}`);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     // Attempt Geolocation
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           fetchWeather(position.coords.latitude, position.coords.longitude, "Your Farm (Live Sync)");
         },
-        (error) => {
-          console.warn("Geolocation denied, using default (Pune).", error);
-          fetchWeather(18.5204, 73.8567);
+        async (error) => {
+          console.warn("Geolocation denied, trying saved farm location.", error);
+          const ok = await fetchFromSavedLocation();
+          if (!ok) fetchWeather(18.5204, 73.8567, "Pune, Maharashtra");
         }
       );
     } else {
-      fetchWeather(18.5204, 73.8567);
+      fetchFromSavedLocation().then((ok) => {
+        if (!ok) fetchWeather(18.5204, 73.8567, "Pune, Maharashtra");
+      });
     }
   }, [t.weather.placeholder]);
 

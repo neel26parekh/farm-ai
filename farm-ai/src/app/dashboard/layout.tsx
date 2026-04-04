@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import VoiceReader from "./advisor/VoiceReader";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function DashboardLayout({
   children,
@@ -14,6 +15,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const { status } = useSession();
+  const { language } = useLanguage();
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -76,9 +78,9 @@ export default function DashboardLayout({
         }}>
           <VoiceReader 
             text="Welcome to your Dashboard. Here you can check your crop health, get weather advisories, check mandi market prices, and run a disease scan on your crops." 
-            label="Audio Tour"
+            label="Audio Tour • Tap to listen"
+            languageCode={language}
           />
-          <span style={{ fontSize: '0.75rem', marginTop: '4px', opacity: 0.9, fontWeight: 400 }}>Tap to listen</span>
         </div>
       </main>
       <style dangerouslySetInnerHTML={{__html: `

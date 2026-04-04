@@ -165,7 +165,14 @@ export default function AdvisorPage() {
 
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = new SR();
-    recognition.lang = language === "en" ? "en-IN" : "hi-IN";
+    const speechLangMap: Record<string, string> = {
+      en: "en-IN",
+      hi: "hi-IN",
+      gu: "gu-IN",
+      mr: "mr-IN",
+      te: "te-IN",
+    };
+    recognition.lang = speechLangMap[language] || "en-IN";
     recognition.interimResults = false;
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);

@@ -23,6 +23,10 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   // Hide nav if inside dashboard
   if (pathname?.startsWith("/dashboard")) return null;
 
@@ -52,10 +56,30 @@ export default function Navbar() {
           className={styles.mobileToggle}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
+          type="button"
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className={styles.mobileMenu}
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Link href="/#features" className={styles.mobileMenuLink}>Product</Link>
+            <Link href="/about" className={styles.mobileMenuLink}>About</Link>
+            <Link href="/news" className={styles.mobileMenuLink}>News</Link>
+            <Link href={user ? "/dashboard" : "/auth/login"} className={styles.mobileMenuCta}>
+              {user ? "Go to Dashboard" : "Login"}
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

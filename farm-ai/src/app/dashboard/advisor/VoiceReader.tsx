@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import styles from "./page.module.css";
 
-export default function VoiceReader({ text, label }: { text: string, label?: string }) {
+type VoiceReaderProps = {
+  text: string;
+  label?: string;
+  languageCode?: string;
+};
+
+export default function VoiceReader({ text, label, languageCode = "en" }: VoiceReaderProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePlay = (e?: React.MouseEvent) => {
@@ -24,11 +30,21 @@ export default function VoiceReader({ text, label }: { text: string, label?: str
 
     const unformatted = text.replace(/[*#_]/g, ""); // strip simple markdown
     const utterance = new SpeechSynthesisUtterance(unformatted);
+
+    const languagePriority: Record<string, string[]> = {
+      en: ["en-IN", "en-GB", "en-US"],
+      hi: ["hi-IN", "en-IN"],
+      gu: ["gu-IN", "hi-IN", "en-IN"],
+      mr: ["mr-IN", "hi-IN", "en-IN"],
+      te: ["te-IN", "en-IN"],
+    };
     
     // Process voices
     let voices = window.speechSynthesis.getVoices();
     const tryPlay = () => {
-      const indianVoice = voices.find(v => v.lang === "en-IN" || (v.name && v.name.includes("India")));
+      const preferred = languagePriority[languageCode] || languagePriority.en;
+      const indianVoice = voices.find((v) => preferred.includes(v.lang))
+        || voices.find(v => v.lang === "en-IN" || (v.name && v.name.includes("India")));
       if (indianVoice) utterance.voice = indianVoice;
       
       utterance.rate = 1.0;

@@ -17,7 +17,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Load language from localStorage if available
   useEffect(() => {
     const savedLang = localStorage.getItem("farm-ai-language") as Language;
-    if (savedLang && ["en", "hi", "mr", "te"].includes(savedLang)) {
+    if (savedLang && ["en", "hi", "gu", "mr", "te"].includes(savedLang)) {
       setLanguage(savedLang);
     }
   }, []);
@@ -27,7 +27,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem("farm-ai-language", lang);
   };
 
-  const t = translations[language];
+  const t = (translations as Record<string, any>)[language] || translations.hi;
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>

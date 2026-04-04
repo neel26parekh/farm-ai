@@ -41,6 +41,7 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   const languages = [
     { code: "en", label: "EN" },
     { code: "hi", label: "HI" },
+    { code: "gu", label: "GU" },
     { code: "mr", label: "MR" },
     { code: "te", label: "TE" },
   ];
