@@ -185,3 +185,125 @@
   width: 100px !important;
   height: 100px !important;
 }
+
+.actionImpactGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.actionsCard,
+.impactCard {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.actionsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.actionsHeader h3,
+.impactCard h3 {
+  font-family: var(--font-heading);
+  color: var(--ink);
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.actionsTag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--green-700);
+  background: var(--bg-sage);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.actionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.actionItem {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actionTitle {
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.actionWhy,
+.actionMeta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  min-height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 12px;
+  font-weight: 600;
+  background: white;
+  color: var(--ink);
+}
+
+.actionPrimary {
+  background: var(--green-600);
+  color: white;
+  border-color: var(--green-600);
+}
+
+.impactMetrics {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.impactMetrics > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.impactMetrics span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.impactMetrics strong {
+  color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .actionImpactGrid {
+    grid-template-columns: 1fr;
+  }
+}

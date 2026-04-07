@@ -58,6 +58,8 @@ export default function MarketPage() {
   const [liveMandiData, setLiveMandiData] = useState<MandiPrice[]>([]);
   const [syncingPrices, setSyncingPrices] = useState(false);
   const [farmerLocation, setFarmerLocation] = useState("India");
+  const [nearestMandi, setNearestMandi] = useState("Local mandi");
+  const [dataSource, setDataSource] = useState<"live" | "cached">("live");
 
   // Load pinned crops from database on mount
   useEffect(() => {
@@ -70,7 +72,21 @@ export default function MarketPage() {
           setSelectedCrop(crop);
           setPinnedCrops((prev) => Array.from(new Set([...prev, crop])));
         }
-        if (farm.location) setFarmerLocation(farm.location);
+        if (farm.location) {
+          const loc = String(farm.location);
+          setFarmerLocation(loc);
+          if (loc.toLowerCase().includes("punjab") || loc.toLowerCase().includes("delhi")) {
+            setNearestMandi("Azadpur, Delhi");
+          } else if (loc.toLowerCase().includes("maharashtra") || loc.toLowerCase().includes("pune")) {
+            setNearestMandi("Gultekdi, Pune");
+          } else if (loc.toLowerCase().includes("karnataka") || loc.toLowerCase().includes("bangalore")) {
+            setNearestMandi("Yeshwanthpur, Bangalore");
+          } else if (loc.toLowerCase().includes("tamil") || loc.toLowerCase().includes("chennai")) {
+            setNearestMandi("Koyambedu, Chennai");
+          } else {
+            setNearestMandi("State central mandi");
+          }
+        }
       }
     } catch {}
 
@@ -93,8 +109,19 @@ export default function MarketPage() {
       try {
         const data = await fetchLiveMarketPrices();
         setLiveMandiData(data);
+        setDataSource("live");
+        localStorage.setItem("farm_ai_market_cache", JSON.stringify(data));
       } catch (e) {
         console.error("Live market sync failed", e);
+        const cached = localStorage.getItem("farm_ai_market_cache");
+        if (cached) {
+          try {
+            setLiveMandiData(JSON.parse(cached));
+            setDataSource("cached");
+          } catch {
+            // Keep defaults
+          }
+        }
       } finally {
         setSyncingPrices(false);
       }
@@ -202,6 +229,9 @@ export default function MarketPage() {
   };
 
   const prediction = getPrediction();
+  const recommendationConfidence = prediction
+    ? Math.min(95, Math.max(68, Math.round(78 + Math.abs(prediction.trend) * 1.2)))
+    : 80;
 
   // Ensure enough items to fill the ticker track seamlessly, even if only 1-2 crops are pinned
   const tickerItems = Array(Math.max(2, Math.ceil(24 / Math.max(1, displayedCrops.length))))
@@ -263,7 +293,7 @@ export default function MarketPage() {
             {t.market.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            {t.market.subtitle} Personalized for {farmerLocation}.
+            {t.market.subtitle} Personalized for {farmerLocation}. Nearest hub: {nearestMandi}. Source: {dataSource === "live" ? "Live" : "Cached"}.
           </p>
         </div>
         
@@ -354,6 +384,7 @@ export default function MarketPage() {
               Our AI recommends targeting a sale in <strong>{prediction.peakIdx} weeks</strong> to maximize profit around 
               <span className={styles.alertHighlight}> ₹{prediction.max.toLocaleString("en-IN")}/q</span>.
             </p>
+            <p style={{ marginTop: "8px", fontWeight: 600 }}>Confidence: {recommendationConfidence}% · Why: based on recent trend slope + seasonal projection.</p>
           </div>
           <div className={styles.reminderActions}>
             <button 

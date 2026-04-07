@@ -60,8 +60,18 @@ export default function WeatherPage() {
   const [currentWeather, setCurrentWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [locationName, setLocationName] = useState("Pune, Maharashtra (Default)");
+  const [profileCrop, setProfileCrop] = useState("Wheat");
+  const [dataSource, setDataSource] = useState<"live" | "cached">("live");
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("farm_ai_settings");
+      if (saved) {
+        const farm = JSON.parse(saved);
+        if (farm.primaryCrop) setProfileCrop(String(farm.primaryCrop));
+      }
+    } catch {}
+
     async function fetchWeather(lat: number, lon: number, name?: string) {
       setLoading(true);
       try {
@@ -119,9 +129,35 @@ export default function WeatherPage() {
           });
 
           setLiveForecast(newForecast);
+          setDataSource("live");
+          localStorage.setItem(
+            "farm_ai_weather_cache",
+            JSON.stringify({ locationName: name || locationName, currentWeather: {
+              temp: Math.round(data.current.temperature_2m),
+              feelsLike: Math.round(data.current.apparent_temperature),
+              humidity: Math.round(data.current.relative_humidity_2m),
+              windSpeed: Math.round(data.current.wind_speed_10m),
+              condition: getCondition(data.current.weather_code),
+              visibility: 10,
+            }, liveForecast: newForecast })
+          );
         }
       } catch (error) {
         console.error("Failed to fetch weather:", error);
+        const cached = localStorage.getItem("farm_ai_weather_cache");
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (parsed.locationName) setLocationName(parsed.locationName);
+            if (parsed.currentWeather) setCurrentWeather(parsed.currentWeather);
+            if (Array.isArray(parsed.liveForecast) && parsed.liveForecast.length > 0) {
+              setLiveForecast(parsed.liveForecast);
+              setDataSource("cached");
+            }
+          } catch {
+            // keep fallback defaults
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -182,7 +218,7 @@ export default function WeatherPage() {
             {t.weather.title}
           </h1>
           <p className={styles.pageSubtitle}>
-            {t.weather.subtitle}
+            {t.weather.subtitle} Source: {dataSource === "live" ? "Live" : "Cached"}.
           </p>
         </div>
         <div className={styles.locationBadge}>
@@ -343,10 +379,10 @@ export default function WeatherPage() {
           </h3>
           <div className={styles.alertsList}>
             {[
-              { crop: "Wheat", alert: "Rust risk HIGH due to morning dew and humidity above 80%", severity: "high" },
-              { crop: "Tomato", alert: "Late blight risk MODERATE. Apply preventive fungicide spray", severity: "medium" },
-              { crop: "Cotton", alert: "No weather-related concerns this week", severity: "low" },
-              { crop: "Sugarcane", alert: "Heavy rain may cause waterlogging. Check field drainage", severity: "high" },
+              { crop: profileCrop, alert: `Primary crop advisory: monitor ${profileCrop} leaf health after humidity spikes.`, severity: "medium" },
+              { crop: "General", alert: "If rainfall exceeds 20mm, postpone spraying by 24-48 hours.", severity: "medium" },
+              { crop: "Harvest", alert: "Dry and secure harvested produce before forecasted rain windows.", severity: "high" },
+              { crop: "Irrigation", alert: "Prefer early morning irrigation to reduce fungal pressure.", severity: "low" },
             ].map((item, i) => (
               <div key={i} className={styles.alertItem}>
                 <div className={styles.alertHeader}>
@@ -363,6 +399,7 @@ export default function WeatherPage() {
                   </span>
                 </div>
                 <p className={styles.alertText}>{item.alert}</p>
+                <p className={styles.alertText} style={{ fontWeight: 600 }}>Confidence: {item.severity === "high" ? "High" : item.severity === "medium" ? "Medium" : "Low"}</p>
               </div>
             ))}
           </div>

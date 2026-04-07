@@ -12,7 +12,7 @@ const google = createGoogleGenerativeAI({
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages, farmContext } = await req.json();
+  const { messages, farmContext, language } = await req.json();
 
   if (!messages || messages.length === 0) {
     return new Response("No messages provided", { status: 400 });
@@ -42,7 +42,16 @@ export async function POST(req: Request) {
     if (fc.location) farmInfo += `Their farm is located in ${fc.location}. `;
     if (fc.farmSize) farmInfo += `Farm size is approximately ${fc.farmSize} acres. `;
     if (fc.fullName) farmInfo += `The farmer's name is ${fc.fullName}. `;
+    if (fc.irrigationType) farmInfo += `Irrigation type is ${fc.irrigationType}. `;
+    if (fc.sowingDate) farmInfo += `Sowing date is ${fc.sowingDate}. `;
+    if (fc.budgetBand) farmInfo += `Input budget band is ${fc.budgetBand}. `;
   }
+
+  const languageLabel =
+    language === "hi" ? "Hindi" :
+    language === "gu" ? "Gujarati" :
+    language === "mr" ? "Marathi" :
+    language === "te" ? "Telugu" : "English";
 
   // Start streaming immediately — no DB wait
   const result = streamText({
@@ -50,10 +59,16 @@ export async function POST(req: Request) {
     system: `You are the AgroNexus AI Advisor, an expert agronomist specialized in Indian agriculture. 
 ${farmInfo ? `\nFARMER CONTEXT: ${farmInfo}\nUse this context to give personalized, location-specific advice when relevant.\n` : ""}
 You provide brief, actionable, and scientifically accurate farming advice.
+- Respond in ${languageLabel} using simple farmer-friendly wording.
 - Keep answers concise and practical.
-- Use bullet points for steps or treatments.
+- Use this output structure:
+  1) Recommendation
+  2) Why this helps
+  3) Confidence: High/Medium/Low
+  4) When to contact local agronomist
+- If disease risk appears severe, always recommend local agronomist/extension-worker verification.
 - If asked about prices, refer them to the Market Intelligence dashboard.
-- Speak as a trusted, professional AI assistant for farmers.`,
+- Never fabricate exact government subsidy amounts.`,
     messages,
     onFinish: async ({ text }) => {
       if (userId) {

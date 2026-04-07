@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Bot, Send, Mic, Sparkles, User, RotateCcw, Leaf, Volume2 } from "lucide-react";
 import Image from "next/image";
 import { chatPresets } from "@/lib/mockData";
@@ -17,13 +18,17 @@ interface ChatMessage {
 }
 
 export default function AdvisorPage() {
+  const searchParams = useSearchParams();
   const { language, t } = useLanguage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [syncState, setSyncState] = useState<"live" | "offline" | "queued">("live");
+  const [prefillHandled, setPrefillHandled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const queueKey = "farm_ai_chat_queue";
 
   // Load history on mount
   useEffect(() => {
@@ -65,6 +70,47 @@ export default function AdvisorPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    if (!isLoaded || prefillHandled) return;
+    const ask = searchParams.get("ask");
+    if (ask && ask.trim()) {
+      setPrefillHandled(true);
+      sendMessage(ask);
+    }
+  }, [isLoaded, prefillHandled, searchParams]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const flushQueue = async () => {
+      if (isLoading || typeof navigator === "undefined" || !navigator.onLine) return;
+      try {
+        const raw = localStorage.getItem(queueKey);
+        const queue: string[] = raw ? JSON.parse(raw) : [];
+        if (!queue.length) {
+          setSyncState("live");
+          return;
+        }
+
+        localStorage.removeItem(queueKey);
+        for (const queuedText of queue) {
+          // eslint-disable-next-line no-await-in-loop
+          await sendMessage(queuedText);
+        }
+        setSyncState("live");
+      } catch {
+        setSyncState("offline");
+      }
+    };
+
+    window.addEventListener("online", flushQueue);
+    flushQueue();
+
+    return () => {
+      window.removeEventListener("online", flushQueue);
+    };
+  }, [isLoaded, isLoading]);
+
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
@@ -78,6 +124,27 @@ export default function AdvisorPage() {
     };
     setMessages(prev => [...prev, userMsg]);
     setChatInput("");
+
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      try {
+        const existing = localStorage.getItem(queueKey);
+        const queue = existing ? JSON.parse(existing) : [];
+        queue.push(trimmed);
+        localStorage.setItem(queueKey, JSON.stringify(queue));
+      } catch {
+        // Ignore queue persistence errors
+      }
+
+      setSyncState("queued");
+      setMessages(prev => [...prev, {
+        id: `${Date.now()}-offline`,
+        role: "assistant",
+        content: "You are offline. I saved this question and will send it when network returns.",
+        createdAt: new Date(),
+      }]);
+      return;
+    }
+
     setIsLoading(true);
 
     // Add empty assistant message to stream into
@@ -106,6 +173,7 @@ export default function AdvisorPage() {
             content: m.content,
           })),
           farmContext,
+          language,
         }),
       });
 
@@ -130,7 +198,22 @@ export default function AdvisorPage() {
           m.id === assistantId ? { ...m, content: fullText } : m
         ));
       }
+      setSyncState("live");
     } catch (err: any) {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        try {
+          const existing = localStorage.getItem(queueKey);
+          const queue = existing ? JSON.parse(existing) : [];
+          queue.push(trimmed);
+          localStorage.setItem(queueKey, JSON.stringify(queue));
+          setSyncState("queued");
+        } catch {
+          setSyncState("offline");
+        }
+      } else {
+        setSyncState("offline");
+      }
+
       setMessages(prev => prev.map(m =>
         m.id === assistantId
           ? { ...m, content: `Sorry, I encountered an error: ${err.message}. Please try again.` }
@@ -208,6 +291,9 @@ export default function AdvisorPage() {
         <div>
           <h1 className={styles.pageTitle}><Bot size={28} />{t.advisor.title}</h1>
           <p className={styles.pageSubtitle}>{t.weather.subtitle} <span className="model-badge"><Sparkles size={10} />Gemini 2.5 Flash</span></p>
+          <p className={styles.pageSubtitle}>
+            Sync: {syncState === "live" ? "Live" : syncState === "queued" ? "Offline queue active" : "Offline"}
+          </p>
         </div>
         <button className="btn btn-secondary btn-sm" onClick={clearChat}>
           <RotateCcw size={14} />{language === "en" ? "Clear Chat" : "चैट साफ़ करें"}

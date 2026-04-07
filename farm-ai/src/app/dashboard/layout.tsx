@@ -6,6 +6,11 @@ import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import VoiceReader from "./advisor/VoiceReader";
 import { useLanguage } from "@/lib/LanguageContext";
+import {
+  isOnboardingComplete,
+  loadFarmerSettingsLocal,
+  mergeFarmerSettings,
+} from "@/lib/farmerProfile";
 
 export default function DashboardLayout({
   children,
@@ -18,6 +23,8 @@ export default function DashboardLayout({
   const { language } = useLanguage();
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [profileReady, setProfileReady] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -34,11 +41,58 @@ export default function DashboardLayout({
     }
   }, [status, router, pathname]);
 
-  if (status === "loading") {
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    let active = true;
+
+    const checkOnboarding = async () => {
+      const local = loadFarmerSettingsLocal();
+      let merged = mergeFarmerSettings(local);
+
+      try {
+        const res = await fetch("/api/farmer/profile", { cache: "no-store" });
+        if (res.ok) {
+          const remote = await res.json();
+          merged = mergeFarmerSettings({
+            ...merged,
+            fullName: remote.fullName || merged.fullName,
+            location: remote.location || merged.location,
+            farmSize: remote.farmSize || merged.farmSize,
+            primaryCrop: remote.primaryCrop || merged.primaryCrop,
+          });
+        }
+      } catch {
+        // Use local profile when network/API isn't available
+      }
+
+      if (!active) return;
+
+      const incomplete = !isOnboardingComplete(merged);
+      setNeedsOnboarding(incomplete);
+      setProfileReady(true);
+
+      if (incomplete && pathname !== "/dashboard/settings") {
+        router.replace("/dashboard/settings?onboarding=1");
+      }
+    };
+
+    checkOnboarding();
+
+    return () => {
+      active = false;
+    };
+  }, [status, pathname, router]);
+
+  if (status === "loading" || (status === "authenticated" && !profileReady)) {
     return null;
   }
 
   if (status === "unauthenticated") {
+    return null;
+  }
+
+  if (needsOnboarding && pathname !== "/dashboard/settings") {
     return null;
   }
 
@@ -80,6 +134,8 @@ export default function DashboardLayout({
             text="Welcome to your Dashboard. Here you can check your crop health, get weather advisories, check mandi market prices, and run a disease scan on your crops." 
             label="Audio Tour • Tap to listen"
             languageCode={language}
+            showSpeedControl
+            showReplay
           />
         </div>
       </main>

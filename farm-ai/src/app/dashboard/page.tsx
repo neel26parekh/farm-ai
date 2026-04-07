@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Sprout,
   Heart,
@@ -36,6 +37,24 @@ interface AnimatedCounterProps {
   prefix?: string;
 }
 
+interface DailyAction {
+  id: string;
+  title: string;
+  why: string;
+  confidence: "High" | "Medium" | "Low";
+  advisorPrompt: string;
+  estimatedValue: number;
+  done: boolean;
+}
+
+interface ImpactSnapshot {
+  actionsDone: number;
+  timelySales: number;
+  diseasePreventions: number;
+  estimatedSavings: number;
+  monthKey: string;
+}
+
 function AnimatedCounter({ target, suffix = "", prefix = "" }: AnimatedCounterProps) {
   const [count, setCount] = useState(0);
 
@@ -66,20 +85,122 @@ function AnimatedCounter({ target, suffix = "", prefix = "" }: AnimatedCounterPr
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { t, language } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState("");
   const [dateStr, setDateStr] = useState("");
+  const [farmerProfile, setFarmerProfile] = useState<{ crop: string; location: string; farmSize: string }>({
+    crop: "Wheat",
+    location: "your location",
+    farmSize: "5",
+  });
+  const [dailyActions, setDailyActions] = useState<DailyAction[]>([]);
+  const [impact, setImpact] = useState<ImpactSnapshot>({
+    actionsDone: 0,
+    timelySales: 0,
+    diseasePreventions: 0,
+    estimatedSavings: 0,
+    monthKey: new Date().toISOString().slice(0, 7),
+  });
   const [communityAlert, setCommunityAlert] = useState({
     title: "Community Outbreak Alert",
     message:
       "Model risk estimate loading for your farm...",
   });
   const { user } = useAuth();
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const monthKey = new Date().toISOString().slice(0, 7);
+
+  const buildActions = (crop: string, location: string, farmSize: string): DailyAction[] => [
+    {
+      id: "disease-scout",
+      title: `Inspect ${crop} leaves this morning`,
+      why: `Humidity-linked disease risk can rise quickly in ${location}. Early field scouting prevents spread and saves spray cost later.`,
+      confidence: "High",
+      advisorPrompt: `Why should I inspect ${crop} early today and what exactly should I look for?`,
+      estimatedValue: 1800,
+      done: false,
+    },
+    {
+      id: "irrigation-plan",
+      title: "Set irrigation window before noon",
+      why: "Morning irrigation lowers fungal pressure and improves water-use efficiency compared to late-evening watering.",
+      confidence: "Medium",
+      advisorPrompt: `Create an irrigation plan for my ${crop} farm size ${farmSize} acres.`,
+      estimatedValue: 900,
+      done: false,
+    },
+    {
+      id: "market-check",
+      title: `Check nearest mandi rates for ${crop}`,
+      why: "Price spread between nearby mandis can materially change net income after transport and commission.",
+      confidence: "High",
+      advisorPrompt: `Explain how I should decide where to sell ${crop} this week based on mandi price spread.`,
+      estimatedValue: 2200,
+      done: false,
+    },
+  ];
+
+  const applyImpactUpdate = (actionId: string, value: number) => {
+    setImpact((prev) => {
+      const reset = prev.monthKey !== monthKey;
+      const base: ImpactSnapshot = reset
+        ? { actionsDone: 0, timelySales: 0, diseasePreventions: 0, estimatedSavings: 0, monthKey }
+        : prev;
+
+      const next: ImpactSnapshot = {
+        ...base,
+        actionsDone: base.actionsDone + 1,
+        estimatedSavings: base.estimatedSavings + value,
+      };
+
+      if (actionId === "market-check") next.timelySales += 1;
+      if (actionId === "disease-scout") next.diseasePreventions += 1;
+
+      localStorage.setItem("farm_ai_impact_metrics", JSON.stringify(next));
+      return next;
+    });
+  };
 
   useEffect(() => {
     setMounted(true);
+    try {
+      const saved = localStorage.getItem("farm_ai_settings");
+      if (saved) {
+        const farm = JSON.parse(saved);
+        const crop = (farm.primaryCrop || "Wheat").toString();
+        const location = (farm.location || "your location").toString();
+        const farmSize = (farm.farmSize || "5").toString();
+        setFarmerProfile({ crop, location, farmSize });
+
+        const actionKey = `farm_ai_daily_actions_${todayKey}`;
+        const persistedActions = localStorage.getItem(actionKey);
+        if (persistedActions) {
+          const parsed = JSON.parse(persistedActions) as DailyAction[];
+          setDailyActions(parsed);
+        } else {
+          const starterActions = buildActions(crop, location, farmSize);
+          setDailyActions(starterActions);
+          localStorage.setItem(actionKey, JSON.stringify(starterActions));
+        }
+      } else {
+        const starterActions = buildActions("Wheat", "your location", "5");
+        setDailyActions(starterActions);
+      }
+
+      const rawImpact = localStorage.getItem("farm_ai_impact_metrics");
+      if (rawImpact) {
+        const parsedImpact = JSON.parse(rawImpact) as ImpactSnapshot;
+        if (parsedImpact.monthKey === monthKey) {
+          setImpact(parsedImpact);
+        }
+      }
+    } catch {
+      // Continue with defaults when local storage is unavailable
+    }
+
     // Simulate real-time data fetch delay for skeleton demo
     const timer = setTimeout(() => setLoading(false), 1200);
 
@@ -198,6 +319,44 @@ export default function DashboardPage() {
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
+  const persistActions = (actions: DailyAction[]) => {
+    localStorage.setItem(`farm_ai_daily_actions_${todayKey}`, JSON.stringify(actions));
+  };
+
+  const markActionDone = (actionId: string) => {
+    setDailyActions((prev) => {
+      const next = prev.map((action) => {
+        if (action.id !== actionId || action.done) return action;
+        applyImpactUpdate(actionId, action.estimatedValue);
+        return { ...action, done: true };
+      });
+      persistActions(next);
+      return next;
+    });
+  };
+
+  const remindAction = async (title: string) => {
+    if (typeof window === "undefined") return;
+
+    if (!("Notification" in window)) {
+      alert("Reminders are not supported in this browser.");
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      setTimeout(() => {
+        new Notification("AgroNexus Reminder", {
+          body: title,
+        });
+      }, 3000);
+    }
+  };
+
+  const askAdvisorWhy = (prompt: string) => {
+    router.push(`/dashboard/advisor?ask=${encodeURIComponent(prompt)}`);
+  };
+
   if (!mounted) return null;
 
   return (
@@ -283,6 +442,66 @@ export default function DashboardPage() {
           }} onClick={handleWhatsappConnect} type="button" aria-label="Open WhatsApp chat">
             Connect Now
           </button>
+        </div>
+      )}
+
+      {!loading && (
+        <div className={styles.actionImpactGrid}>
+          <div className={styles.actionsCard}>
+            <div className={styles.actionsHeader}>
+              <h3>Today&apos;s Farm Actions</h3>
+              <span className={styles.actionsTag}>Action-first recommendations</span>
+            </div>
+            <div className={styles.actionsList}>
+              {dailyActions.map((action) => (
+                <div key={action.id} className={styles.actionItem}>
+                  <div className={styles.actionMain}>
+                    <p className={styles.actionTitle}>{action.title}</p>
+                    <p className={styles.actionWhy}>Why: {action.why}</p>
+                    <p className={styles.actionMeta}>Confidence: {action.confidence} · Est. value protected: ₹{action.estimatedValue.toLocaleString("en-IN")}</p>
+                  </div>
+                  <div className={styles.actionButtons}>
+                    <button type="button" className={styles.actionBtn} onClick={() => askAdvisorWhy(action.advisorPrompt)}>
+                      Ask AI Why
+                    </button>
+                    <button type="button" className={styles.actionBtn} onClick={() => remindAction(action.title)}>
+                      Remind Me
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.actionBtn} ${styles.actionPrimary}`}
+                      onClick={() => markActionDone(action.id)}
+                      disabled={action.done}
+                    >
+                      {action.done ? "Done ✓" : "Mark Done"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.impactCard}>
+            <h3>Your Farm Gains ({monthKey})</h3>
+            <div className={styles.impactMetrics}>
+              <div>
+                <span>Actions Completed</span>
+                <strong>{impact.actionsDone}</strong>
+              </div>
+              <div>
+                <span>Disease Risks Prevented</span>
+                <strong>{impact.diseasePreventions}</strong>
+              </div>
+              <div>
+                <span>Timely Sale Decisions</span>
+                <strong>{impact.timelySales}</strong>
+              </div>
+              <div>
+                <span>Estimated Savings</span>
+                <strong>₹{impact.estimatedSavings.toLocaleString("en-IN")}</strong>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

@@ -1,31 +1,29 @@
 import { useState, useEffect } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX, RotateCcw, Gauge } from "lucide-react";
 import styles from "./page.module.css";
 
 type VoiceReaderProps = {
   text: string;
   label?: string;
   languageCode?: string;
+  showSpeedControl?: boolean;
+  showReplay?: boolean;
 };
 
-export default function VoiceReader({ text, label, languageCode = "en" }: VoiceReaderProps) {
+export default function VoiceReader({
+  text,
+  label,
+  languageCode = "en",
+  showSpeedControl = false,
+  showReplay = false,
+}: VoiceReaderProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [slowMode, setSlowMode] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
 
-  const handlePlay = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    
+  const speakText = () => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
-    
-    if (isPlaying) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
-      return;
-    }
 
-    // Cancel any previous
     window.speechSynthesis.cancel();
 
     const unformatted = text.replace(/[*#_]/g, ""); // strip simple markdown
@@ -38,7 +36,7 @@ export default function VoiceReader({ text, label, languageCode = "en" }: VoiceR
       mr: ["mr-IN", "hi-IN", "en-IN"],
       te: ["te-IN", "en-IN"],
     };
-    
+
     // Process voices
     let voices = window.speechSynthesis.getVoices();
     const tryPlay = () => {
@@ -46,17 +44,20 @@ export default function VoiceReader({ text, label, languageCode = "en" }: VoiceR
       const indianVoice = voices.find((v) => preferred.includes(v.lang))
         || voices.find(v => v.lang === "en-IN" || (v.name && v.name.includes("India")));
       if (indianVoice) utterance.voice = indianVoice;
-      
-      utterance.rate = 1.0;
+
+      utterance.rate = slowMode ? 0.82 : 1.0;
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
-      
-      utterance.onend = () => setIsPlaying(false);
+
+      utterance.onend = () => {
+        setIsPlaying(false);
+        setHasPlayed(true);
+      };
       utterance.onerror = () => setIsPlaying(false);
-      
+
       window.speechSynthesis.speak(utterance);
       setIsPlaying(true);
-      
+
       if (navigator.vibrate) navigator.vibrate(50);
     };
 
@@ -73,16 +74,71 @@ export default function VoiceReader({ text, label, languageCode = "en" }: VoiceR
     }
   };
 
+  const handlePlay = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      return;
+    }
+
+    speakText();
+  };
+
+  const handleReplay = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    speakText();
+  };
+
   return (
-    <button 
-      className={`${styles.readAloudBtn} ${label ? styles.labeledBtn : ''}`}
-      onClick={handlePlay} 
-      title="Read Aloud"
-      aria-label="Read Aloud"
-      style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: "bold" }}
-    >
-      {isPlaying ? <VolumeX size={label ? 18 : 14} /> : <Volume2 size={label ? 18 : 14} />}
-      {label && <span>{label}</span>}
-    </button>
+    <div className={styles.voiceReaderGroup}>
+      <button 
+        className={`${styles.readAloudBtn} ${label ? styles.labeledBtn : ''}`}
+        onClick={handlePlay} 
+        title="Read Aloud"
+        aria-label="Read Aloud"
+        style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: "bold" }}
+      >
+        {isPlaying ? <VolumeX size={label ? 18 : 14} /> : <Volume2 size={label ? 18 : 14} />}
+        {label && <span>{label}</span>}
+      </button>
+
+      {(showSpeedControl || (showReplay && hasPlayed)) && label && (
+        <div style={{ display: "flex", gap: "6px" }}>
+          {showSpeedControl && (
+            <button
+              type="button"
+              className={styles.voiceSubBtn}
+              onClick={() => setSlowMode((v) => !v)}
+              aria-label="Toggle slow mode"
+              title={slowMode ? "Normal speed" : "Slow speed"}
+            >
+              <Gauge size={14} />
+              {slowMode ? "1x" : "0.8x"}
+            </button>
+          )}
+          {showReplay && hasPlayed && (
+            <button
+              type="button"
+              className={styles.voiceSubBtn}
+              onClick={handleReplay}
+              aria-label="Replay audio"
+              title="Replay"
+            >
+              <RotateCcw size={14} /> Replay
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

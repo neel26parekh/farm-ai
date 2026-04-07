@@ -1,50 +1,75 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Save, User, MapPin, Sprout, Languages, ShieldCheck, Loader2, Bell, Smartphone, Database, Sparkles } from "lucide-react";
 import styles from "./page.module.css";
 import { useAuth } from "@/lib/AuthContext";
-
-interface UserSettings {
-  fullName: string;
-  location: string;
-  farmSize: string;
-  primaryCrop: string;
-  language: string;
-  pushNotifications: boolean;
-  smsAlerts: boolean;
-  aiDataConsent: boolean;
-  currency: string;
-}
+import {
+  FarmerSettings,
+  defaultFarmerSettings,
+  isOnboardingComplete,
+  loadFarmerSettingsLocal,
+  saveFarmerSettingsLocal,
+} from "@/lib/farmerProfile";
 
 export default function SettingsPage() {
+  const searchParams = useSearchParams();
   const { user } = useAuth();
+  const onboardingMode = searchParams.get("onboarding") === "1";
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [settings, setSettings] = useState<UserSettings>({
-    fullName: "",
-    location: "Punjab, India",
-    farmSize: "5",
-    primaryCrop: "Wheat",
-    language: "English",
-    pushNotifications: true,
-    smsAlerts: false,
-    aiDataConsent: true,
-    currency: "INR",
-  });
+  const [settings, setSettings] = useState<FarmerSettings>(defaultFarmerSettings);
 
   useEffect(() => {
-    if (user?.name) {
-      setSettings(prev => ({ ...prev, fullName: prev.fullName || user.name }));
-    }
+    const hydrate = async () => {
+      const local = loadFarmerSettingsLocal();
+      let merged: FarmerSettings = {
+        ...local,
+        fullName: local.fullName || user?.name || "",
+      };
 
-    const saved = localStorage.getItem("farm_ai_settings");
-    if (saved) {
       try {
-        setSettings({ ...settings, ...JSON.parse(saved) });
-      } catch (e) {}
-    }
+        const res = await fetch("/api/farmer/profile", { cache: "no-store" });
+        if (res.ok) {
+          const remote = await res.json();
+          merged = {
+            ...merged,
+            fullName: remote.fullName || merged.fullName,
+            location: remote.location || merged.location,
+            farmSize: remote.farmSize || merged.farmSize,
+            primaryCrop: remote.primaryCrop || merged.primaryCrop,
+            pushNotifications: remote.pushNotifications ?? merged.pushNotifications,
+            smsAlerts: remote.smsAlerts ?? merged.smsAlerts,
+            aiDataConsent: remote.aiDataConsent ?? merged.aiDataConsent,
+            currency: remote.currency || merged.currency,
+          };
+        }
+      } catch {
+        // Keep local settings on API failures
+      }
+
+      setSettings(merged);
+      setIsLoading(false);
+    };
+
+    hydrate();
   }, [user]);
+
+  useEffect(() => {
+    const map: Record<string, string> = {
+      English: "en",
+      Hindi: "hi",
+      Gujarati: "gu",
+      Marathi: "mr",
+      Telugu: "te",
+      Tamil: "te",
+      Punjabi: "hi",
+    };
+
+    localStorage.setItem("farm-ai-language", map[settings.language] || "en");
+  }, [settings.language]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = e.target;
@@ -53,26 +78,40 @@ export default function SettingsPage() {
     setSettings(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
-    setTimeout(() => {
-      localStorage.setItem("farm_ai_settings", JSON.stringify(settings));
-      setIsSaving(false);
+
+    try {
+      saveFarmerSettingsLocal(settings);
+      await fetch("/api/farmer/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
       setShowToast(true);
-      
       setTimeout(() => setShowToast(false), 3000);
-    }, 800);
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) return null;
+
+  const profileComplete = isOnboardingComplete(settings);
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Platform Settings</h1>
+        <h1 className={styles.title}>{onboardingMode ? "Complete Farmer Onboarding" : "Platform Settings"}</h1>
         <p className={styles.subtitle}>
           Configure your farm profile so advice, weather, and market recommendations are personalized for your needs.
         </p>
+        {onboardingMode && !profileComplete && (
+          <p className={styles.subtitle} style={{ marginTop: "8px", color: "#b91c1c", fontWeight: 600 }}>
+            Complete all required fields to unlock personalized recommendations.
+          </p>
+        )}
       </div>
 
       <div className={styles.container}>
@@ -81,7 +120,7 @@ export default function SettingsPage() {
             <div className={styles.avatarWrap}>
               <User size={32} className={styles.avatarIcon} />
             </div>
-            <h3 className={styles.sidebarName}>{settings.fullName || "AgroNexus Commander"}</h3>
+            <h3 className={styles.sidebarName}>{settings.fullName || "Farmer"}</h3>
             <p className={styles.sidebarRole}>Farmer Profile</p>
             
             <div className={styles.sidebarBadges}>
@@ -190,6 +229,45 @@ export default function SettingsPage() {
                 </select>
               </div>
             </div>
+
+            <div className={styles.inputGroup}>
+              <label>Irrigation Type</label>
+              <div className={styles.inputWrap}>
+                <Database size={18} className={styles.inputIcon} />
+                <select name="irrigationType" value={settings.irrigationType} onChange={handleChange}>
+                  <option value="Canal">Canal</option>
+                  <option value="Borewell">Borewell</option>
+                  <option value="Drip">Drip</option>
+                  <option value="Rainfed">Rainfed</option>
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label>Sowing Date</label>
+              <div className={styles.inputWrap}>
+                <input 
+                  type="date" 
+                  name="sowingDate"
+                  value={settings.sowingDate}
+                  onChange={handleChange}
+                  required
+                  style={{ paddingLeft: "12px" }}
+                />
+              </div>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label>Input Budget Band</label>
+              <div className={styles.inputWrap}>
+                <Database size={18} className={styles.inputIcon} />
+                <select name="budgetBand" value={settings.budgetBand} onChange={handleChange}>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <h2 className={styles.formTitle}>Notifications & Alerts</h2>
@@ -249,7 +327,7 @@ export default function SettingsPage() {
               {isSaving ? (
                 <><Loader2 size={18} className="spin" /> Syncing with Platform...</>
               ) : (
-                <><Save size={18} /> Save Settings</>
+                <><Save size={18} /> {onboardingMode ? "Save & Continue" : "Save Settings"}</>
               )}
             </button>
             
